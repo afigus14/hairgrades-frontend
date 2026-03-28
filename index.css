@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Full-page background (deep blue film) */
+html, body, #root { height: 100%; }
+body {
+  @apply bg-[#3b5268]; /* page surround (outside the shell) */
+  background-image:
+    radial-gradient(1200px 600px at 20% -10%, rgba(255,255,255,0.06), transparent 60%),
+    radial-gradient(1000px 500px at 80% -10%, rgba(255,255,255,0.04), transparent 60%);
+  color: #1f2430;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+/* The rounded container frame shown in the mock */
+.shell {
+  @apply mx-auto max-w-6xl rounded-2xl border border-white/10 shadow-xl overflow-hidden;
+  @apply bg-white/5 backdrop-blur;
+}
+
+/* Panels used on Home: dark band + light band */
+.panel-dark {
+  @apply bg-[#1f344b] text-white;
+  background-image: linear-gradient(to bottom, #2a4766, #1f344b);
+}
+.panel-light {
+  @apply bg-[#e7edf3] text-[#1b2735];
+}
+
+/* Buttons */
+.btn { @apply inline-flex items-center justify-center rounded-lg px-4 py-2 font-medium transition; }
+.btn-primary { @apply bg-[#344e6b] text-white hover:bg-[#476587]; }
+.btn-ghost   { @apply bg-white/15 text-white hover:bg-white/25; }

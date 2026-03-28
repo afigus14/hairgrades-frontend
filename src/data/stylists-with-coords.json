@@ -1,0 +1,288 @@
+[
+  {
+    "id": "sty_1767636860515",
+    "profileSlug": "coco-rubani",
+    "name": "Coco Rubani",
+    "verified": true,
+    "specialties": [],
+    "training": "",
+    "awards": "",
+    "cost": "",
+    "instagram": "",
+    "website": "",
+    "lat": null,
+    "lng": null,
+    "tier": "premium",
+    "applicationId": "app_1767636841966",
+    "createdAt": "2026-01-05T18:14:20.515Z"
+  },
+  {
+    "id": "sty_1767632905613",
+    "name": "Donna Sommer",
+    "email": "dsommer@email.com",
+    "city": "Carmel, IN.",
+    "gender": "",
+    "specialties": [],
+    "training": "",
+    "awards": "",
+    "cost": "",
+    "instagram": "",
+    "website": "",
+    "lat": null,
+    "lng": null,
+    "verified": true,
+    "tier": "pro",
+    "applicationId": "app_1767632886484",
+    "createdAt": "2026-01-05T17:08:25.613Z"
+  },
+  {
+    "id": "sty_1767632637554",
+    "name": "Coco Cortez",
+    "email": "coco@emailaddress.com",
+    "city": "Saint John",
+    "gender": "",
+    "specialties": [],
+    "training": "",
+    "awards": "",
+    "cost": "",
+    "instagram": "",
+    "website": "",
+    "lat": null,
+    "lng": null,
+    "verified": true,
+    "tier": "premium",
+    "applicationId": "app_1767632624932",
+    "createdAt": "2026-01-05T17:03:57.554Z"
+  },
+  {
+    "id": "ava-lee",
+    "slug": "ava-lee",
+    "name": "Ava Lee",
+    "specialty": "Balayage & Highlights",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60601",
+    "inquiryEmail": "ava@stylegrades-demo.com",
+    "photoUrl": "/assets/stylists/ava-lee.jpg",
+    "gallery": [
+      "/assets/gallery/ava-work1.jpg",
+      "/assets/gallery/ava-work2.jpg",
+      "/assets/gallery/ava-work3.jpg",
+      "/assets/gallery/ava-work4.jpg",
+      "/assets/gallery/ava-work5.jpg"
+    ],
+    "bio": "Color-first stylist with 10+ years of experience creating soft, natural dimension and low-maintenance looks.",
+    "specialties": [
+      "Balayage",
+      "Highlights",
+      "Lived-in Color"
+    ],
+    "awards": [
+      "Top Stylist 2024",
+      "Color Specialist 2023"
+    ],
+    "reviews": [
+      {
+        "name": "Emily R.",
+        "rating": 5,
+        "date": "2025-08-02",
+        "text": "Best color I’ve had in years!",
+        "verified": true
+      },
+      {
+        "name": "Taylor M.",
+        "rating": 4,
+        "date": "2025-07-14",
+        "text": "Listened carefully and nailed the look.",
+        "verified": true
+      }
+    ],
+    "featured": true,
+    "lat": 41.8858,
+    "lng": -87.6181
+    
+  },
+  {
+    "id": 2,
+    "name": "Carlos Rivera",
+    "specialty": "Men’s Cuts & Fades",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60602",
+    "inquiryEmail": "carlos@stylegrades-demo.com",
+    "photoUrl": "/assets/stylists/carlos-rivera.jpg",
+    "gallery": [
+      "/assets/gallery/carlos-work1.jpg",
+      "/assets/gallery/carlos-work2.jpg",
+      "/assets/gallery/carlos-work3.jpg",
+      "/assets/gallery/carlos-work4.jpg",
+      "/assets/gallery/carlos-work5.jpg"
+    ],
+    "bio": "Precision barber focused on clean fades, classic scissor work, and easy styling routines.",
+    "specialties": [
+      "Skin Fades",
+      "Scissor Cuts",
+      "Beard Shaping"
+    ],
+    "awards": [
+      "Barber of the Year 2023"
+    ],
+    "reviews": [
+      {
+        "name": "Jordan P.",
+        "rating": 5,
+        "date": "2025-06-21",
+        "text": "Fade is sharp every time.",
+        "verified": true
+      },
+      {
+        "name": "Marcus L.",
+        "rating": 4,
+        "date": "2025-05-18",
+        "text": "Fast, friendly, consistent.",
+        "verified": true
+      }
+    ],
+    "featured": false,
+    "lat": 41.8829,
+    "lng": -87.6321
+  },
+  {
+    "id": 3,
+    "name": "Dante Brooks",
+    "specialty": "Curly Hair & Textured Styles",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60603",
+    "inquiryEmail": "dante@stylegrades-demo.com",
+    "photoUrl": "/assets/stylists/dante-brooks.jpg",
+    "gallery": [
+      "/assets/gallery/dante-work1.jpg",
+      "/assets/gallery/dante-work2.jpg",
+      "/assets/gallery/dante-work3.jpg",
+      "/assets/gallery/dante-work4.jpg",
+      "/assets/gallery/dante-work5.jpg",
+      "/assets/gallery/dante-work6.jpg"
+    ],
+    "bio": "Curl specialist who focuses on shape, hydration, and healthy hair routines for all textures.",
+    "specialties": [
+      "Curly Cuts",
+      "Twist Outs",
+      "Texture Education"
+    ],
+    "awards": [
+      "Texture Trendsetter Award"
+    ],
+    "reviews": [
+      {
+        "name": "Renee C.",
+        "rating": 5,
+        "date": "2025-09-03",
+        "text": "Finally a cut that works for my curls!",
+        "verified": true
+      },
+      {
+        "name": "Sam A.",
+        "rating": 4,
+        "date": "2025-06-29",
+        "text": "Great shape and tips I can use at home.",
+        "verified": true
+      }
+    ],
+    "featured": false,
+    "lat": 41.8798,
+    "lng": -87.6285
+  },
+  {
+    "id": 4,
+    "name": "Jamie Smith",
+    "specialty": "Color Correction & Extensions",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60604",
+    "inquiryEmail": "jamie@stylegrades-demo.com",
+    "photoUrl": "/assets/stylists/jamie-smith.jpg",
+    "gallery": [
+      "/assets/gallery/jamie-work1.jpg",
+      "/assets/gallery/jamie-work2.jpg",
+      "/assets/gallery/jamie-work3.jpg",
+      "/assets/gallery/jamie-work4.jpg",
+      "/assets/gallery/jamie-work5.jpg",
+      "/assets/gallery/jamie-work6.jpg"
+    ],
+    "bio": "Extension pro and corrective color expert specializing in natural blends and seamless installs.",
+    "specialties": [
+      "Color Correction",
+      "Hand-Tied Extensions",
+      "Blonding"
+    ],
+    "awards": [
+      "Platinum Stylist 2023"
+    ],
+    "reviews": [
+      {
+        "name": "Megan H.",
+        "rating": 5,
+        "date": "2025-04-10",
+        "text": "She saved my hair after a botched color.",
+        "verified": true
+      },
+      {
+        "name": "Ivy N.",
+        "rating": 4,
+        "date": "2025-02-21",
+        "text": "Extensions look so natural!",
+        "verified": true
+      }
+    ],
+    "featured": false,
+    "lat": 41.8784,
+    "lng": -87.633
+  },
+  {
+    "id": 5,
+    "name": "Maya Patel",
+    "specialty": "Updos & Bridal Styles",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60605",
+    "inquiryEmail": "maya@stylegrades-demo.com",
+    "photoUrl": "/assets/stylists/maya-patel.jpg",
+    "gallery": [
+      "/assets/gallery/maya-work1.jpg",
+      "/assets/gallery/maya-work2.jpg",
+      "/assets/gallery/maya-work3.jpg",
+      "/assets/gallery/maya-work4.jpg",
+      "/assets/gallery/maya-work5.jpg",
+      "/assets/gallery/maya-work6.jpg"
+    ],
+    "bio": "Bridal stylist focused on timeless updos, secure pins, and humidity-proof finishes.",
+    "specialties": [
+      "Bridal Updos",
+      "Hollywood Waves",
+      "Event Styling"
+    ],
+    "awards": [
+      "Wedding Stylist of the Year"
+    ],
+    "reviews": [
+      {
+        "name": "Priya D.",
+        "rating": 5,
+        "date": "2025-09-12",
+        "text": "My hair stayed perfect all night!",
+        "verified": true
+      },
+      {
+        "name": "Chloe W.",
+        "rating": 5,
+        "date": "2025-08-22",
+        "text": "Elegant and exactly what I pictured.",
+        "verified": true
+      }
+    ],
+    "featured": false,
+    "lat": 41.8712,
+    "lng": -87.6277
+  }
+]
