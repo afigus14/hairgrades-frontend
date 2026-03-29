@@ -4,9 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 /**
  * PricingPage.jsx
  * - Earthy/Healthgrades-like layout
- * - 3 cards: Starter / Signature / Elite (0, 18, 29)
+ * - 3 cards: Free / Pro / Premium (0, 18, 29)
  * - Includes a pricing comparison table section
- * - Sends selected plan to Join page via query param (?plan=starter|signature|elite)
+ * - Sends selected plan to Join page via query param (?plan=free|pro|premium)
  */
 
 function classNames(...xs) {

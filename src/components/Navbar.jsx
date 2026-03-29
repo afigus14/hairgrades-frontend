@@ -45,6 +45,10 @@ export default function Navbar() {
           <Link to="/contact" className={linkClasses("/contact")}>
             Contact
           </Link>
+
+          <Link to="/login" className={linkClasses("/login")}>
+            Member Login
+          </Link>
         </div>
       </div>
     </nav>

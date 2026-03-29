@@ -314,7 +314,6 @@ export default function JoinAsStylist() {
     setWebsite("");
     setTierRequested("free");
     setBio("");
-    setPhotoLinksText("");
     setPhotoUrl("");
     setGallery([]);
     setHeadshotFileName("");

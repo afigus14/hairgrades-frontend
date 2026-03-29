@@ -170,7 +170,6 @@ export default function SearchPage() {
       const { data, error } = await supabase
         .from("stylists")
         .select("*")
-        .eq("status", "approved");
 
       console.log("Stylists from Supabase:", data);
       console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);

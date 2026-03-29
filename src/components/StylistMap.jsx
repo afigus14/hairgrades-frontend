@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
+import "leaflet/dist/leaflet.css";
 
 function RecenterMap({ location }) {
   const map = useMap();

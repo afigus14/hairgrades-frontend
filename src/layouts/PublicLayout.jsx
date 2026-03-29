@@ -104,7 +104,7 @@ function TopNav() {
             {/* Member login when logged out */}
             {!user && (
               <NavLink
-                to="/stylist/login"
+                to="/login"
                 className={({ isActive }) =>
                   `${linkBase} ${isActive ? linkActive : linkIdle}`
                 }
