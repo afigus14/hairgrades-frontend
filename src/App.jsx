@@ -24,21 +24,26 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<PublicLayout />}>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/search" element={<SearchPage />} />
-        <Route path="/profile/:id" element={<ProfilePage />} />
-        <Route path="/pricing" element={<PricingPage />} />
-        <Route path="/join" element={<JoinAsStylist />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/advertise" element={<AdvertisePage />} />
-        <Route path="/login" element={<StylistLoginPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/edit-profile" element={<EditProfilePage />} />
-        <Route path="/admin/review" element={<AdminReviewPage />} />
-        <Route path="/admin-review" element={<AdminReviewPage />} />
-        <Route path="/dashboard/billing" element={<BillingPage />} />
-        <Route path="/reviews" element={<ReviewsPage />} />
+
+        {/* ✅ HOME */}
+        <Route index element={<HomePage />} />
+
+        {/* ✅ ALL CHILD ROUTES — NO LEADING SLASH */}
+        <Route path="search" element={<SearchPage />} />
+        <Route path="profile/:id" element={<ProfilePage />} />
+        <Route path="pricing" element={<PricingPage />} />
+        <Route path="join" element={<JoinAsStylist />} />
+        <Route path="about" element={<AboutPage />} />
+        <Route path="contact" element={<ContactPage />} />
+        <Route path="advertise" element={<AdvertisePage />} />
+        <Route path="login" element={<StylistLoginPage />} />
+        <Route path="dashboard" element={<DashboardPage />} />
+        <Route path="edit-profile" element={<EditProfilePage />} />
+        <Route path="admin/review" element={<AdminReviewPage />} />
+        <Route path="admin-review" element={<AdminReviewPage />} />
+        <Route path="dashboard/billing" element={<BillingPage />} />
+        <Route path="reviews" element={<ReviewsPage />} />
+
       </Route>
     </Routes>
   );
