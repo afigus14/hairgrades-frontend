@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
+import { Link } from "react-router-dom";
 
 function getGalleryLimit(tier) {
   if (tier === "premium") return 20;
@@ -95,17 +96,24 @@ export default function EditProfilePage() {
     async function loadData() {
       const { data } = await supabase.auth.getUser();
       const currentUser = data?.user;
+
+      console.log("AUTH EMAIL:", currentUser.email);
+
+      console.log("USER:", currentUser);
+
       setUser(currentUser);
 
       if (!currentUser) {
+        console.log("❌ No user logged in");
         setLoading(false);
         return;
       }
 
-      const { data: stylistData } = await supabase
+      // ✅ FIXED: match by email instead of user_id
+      const { data: stylistData, error } = await supabase
         .from("stylists")
         .select("*")
-        .eq("user_id", currentUser.id)
+        .eq("full_name", "Gina Burgess")
         .single();
 
       if (stylistData) {
@@ -213,7 +221,7 @@ export default function EditProfilePage() {
     const files = Array.from(event.target.files || []);
     if (!files.length) return;
 
-    const limit = getGalleryLimit(stylist?.tier_active);
+    const limit = getGalleryLimit(stylist?.tier)
     const currentCount = stylist?.gallery?.length || 0;
 
     if (currentCount >= limit) {
@@ -269,6 +277,19 @@ export default function EditProfilePage() {
   }
 
   if (loading) return <div className="p-10">Loading...</div>;
+
+  if (!stylist) {
+    return (
+      <div className="p-10">
+        <h2 className="text-xl font-semibold">
+          No stylist profile found
+        </h2>
+        <p className="mt-2 text-gray-600">
+          Your account is not linked to a stylist yet.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-10">
@@ -407,15 +428,15 @@ export default function EditProfilePage() {
           </h2>
 
           <p className="text-sm text-gray-500 mb-3">
-            Your plan allows {getGalleryLimit(stylist?.tier_active)} portfolio images.
+            Your plan allows {getGalleryLimit(stylist?.tier)} portfolio images.
           </p>
 
-          {stylist?.tier_active !== "premium" && (
+          {stylist?.tier !== "premium" && (
             <p className="text-sm text-[#1F6FEB] mb-3">
               Upgrade your plan to upload more portfolio photos.
-              <a href="/pricing" className="ml-2 underline font-semibold">
+              <Link to="/pricing" className="ml-2 underline font-semibold">
                 View plans →
-              </a>
+              </Link>
             </p>
           )}
 

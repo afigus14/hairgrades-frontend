@@ -23,7 +23,7 @@ async function importStylists() {
     featured: s.featured || false,
     status: "approved",
     tier_requested: "free",
-    tier_active: "free",
+    tier: "free",
     photo_url: s.photoUrl || "",
     gallery: s.gallery || [],
     rating: s.rating || 0,

@@ -1,6 +1,8 @@
 // src/pages/AdminReviewPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 
+console.log("AdminReviewPage render", window.location.pathname);
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function safeArray(v) {
@@ -28,7 +30,7 @@ export default function AdminReviewPage() {
   const headers = useMemo(() => {
     return {
       "Content-Type": "application/json",
-      "x-admin-key": adminKey,
+      "X-Admin-key": adminKey,
     };
   }, [adminKey]);
 
@@ -41,23 +43,40 @@ export default function AdminReviewPage() {
     setStatus({ type: "idle", message: "" });
 
     try {
-      const res = await fetch(`${API_BASE}/api/admin/applications`, {
+      const res = await fetch(`${API_BASE}/api/stylists`, {
         method: "GET",
-        headers: { "x-admin-key": adminKey },
+        headers: {
+          "x-admin-key": adminKey,
+        },
       });
 
-      const data = await res.json().catch(() => ({}));
+      const result = await res.json();
 
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "Failed to load applications");
+      if (!res.ok || !result?.stylists) {
+        throw new Error("Failed to load applications");
       }
 
-      setApplications(safeArray(data.applications));
+      // ✅ Only pending
+      const pending = result.stylists.filter(
+        (s) => s.status === "pending"
+      );
+
+      setApplications(
+        safeArray(pending).map((s) => ({
+          ...s,
+          name: s.full_name || s.name,
+          fullName: s.full_name || s.fullName,
+          photoUrl: s.photo_urls?.[0] || null,
+          gallery: s.photo_urls || [],
+          licenseUrl: s.license_url || s.licenseUrl,
+          yearsExperience: s.years_experience || s.yearsExperience,
+          bio: s.bio || "",
+        }))
+      );
+
       setStatus({
         type: "success",
-        message: `Loaded ${safeArray(data.applications).length} application${
-          safeArray(data.applications).length === 1 ? "" : "s"
-        }.`,
+        message: `Loaded ${pending.length} application(s).`,
       });
     } catch (e) {
       setApplications([]);
@@ -67,80 +86,40 @@ export default function AdminReviewPage() {
     }
   }
 
+  async function handleAction(id, action, message = "") {
+    if (!adminKey) {
+      setStatus({ type: "error", message: "Enter your admin key first." });
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/api/applications/action`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Key": adminKey,
+        },
+        body: JSON.stringify({ id, action, message }),
+      });
+
+      if (!res.ok) throw new Error("Action failed");
+
+      setStatus({
+        type: "success",
+        message: `Action "${action}" completed.`,
+      });
+
+      await fetchApplications(); // refresh list
+    } catch (e) {
+      setStatus({ type: "error", message: e.message });
+    }
+  }
+
   useEffect(() => {
     // only auto-load if key exists; avoids confusing 401 spam
     if (adminKey) fetchApplications();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function approveApplication(appId) {
-    const id = idSafe(appId);
-    if (!id) return;
-
-    if (!adminKey) {
-      setStatus({ type: "error", message: "Enter your admin key first." });
-      return;
-    }
-
-    setLoading(true);
-    setStatus({ type: "idle", message: "" });
-
-    try {
-      const res = await fetch(`${API_BASE}/api/admin/approve-stylist`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ id }),
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "Approve failed");
-      }
-
-      setStatus({ type: "success", message: "Approved and added to Managed Stylists." });
-      await fetchApplications();
-    } catch (e) {
-      setStatus({ type: "error", message: e?.message || "Approve failed" });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function deleteApplication(appId) {
-    const id = idSafe(appId);
-    if (!id) return;
-
-    if (!adminKey) {
-      setStatus({ type: "error", message: "Enter your admin key first." });
-      return;
-    }
-
-    const ok = window.confirm("Delete this application? This cannot be undone.");
-    if (!ok) return;
-
-    setLoading(true);
-    setStatus({ type: "idle", message: "" });
-
-    try {
-      const res = await fetch(`${API_BASE}/api/admin/delete-application`, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({ id }),
-      });
-
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "Delete failed");
-      }
-
-      setStatus({ type: "success", message: "Application deleted." });
-      await fetchApplications();
-    } catch (e) {
-      setStatus({ type: "error", message: e?.message || "Delete failed" });
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const stamp = useMemo(() => {
     const d = new Date();
@@ -150,7 +129,7 @@ export default function AdminReviewPage() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
       {/* Build stamp */}
-      <div className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
+      <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-800">
         <div className="font-semibold">THIS PAGE IS RENDERING AdminReviewPage.jsx</div>
         <div className="opacity-80">BUILD STAMP: {stamp}</div>
       </div>
@@ -222,7 +201,7 @@ export default function AdminReviewPage() {
                     </div>
 
                     <div className="text-sm text-gray-700 mt-1">
-                      {app.email || ""} • {app.city || ""} • Tier:{" "}
+                      {app.email || ""} • {app.phone || "No phone"} • {app.city || ""} • Tier:{" "}
                       {app.tierRequested || "free"}
                     </div>
 
@@ -233,31 +212,68 @@ export default function AdminReviewPage() {
                     <div className="text-xs text-gray-500 mt-2">
                       {id || "Missing id"} • {app.createdAt || ""}
                     </div>
+
+                    <div className="text-sm text-gray-700 mt-2">
+                      <strong>Bio:</strong> {app.bio || "—"}
+                    </div>
+
+                    {app.licenseUrl && (
+                      <div className="mt-2">
+                        <a
+                          href={app.licenseUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline text-sm"
+                        >
+                          View License Document
+                        </a>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Message box */}
+                  <div className="mt-3">
+                    <textarea
+                      placeholder="Message to stylist (optional)"
+                      className="w-full border rounded-lg px-3 py-2 text-sm"
+                      onChange={(e) => {
+                        app._message = e.target.value;
+                      }}
+                    />
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  {/* Buttons */}
+                  <div className="flex items-center gap-2 mt-3">
                     <button
                       type="button"
-                      onClick={() => approveApplication(id)}
+                      onClick={() => handleAction(id, "approve")}
                       disabled={loading || !adminKey || !id || isApproved}
                       className={`px-4 py-2 rounded-lg font-semibold text-white disabled:opacity-50 ${
                         isApproved ? "bg-emerald-400" : "bg-emerald-600 hover:bg-emerald-700"
                       }`}
-                      title={isApproved ? "Already approved" : "Approve"}
                     >
                       {isApproved ? "Approved" : "Approve"}
                     </button>
 
                     <button
                       type="button"
-                      onClick={() => deleteApplication(id)}
-                      disabled={loading || !adminKey || !id}
-                      className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold disabled:opacity-50"
+                      onClick={() => handleAction(id, "reject", app._message)}
+                      disabled={loading || !adminKey}
+                      className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold"
                     >
-                      Delete
+                      Reject
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => handleAction(id, "request_info", app._message)}
+                      disabled={loading || !adminKey}
+                      className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold"
+                    >
+                      Request Info
                     </button>
                   </div>
-                </div>
 
                 {/* Photos */}
                 <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">

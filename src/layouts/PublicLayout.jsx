@@ -5,6 +5,8 @@ import AdRailLeft from "../components/AdRailLeft";
 import AdRailRight from "../components/AdRailRight";
 import { supabase } from "../lib/supabase";
 
+console.log("PublicLayout render", window.location.pathname);
+
 function TopNav() {
   const [user, setUser] = useState(null);
 

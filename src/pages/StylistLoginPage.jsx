@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { supabase } from "../lib/supabase";
+import { useNavigate } from "react-router-dom";
 
 export default function StylistLoginPage(){
 
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [error,setError] = useState("");
+  const navigate = useNavigate();
 
   async function handleLogin(e){
     e.preventDefault();
@@ -18,7 +20,7 @@ export default function StylistLoginPage(){
     if(error){
       setError(error.message);
     }else{
-      window.location.href="/";
+      navigate("/dashboard", { replace: true });
     }
   }
 

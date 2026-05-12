@@ -103,7 +103,7 @@ export default function AdminStylistsPage() {
   async function updateTier(id, tier) {
     const { error } = await supabase
       .from("stylists")
-      .update({ tier_active: tier })
+      .update({ tier: tier })
       .eq("id", id);
 
     if (error) {
@@ -172,7 +172,7 @@ export default function AdminStylistsPage() {
           <div className="divide-y">
             {stylists.map((s) => {
               const st = normalizeStatus(s.status);
-              const tier = s.tier_active || "free";
+              const tier = s.tier || "free";
 
               return (
                 <div
@@ -244,7 +244,7 @@ export default function AdminStylistsPage() {
                     >
 
                     <select
-                      value={s.tier_active || "free"}
+                      value={s.tier || "free"}
                       onChange={(e) => updateTier(s.id, e.target.value)}
                       className="border rounded px-2 py-1 text-sm"
                     >

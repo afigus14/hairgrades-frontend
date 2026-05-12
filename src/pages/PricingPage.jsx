@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 
 /**
  * PricingPage.jsx
@@ -147,22 +148,28 @@ export default function PricingPage() {
 
   async function startCheckout(tier) {
 
-    const res = await fetch("/api/stripe/create-checkout-session", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        stylistId: "test-stylist",
-        tier
-      })
-    });
+    const { data } = await supabase.auth.getUser();
+    const user = data?.user;
 
-    const data = await res.json();
-
-    if (data.url) {
-      window.location.href = data.url;
+    if (!user) {
+      alert("You must be logged in");
+      return;
     }
+
+    const res = await fetch(
+      "https://stylegrades-api.vercel.app/api/create-checkout-session",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan: plan.key,   // or whatever your plan variable is
+          user_id: user.id,
+          email: user.email,
+        }),
+      }
+    );
   }
 
   const plans = useMemo(

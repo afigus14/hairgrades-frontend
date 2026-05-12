@@ -54,11 +54,7 @@ export default function StylistCard({
 
   const salon = stylist?.salon_name || "";
 
-  const photoUrl =
-    stylist?.photo_thumb_url ||
-    stylist?.photoUrl ||
-    stylist?.photo_url ||
-    "";
+  const photoUrl = stylist?.photo_url?.trim() || "";
 
   const miles = formatMiles(distanceMiles);
 
@@ -104,30 +100,25 @@ export default function StylistCard({
 
   return (
     <div
-      className={`relative rounded-xl border shadow-sm p-4 transition ${
-        stylist.tier_active === "premium"
+      className={`relative rounded-xl border-[2px] shadow-sm p-4 transition ${
+        stylist.tier === "premium"
           ? "bg-amber-50 border-amber-400 shadow-lg ring-2 ring-amber-200"
-          : "bg-white border-gray-200"
+          : "bg-white border-[#2F3C4F]"
       }`}
     >
           
-      {stylist.tier_active === "premium" && (
+      {stylist.tier === "premium" && (
         <span className="absolute top-2 right-2 bg-amber-400 text-black text-xs font-semibold px-2 py-1 rounded">
           Premium
         </span>
       )}
 
-      {stylist.tier_active === "pro" && (
-        <span className="absolute top-2 left-2 bg-slate-700 text-white text-xs px-2 py-1 rounded font-semibold">
+      {stylist.tier === "pro" && (
+        <span className="absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded font-semibold">
           Pro
         </span>
       )}
 
-      {stylist.verified && (
-        <span className="absolute bottom-2 right-2 bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">
-          ✔ Verified
-        </span>
-      )}
       {/* Whole card navigates to profile */}
       <Link
         to={`/profile/${encodeURIComponent(String(slug))}`}
@@ -135,30 +126,60 @@ export default function StylistCard({
         className="block"
       >
         {/* Image area: show full image (no crop) */}
-        <div className="bg-[#F0F4F8]">
-          <div className="w-full aspect-[4/3] overflow-hidden bg-[#F0F4F8]">
+        <div className="flex gap-4 p-6 pt-8">
+
+          {/* IMAGE */}
+          <div className="w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg bg-[#F0F4F8]">
             {photoUrl ? (
               <img
                 src={photoUrl}
                 alt={name}
-                className="h-full w-full object-cover"
+                className="w-full h-full object-cover"
                 loading="lazy"
               />
             ) : (
-              <div className="h-full w-full flex items-center justify-center text-sm text-[#52606D]">
+              <div className="w-full h-full flex items-center justify-center text-sm text-[#52606D]">
                 No photo
               </div>
             )}
           </div>
-        </div>
 
-        <div className="p-4">
+          {/* CONTENT */}
+          <div className="flex-1">
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0">
-              <h3 className="text-sm font-semibold text-[#102A43]">{name}</h3>
+              {/* NAME + VERIFIED */}
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-semibold text-[#102A43]">
+                  {name}
+                </h3>
+
+                {stylist.status === "approved" && stylist.verified && (
+                  <span className="inline-flex items-center bg-emerald-50 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded-full">
+                    ✔ Verified
+                  </span>
+                )}
+              </div>
+
+              {/* RATING (OWN LINE) */}
+              <div className="mt-1 text-sm font-medium">
+                <span className="text-amber-600">
+                  ★ {Number(stylist.rating || 0).toFixed(1)}
+                </span>
+
+                <span className="text-[#7B8794] ml-1">
+                  ({stylist.review_count || 0} Reviews)
+                </span>
+              </div>
               <div className="text-sm text-[#52606D] truncate">
                 {specialty}
               </div>
+
+              {stylist?.featured ? (
+                <span className="absolute top-2 left-2 z-10 text-xs font-semibold text-[#7C5E10] bg-[#FFF7E6] border border-[#FFE8B5] px-2 py-1 rounded-full shadow-sm">
+                  ⭐ Featured
+                </span>
+              ) : null}
 
               {salon && (
                 <div className="text-xs text-[#7B8794] truncate">
@@ -172,25 +193,21 @@ export default function StylistCard({
                 {miles ? ` • ${miles}` : ""}
               </div>
             </div>
-
-            {stylist?.featured ? (
-              <span className="shrink-0 text-xs font-semibold text-[#7C5E10] bg-[#FFF7E6] border border-[#FFE8B5] px-2 py-1 rounded-full">
-                Featured
-              </span>
-            ) : null}
           </div>
 
-          {adminHints ? (
-            <div className="mt-3 text-[11px] text-[#7B8794]">
-              <div>src: {stylist?.__src || "seed"}</div>
-              <div>id: {String(stylist?.id)}</div>
-              <div>email: {email || "(none)"}</div>
-            </div>
-          ) : null}
-        </div>
+          </div> {/* END CONTENT */}
+        </div> {/* END FLEX ROW */}
+
+        {adminHints ? (
+          <div className="mt-3 text-[11px] text-[#7B8794]">
+            <div>src: {stylist?.__src || "seed"}</div>
+            <div>id: {String(stylist?.id)}</div>
+            <div>email: {email || "(none)"}</div>
+          </div>
+        ) : null}
 
         {/* Footer */}
-        <div className="px-4 pb-4">
+        <div className="mt-4">
           <button
             type="button"
             onClick={handleContact}

@@ -1,6 +1,6 @@
 const API_BASE = import.meta.env.VITE_API_BASE_URL;
 
-export async function submitApplication(formData) {
+export async function applications(formData) {
   const res = await fetch(`${API_BASE}/api/applications`, {
     method: "POST",
     headers: {

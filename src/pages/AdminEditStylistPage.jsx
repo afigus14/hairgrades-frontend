@@ -43,7 +43,7 @@ export default function AdminEditStylistPage() {
         gallery: data.gallery || []
       });
 
-      setTierActive(data.tier_active || "free");
+      setTierActive(data.tier || "free");
     }
 
     setLoading(false);
@@ -66,7 +66,7 @@ export default function AdminEditStylistPage() {
 
     setSaving(true);
 
-    console.log("Tier being saved:", stylist.tier_active);
+    console.log("Tier being saved:", stylist.tier);
     
     const { error } = await supabase
       .from("stylists")
@@ -79,7 +79,7 @@ export default function AdminEditStylistPage() {
         instagram: stylist.instagram,
         years_experience: stylist.years_experience,
         verified: stylist.verified,
-        tier_active: tierActive,
+        tier: tierActive,
         featured: stylist.featured,
         gallery: stylist.gallery,
         photo_url: stylist.photoUrl
@@ -114,7 +114,7 @@ export default function AdminEditStylistPage() {
   }
 
   function handleGalleryUpload(files) {
-    const limit = getGalleryLimit(stylist.tier_active)
+    const limit = getGalleryLimit(stylist.tier)
     const current = stylist.gallery || [];
 
     if (current.length >= limit) {
@@ -162,7 +162,7 @@ export default function AdminEditStylistPage() {
   if (!stylist)
     return <div className="p-10">Stylist not found.</div>;
 
-  const galleryLimit = getGalleryLimit(stylist?.tier_active);
+  const galleryLimit = getGalleryLimit(stylist?.tier);
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-10">

@@ -1,7 +1,8 @@
 // src/pages/JoinAsStylist.jsx
 import React, { useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { submitApplication } from "../lib/api";
+import { applications } from "../lib/api";
+import { supabase } from "../lib/supabase";
 
 // ✅ DEFINE FIRST
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
@@ -14,7 +15,7 @@ console.log("PRESET:", PRESET);
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 // ✅ Your submit endpoint:
-const SUBMIT_URL = "https://stylegrades-api.vercel.app/api/applications";
+const SUBMIT_URL = "/api/applications";
 
 // Cloudinary public vars (safe to expose):
 const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "";
@@ -23,9 +24,9 @@ const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || "";
 function getTierPrice(tier) {
   switch (tier) {
     case "premium":
-      return 29;
+      return 39;
     case "pro":
-      return 18;
+      return 19;
     default:
       return 0;
   }
@@ -101,9 +102,9 @@ function isProbablyUrl(s) {
 function getGalleryLimit(tier) {
   switch (String(tier).toLowerCase()) {
     case "premium":
-      return 9;
+      return 20;
     case "pro":
-      return 6;
+      return 12;
     default:
       return 3;
   }
@@ -119,7 +120,7 @@ async function uploadToCloudinary(file, { folder }) {
   form.append("upload_preset", PRESET);
   form.append("folder", folder);
 
-  const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+  const uploadUrl = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
 
   const res = await fetch(uploadUrl, {
     method: "POST",
@@ -129,7 +130,7 @@ async function uploadToCloudinary(file, { folder }) {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
-    throw new Error(data?.error?.message || "Upload failed");
+    throw new Error(data?.error || "Upload failed");
   }
 
   return data.secure_url;
@@ -137,6 +138,79 @@ async function uploadToCloudinary(file, { folder }) {
 
 // ---------- component ----------
 export default function JoinAsStylist() {
+  const navigate = useNavigate();
+  
+  const handleCheckout = async (plan) => {
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData?.user;
+
+    if (!user) {
+      alert("You must be logged in before upgrading.");
+      return;
+    }
+
+    console.log("SENDING TO STRIPE:", {
+      plan,
+      user_id: user.id,
+      email: user.email,
+    });
+
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/applications`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await res.json();
+
+    if (data.url) {
+      window.location.href = data.url;
+    } else {
+      console.error("No checkout URL returned");
+    }
+
+  } catch (err) {
+    console.error("Checkout error:", err);
+  }
+};
+
+  async function handleUpgradeClick() {
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData?.user;
+
+      if (!user) {
+        alert("You must be logged in");
+        return;
+      }
+
+      const res = await fetch(
+        "https://stylegrades-api.vercel.app/api/create-checkout-session",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            plan: "premium",
+            user_id: user.id,
+            email: user.email,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert("Upgrade failed. Try again.");
+      }
+
+    } catch (err) {
+      console.error(err);
+      alert("Error connecting to payment.");
+    }
+  }
 
   const [searchParams] = useSearchParams();
   const selectedPlan = searchParams.get("plan") || "free";
@@ -173,6 +247,7 @@ export default function JoinAsStylist() {
   // ---------------- ui state ----------------
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
 
   const specialties = useMemo(
     () => splitSpecialties(specialtiesText),
@@ -429,32 +504,48 @@ export default function JoinAsStylist() {
 
         bio: bio.trim(),
 
-        photoUrl: photoUrl || "",
+        photo_url: photoUrl || "",
         gallery: safeArray(gallery),
       };
 
       console.log("Submitting payload:", payload);
       console.log("API_BASE:", API_BASE);
       console.log("SUBMIT_URL:", SUBMIT_URL);
-      
+      console.log("🚀 SUBMITTING TO:", SUBMIT_URL);
+
       const res = await fetch(SUBMIT_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json"
+        },
         body: JSON.stringify(payload),
       });
 
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data?.ok) {
-        throw new Error(data?.error || "Application submission failed.");
+      const result = await res.json();
+
+      console.log("🔥 RESPONSE STATUS:", res.status);
+      console.log("🔥 RESPONSE BODY:", result);
+
+      if (!res.ok || !result?.ok) { 
+        if (result?.error?.toLowerCase?.().includes("already exists")) {
+          setStatus({
+            type: "error",
+            message: "User already exists. Please log in to continue.",
+          });
+          return;
+        }
+
+        throw new Error(result?.error || "Application submission failed.");
       }
 
+      // ✅ First submit application
+      setSubmitted(true);
       setStatus({
         type: "success",
-        message:
-          "Application submitted! We’ll review it and publish once approved.",
+        message: "Application submitted!",
       });
 
-      clearForm();
     } catch (err) {
       setStatus({
         type: "error",
@@ -467,11 +558,88 @@ export default function JoinAsStylist() {
 
   const disabledUploads = uploadingHeadshot || uploadingGallery || submitting;
 
+    if (submitted) {
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
+    <div className="max-w-xl mx-auto px-4 py-16 text-center">
+      <h1 className="text-3xl font-bold mb-4">
+        🎉 Application Submitted!
+      </h1>
+
+      <p className="text-gray-600 mb-6">
+        Thanks for applying to Stylegrades. We’ll review your submission and notify you shortly.
+      </p>
+
+      <div className="bg-gray-50 border rounded-xl p-4 text-sm text-gray-700">
+        You’ll receive an email once your profile is reviewed.
+      </div>
+    </div>
+  );
+}
+
+// 👇 THEN your normal return
+return (
+  <div className="max-w-5xl mx-auto px-4 py-10">
       <h1 className="text-3xl font-bold mb-2">Join as Stylist</h1>
-      <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 mb-3 text-sm text-amber-800">
-        Selected plan: <strong>{tierRequested.toUpperCase()}</strong>
+      <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 mb-3 text-sm text-amber-800">
+
+        <div>
+          Current plan:{" "}
+          <span className="font-semibold uppercase">
+            {tierRequested}
+          </span>
+        </div>
+
+        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-3">
+
+          {/* Current Plan */}
+          <div className="text-sm text-amber-800">
+            Current plan:{" "}
+            <span className="font-semibold uppercase">
+              {tierRequested}
+            </span>
+          </div>
+
+          {/* Upgrade Options */}
+          {tierRequested !== "premium" && (
+            <div className="mt-2 flex items-center gap-2 text-xs">
+
+              <span className="text-gray-600">Upgrade your plan:</span>
+
+              {tierRequested === "free" && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setTierRequested("pro")}
+                    className="px-3 py-1 border rounded-full text-[#1F6FEB] border-[#1F6FEB] hover:bg-blue-50 transition"
+                  >
+                    Pro
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setTierRequested("premium")}
+                    className="px-3 py-1 border rounded-full text-white bg-[#1F6FEB] border-[#1F6FEB] hover:opacity-90 transition"
+                  >
+                    Premium
+                  </button>
+                </>
+              )}
+
+              {tierRequested === "pro" && (
+                <button
+                  type="button"
+                  onClick={() => setTierRequested("premium")}
+                  className="px-3 py-1 border rounded-full text-white bg-[#1F6FEB] border-[#1F6FEB] hover:opacity-90 transition"
+                >
+                  Upgrade to Premium
+                </button>
+              )}
+
+            </div>
+          )}
+
+        </div>
+
       </div>
       <p className="text-gray-600 mb-6">
         Submit your info and photos. We’ll review and publish approved profiles.
@@ -526,6 +694,16 @@ export default function JoinAsStylist() {
             }`}
           >
             {status.message}
+
+            {status.message.toLowerCase().includes("already exists") && (
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="mt-3 block px-4 py-2 rounded-lg border border-[#1F6FEB] text-[#1F6FEB] hover:bg-blue-50"
+              >
+                Go to Login
+              </button>
+            )}
           </div>
         ) : null}
 
@@ -739,13 +917,51 @@ export default function JoinAsStylist() {
           <div>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-medium">
-                  Work photos (up to {galleryLimit})
+                <div className="text-sm font-medium text-[#1F6FEB]">
+                  {tierRequested === "premium"
+                    ? "Work photos (Premium: up to 20)"
+                    : tierRequested === "pro"
+                    ? "Work photos (Pro: up to 12)"
+                    : "Work photos (Free: up to 3)"}
                 </div>
                 <div className="text-xs text-gray-500">
                   Show your best cuts, color, or styling.
                 </div>
               </div>
+
+              {galleryCount >= galleryLimit && (
+                <div className="mt-2 text-xs">
+                  
+                  <p className="text-red-600">
+                    You’ve reached your limit of {galleryLimit} photos.
+                  </p>
+
+                  <p className="text-gray-600 mt-1">
+                    Upgrade to{" "}
+                    
+                    <button
+                      type="button"
+                      onClick={() => setTierRequested("pro")}
+                      className="px-2 py-1 border border-[#1F6FEB] rounded-full text-[#1F6FEB] text-xs hover:bg-blue-50"
+                    >
+                      Pro
+                    </button>
+
+                    {" "}or{" "}
+
+                    <button
+                      type="button"
+                      onClick={() => setTierRequested("premium")}
+                      className="px-2 py-1 border border-[#1F6FEB] rounded-full text-[#1F6FEB] text-xs hover:bg-blue-50"
+                    >
+                      Premium
+                    </button>
+
+                    {" "}to add more photos.
+                  </p>
+
+                </div>
+              )}
 
               <label className="inline-flex items-center gap-2">
                 <input

@@ -5,49 +5,6 @@ import { supabase } from "../lib/supabase";
 import StylistCard from "../components/StylistCard";
 
 export default function HomePage() {
-  
-  const [premiumStylists, setPremiumStylists] = useState([]);
-
-  useEffect(() => {
-
-    async function loadPremiumStylists() {
-
-      const { data, error } = await supabase
-        .from("stylists")
-        .select("*")
-        .eq("status", "approved")
-        .eq("tier_active", "premium")
-
-      if (error) {
-        console.error("Error loading premium stylists:", error);
-        return;
-      }
-
-      const stylists = data || [];
-
-      if (stylists.length > 0) {
-
-        const rotateIndex =
-          Math.floor(Date.now() / 1000 / 60) % stylists.length;
-
-        const rotated = [
-          ...stylists.slice(rotateIndex),
-          ...stylists.slice(0, rotateIndex),
-        ];
-
-        // only show 6 at a time
-        const visible = rotated.slice(0, 6);
-
-        setPremiumStylists(visible);
-
-      } else {
-        setPremiumStylists([]);
-      }
-    }
-
-    loadPremiumStylists();
-
-  }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -140,31 +97,6 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
-      {premiumStylists.length > 0 && (
-
-      <section className="max-w-6xl mx-auto px-4 mt-16">
-
-        <h2 className="text-2xl font-semibold text-[#102A43] mb-2">
-          ⭐ Featured Stylists
-        </h2>
-
-        <p className="text-sm text-gray-500 mb-6">
-          Premium stylists highlighted for visibility.
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {premiumStylists.map((stylist) => (
-            <StylistCard
-              key={stylist.id}
-              stylist={stylist}
-            />
-          ))}
-        </div>
-
-      </section>
-
-    )}
 
       {/* WHY STYLEGRADES STRIP */}
       <section className="mb-12">

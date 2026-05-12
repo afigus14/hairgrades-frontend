@@ -3,6 +3,16 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import { useNavigate } from "react-router-dom";
 import "leaflet/dist/leaflet.css";
 
+function DisableScrollZoom() {
+  const map = useMap();
+
+  useEffect(() => {
+    map.scrollWheelZoom.disable();
+  }, [map]);
+
+  return null;
+}
+
 function RecenterMap({ location }) {
   const map = useMap();
 
@@ -29,8 +39,11 @@ export default function StylistMap({ stylists, userLocation }) {
     <MapContainer
       center={center}
       zoom={10}
+      scrollWheelZoom={false}
       style={{ height: "400px", width: "100%", borderRadius: "12px" }}
     >
+      <DisableScrollZoom />
+      
       <TileLayer
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

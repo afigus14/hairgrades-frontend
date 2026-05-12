@@ -119,28 +119,27 @@ function FilterSelect({ label, value, onChange, options }) {
 }
 
 function stylistScore(stylist, userLocation) {
-
   let score = 0;
 
-  // rating weight
-  const rating = Number(stylist.rating || 0);
-  score += rating * 20;
+  // 💰 Tier boost (MAIN DRIVER)
+  if (stylist.tier === "premium") score += 80;
+  else if (stylist.tier === "pro") score += 50;
+  else score += 10;
 
-  // review count weight
-  const reviews = Number(stylist.review_count || 0);
-  score += Math.min(reviews * 2, 40);
+  // 🔥 Featured boost
+  if (stylist.featured) score += 40;
 
-  // profile completeness
-  if (stylist.bio) score += 5;
-  if (stylist.photo_url || stylist.photo_thumb_url) score += 5;
-  if (Array.isArray(stylist.gallery) && stylist.gallery.length > 0) score += 5;
+  // ⭐ Verified boost
+  if (stylist.verified) score += 25;
 
-  // featured stylists
-  if (stylist.featured) score += 25;
+  // 🌟 Rating boost
+  if (stylist.rating) {
+    score += stylist.rating * 5;
+  }
 
-  // distance boost
-  if (userLocation && stylist.distanceMiles) {
-    score += Math.max(0, 15 - stylist.distanceMiles);
+  // 📍 Distance boost (closer = higher)
+  if (stylist.distanceMiles != null) {
+    score += Math.max(0, 50 - stylist.distanceMiles);
   }
 
   return score;
@@ -171,7 +170,6 @@ export default function SearchPage() {
         .from("stylists")
         .select("*")
 
-      console.log("Stylists from Supabase:", data);
       console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
 
       if (error) throw error;
@@ -181,7 +179,7 @@ export default function SearchPage() {
           ...s,
           name: s.full_name || s.name,
           slug: s.profile_slug || s.slug || s.id,   // ⭐ add this
-          photoUrl: s.photo_url || s.photoUrl || s.photo,
+          photo_url: s.photo_url ?? "",
           review_count: s.reviews_count,
           specialty: Array.isArray(s.specialties)
             ? s.specialties[0]
@@ -279,6 +277,8 @@ export default function SearchPage() {
   const stylists = useMemo(() => {
     let filtered = [...allStylists];
 
+    filtered = filtered.filter((s) => normalizeStatus(s.status) === "approved");
+
     const q = term.trim().toLowerCase();
     if (q) {
       filtered = filtered.filter((s) => {
@@ -368,30 +368,7 @@ export default function SearchPage() {
       const scoreB = stylistScore(b, userLocation);
 
       return scoreB - scoreA;
-
     });
-
-    // ----- tier ordering -----
-
-    const premium = filtered.filter((s) => s.tier_active === "premium");
-    const pro = filtered.filter((s) => s.tier_active === "pro");
-    const free = filtered.filter((s) => !s.tier_active || s.tier_active === "free");
-
-    // rotate premium stylists
-    let rotatedPremium = [];
-
-    if (premium.length > 0) {
-      const rotateIndex =
-        Math.floor(Date.now() / 1000 / 60) % premium.length;
-
-      rotatedPremium = [
-        ...premium.slice(rotateIndex),
-        ...premium.slice(0, rotateIndex),
-      ];
-    }
-
-    // final display order
-    filtered = [...rotatedPremium, ...pro, ...free];
     
     return filtered;
   }, [
@@ -407,7 +384,7 @@ export default function SearchPage() {
   ]);
 
   const premiumStylists = stylists.filter(
-    (s) => s.tier_active === "premium"
+    (s) => s.tier === "premium"
   );
 
   const gridItems = useMemo(() => {
@@ -603,36 +580,26 @@ export default function SearchPage() {
 
       <section className="mt-8">
 
-        <StylistMap stylists={stylists} userLocation={userLocation} />
+        <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
+          <StylistMap stylists={stylists} userLocation={userLocation} />
+        </div>
 
-        {premiumStylists.length > 0 && (
-          <div className="mb-10">
-            <h3 className="text-xl font-semibold text-[#102A43] mb-1">
-              ⭐ Featured Stylists
-            </h3>
+        {/* TEMP REMOVED DUPLICATE FEATURED CARDS
+          <h2 className="text-lg font-semibold">
+            ⭐ Featured Stylists
+          </h2>
 
-            <p className="text-sm text-gray-500 mb-4">
-              Premium stylists highlighted for visibility.
-            </p>
-
-            <div className="grid gap-6 md:grid-cols-3">
-              {premiumStylists.slice(0, 6).map((stylist) => (
-                <StylistCard
-                  key={`premium_${stylist.id}`}
-                  stylist={stylist}
-                  distanceMiles={stylist.distanceMiles ?? null}
-                  onProfileClick={(s) => track(s.id, "profile_click")}
-                  onContactClick={(s) => track(s.id, "contact_click")}
-                />
-              ))}
-            </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            {featuredStylists.map((stylist) => (
+              <StylistCard ... />
+            ))}
           </div>
-        )}
+          */}
         
         {stylists.length === 0 ? (
           <p>No stylists found.</p>
         ) : (
-          <div className="grid gap-6 [grid-template-columns:repeat(auto-fill,minmax(260px,1fr))]">
+          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
             {gridItems}
           </div>
         )}
