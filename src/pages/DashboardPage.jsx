@@ -78,6 +78,8 @@ export default function DashboardPage() {
     );
   }
 
+  const tier = stylist?.tier_active || stylist?.tier || "free";
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-serif text-[#102A43] mb-6">
@@ -98,14 +100,14 @@ export default function DashboardPage() {
               <p className="text-sm text-amber-800">
                 Current plan:{" "}
                 <span className="font-semibold uppercase">
-                  {stylist.tier || "free"}
+                  {tier}
                 </span>
               </p>
             </div>
 
             <div className="flex gap-2">
 
-              {stylist.tier === "free" && (
+              {tier === "free" && (
                 <>
                   <button
                     onClick={() => handleUpgrade("pro")}
@@ -123,7 +125,7 @@ export default function DashboardPage() {
                 </>
               )}
 
-              {stylist.tier === "pro" && (
+              {tier === "pro" && (
                 <button
                   onClick={() => handleUpgrade("premium")}
                   className="px-3 py-1 text-xs bg-[#1F6FEB] text-white rounded-full hover:opacity-90"
