@@ -269,113 +269,62 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* KPI CARDS */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4 mb-8">
-        <KpiCard
-          label="Total Views"
-          value={formatInt(kpis.views)}
-        />
-        <KpiCard
-          label="Profile Clicks"
-          value={formatInt(
-            kpis.profileClicks
-          )}
-        />
-        <KpiCard
-          label="Contact Clicks"
-          value={formatInt(
-            kpis.contactClicks
-          )}
-        />
-        <KpiCard
-          label="Favorites"
-          value={formatInt(
-            kpis.favorites
-          )}
-        />
-      {/* Monthly Revenue */}
-      <div className="bg-white border rounded-2xl p-4 shadow-sm">
-        <div className="text-xs uppercase tracking-wide text-gray-500">
-          Monthly Recurring Revenue
+      <div className="mb-8 space-y-6">
+
+        {/* PRIMARY ROW */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <KpiCard
+            label="Total Views"
+            value={formatInt(kpis.views)}
+          />
+          <KpiCard
+            label="Profile Clicks"
+            value={formatInt(kpis.profileClicks)}
+          />
+          <KpiCard
+            label="Contact Clicks"
+            value={formatInt(kpis.contactClicks)}
+          />
         </div>
-        <div className="text-2xl font-bold mt-1">
-          ${formatInt(analytics?.mrr || 0)}
+
+        {/* SECONDARY ROW */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+          <KpiCard
+            label="Favorites"
+            value={formatInt(kpis.favorites)}
+          />
+
+          <div className="bg-gray-50 border rounded-xl p-4 text-sm">
+            <div className="text-xs uppercase text-gray-500">
+              Monthly Revenue
+            </div>
+            <div className="text-xl font-bold mt-1">
+              ${formatInt(analytics?.mrr || 0)}
+            </div>
+          </div>
+
+          <div className="bg-gray-50 border rounded-xl p-4 text-sm">
+            <div className="text-xs uppercase text-gray-500">
+              3 Month Forecast
+            </div>
+            <div className="text-xl font-bold mt-1">
+              ${formatInt(analytics?.forecast3mo || 0)}
+            </div>
+          </div>
+
+          <div className="bg-gray-50 border rounded-xl p-4 text-sm">
+            <div className="text-xs uppercase text-gray-500">
+              Ad CTR
+            </div>
+            <div className="text-xl font-bold mt-1">
+              {pct(analytics?.ads?.ctr || 0)}
+            </div>
+          </div>
+
         </div>
-        <div className="text-xs text-gray-500 mt-1">
-          From active Pro + Premium
-        </div>
+
       </div>
-
-      {/* 3 Month Forecast */}
-      <div className="bg-white border rounded-2xl p-4 shadow-sm">
-        <div className="text-xs uppercase tracking-wide text-gray-500">
-          3 Month Forecast
-        </div>
-        <div className="text-2xl font-bold mt-1">
-          ${formatInt(analytics?.forecast3mo || 0)}
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          Based on current MRR
-        </div>
-      </div>
-
-      {/* Ad Impressions */}
-      <div className="bg-white border rounded-2xl p-4 shadow-sm">
-        <div className="text-xs uppercase tracking-wide text-gray-500">
-          Ad Impressions
-        </div>
-        <div className="text-2xl font-bold mt-1">
-          {formatInt(analytics?.ads?.impressions || 0)}
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          All placements
-        </div>
-      </div>
-
-      {/* Ad CTR */}
-      <div className="bg-white border rounded-2xl p-4 shadow-sm">
-        <div className="text-xs uppercase tracking-wide text-gray-500">
-          Ad Click-Through Rate
-        </div>
-        <div className="text-2xl font-bold mt-1">
-          {pct(analytics?.ads?.ctr || 0)}
-        </div>
-        <div className="text-xs text-gray-500 mt-1">
-          Clicks / Impressions
-        </div>
-      </div>
-
-      {/* TREND */}
-      </div>
-      <ChartCard title="Platform Activity Trend">
-        <ResponsiveContainer
-          width="100%"
-          height={300}
-        >
-          <LineChart data={trendData}>
-            <CartesianGrid
-              strokeDasharray="3 3"
-            />
-            <XAxis dataKey="date" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="views"
-              stroke="#3B82F6"
-            />
-            <Line
-              type="monotone"
-              dataKey="contactClicks"
-              stroke="#10B981"
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </ChartCard>
-
-      {/* RANKINGS & TABLE remain exactly same as your structure */}
-
-      {/* ... (omitted here for space, but you keep your entire Rankings + Table blocks exactly as written) */}
 
     </div>
   );

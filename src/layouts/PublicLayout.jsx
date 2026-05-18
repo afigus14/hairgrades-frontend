@@ -9,6 +9,9 @@ console.log("PublicLayout render", window.location.pathname);
 
 function TopNav() {
   const [user, setUser] = useState(null);
+  
+  const location = useLocation();
+  const isAdminPage = location.pathname.includes("/admin");
 
   useEffect(() => {
     async function loadUser() {
@@ -199,6 +202,8 @@ export default function PublicLayout() {
   const loc = useLocation();
   const page = pageFromPath(loc.pathname);
 
+  const isAdminPage = loc.pathname.includes("/admin");
+
   return (
     <div className="min-h-screen bg-[#9FD0D6]">
       <TopNav />
@@ -214,17 +219,21 @@ export default function PublicLayout() {
             "py-5",
           ].join(" ")}
         >
-          <div className="hidden lg:block min-w-0">
-            <LeftRail page={page} />
-          </div>
+          {!isAdminPage && (
+            <div className="hidden lg:block min-w-0">
+              <LeftRail page={page} />
+            </div>
+)}
 
           <main className="min-w-0">
             <Outlet />
           </main>
 
-          <div className="hidden lg:block min-w-0">
-            <RightRail page={page} />
-          </div>
+          {!isAdminPage && (
+            <div className="hidden lg:block min-w-0">
+              <RightRail page={page} />
+            </div>
+          )}
         </div>
       </div>
     </div>
