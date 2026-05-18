@@ -1,5 +1,6 @@
 // src/pages/AdminReviewPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
+import { supabase } from "../lib/supabase";
 
 console.log("AdminReviewPage render", window.location.pathname);
 
@@ -43,26 +44,16 @@ export default function AdminReviewPage() {
     setStatus({ type: "idle", message: "" });
 
     try {
-      const res = await fetch(`${API_BASE}/api/stylists`, {
-        method: "GET",
-        headers: {
-          "x-admin-key": adminKey,
-        },
-      });
+      const { data, error } = await supabase
+        .from("stylists")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
 
-      const result = await res.json();
-
-      if (!res.ok || !result?.stylists) {
-        throw new Error("Failed to load applications");
-      }
-
-      // ✅ Only pending
-      const pending = result.stylists.filter(
-        (s) => s.status === "pending"
-      );
+      if (error) throw error;
 
       setApplications(
-        safeArray(pending).map((s) => ({
+        safeArray(data).map((s) => ({
           ...s,
           name: s.full_name || s.name,
           fullName: s.full_name || s.fullName,
@@ -76,7 +67,12 @@ export default function AdminReviewPage() {
 
       setStatus({
         type: "success",
-        message: `Loaded ${pending.length} application(s).`,
+        message: `Loaded ${data?.length || 0} application(s).`,
+      });
+
+      setStatus({
+        type: "success",
+        message: `Loaded ${data?.length || 0} application(s).`,
       });
     } catch (e) {
       setApplications([]);
@@ -86,33 +82,51 @@ export default function AdminReviewPage() {
     }
   }
 
-  async function handleAction(id, action, message = "") {
-    if (!adminKey) {
-      setStatus({ type: "error", message: "Enter your admin key first." });
-      return;
-    }
-
+  async function approveStylist(id) {
     try {
-      const res = await fetch(`${API_BASE}/api/applications/action`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-Admin-Key": adminKey,
-        },
-        body: JSON.stringify({ id, action, message }),
-      });
+      const { error } = await supabase
+        .from("stylists")
+        .update({ status: "approved", verified: true })
+        .eq("id", id);
 
-      if (!res.ok) throw new Error("Action failed");
+      if (error) throw error;
+
+      setApplications((prev) => prev.filter((s) => s.id !== id));
 
       setStatus({
         type: "success",
-        message: `Action "${action}" completed.`,
+        message: "Stylist approved.",
       });
-
-      await fetchApplications(); // refresh list
     } catch (e) {
       setStatus({ type: "error", message: e.message });
     }
+  }
+
+  async function rejectStylist(id) {
+    try {
+      const { error } = await supabase
+        .from("stylists")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setApplications((prev) => prev.filter((s) => s.id !== id));
+
+      setStatus({
+        type: "success",
+        message: "Stylist rejected.",
+      });
+    } catch (e) {
+      setStatus({ type: "error", message: e.message });
+    }
+  }
+
+  async function requestInfo(id, message) {
+    setStatus({
+      type: "success",
+      message: "Request info feature coming next.",
+    });
   }
 
   useEffect(() => {
@@ -247,7 +261,7 @@ export default function AdminReviewPage() {
                   <div className="flex items-center gap-2 mt-3">
                     <button
                       type="button"
-                      onClick={() => handleAction(id, "approve")}
+                      onClick={() => approveStylist(id)}
                       disabled={loading || !adminKey || !id || isApproved}
                       className={`px-4 py-2 rounded-lg font-semibold text-white disabled:opacity-50 ${
                         isApproved ? "bg-emerald-400" : "bg-emerald-600 hover:bg-emerald-700"
@@ -258,7 +272,7 @@ export default function AdminReviewPage() {
 
                     <button
                       type="button"
-                      onClick={() => handleAction(id, "reject", app._message)}
+                      onClick={() => rejectStylist(id)}
                       disabled={loading || !adminKey}
                       className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold"
                     >
@@ -267,7 +281,7 @@ export default function AdminReviewPage() {
 
                     <button
                       type="button"
-                      onClick={() => handleAction(id, "request_info", app._message)}
+                      onClick={() => requestInfo(id, app._message)}
                       disabled={loading || !adminKey}
                       className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold"
                     >
