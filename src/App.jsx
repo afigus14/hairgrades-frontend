@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { Routes, Route } from "react-router-dom";
 
 import PublicLayout from "./layouts/PublicLayout";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 import HomePage from "./pages/HomePage";
 import SearchPage from "./pages/SearchPage";
@@ -29,6 +30,7 @@ function App() {
         <Route index element={<HomePage />} />
 
         {/* ✅ ALL CHILD ROUTES — NO LEADING SLASH */}
+        <Route path="admin/dashboard" element={<AdminDashboardPage />} />
         <Route path="search" element={<SearchPage />} />
         <Route path="profile/:id" element={<ProfilePage />} />
         <Route path="pricing" element={<PricingPage />} />
