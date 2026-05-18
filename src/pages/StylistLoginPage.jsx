@@ -24,6 +24,22 @@ export default function StylistLoginPage(){
     }
   }
 
+  async function handleResetPassword() {
+    const emailInput = prompt("Enter your email:");
+
+    if (!emailInput) return;
+
+    const { error } = await supabase.auth.resetPasswordForEmail(emailInput, {
+      redirectTo: "https://www.stylegrades.com/#/update-password",
+    });
+
+    if (error) {
+      alert("Error sending reset email");
+    } else {
+      alert("Password reset email sent!");
+    }
+  }
+
   return(
     <div className="max-w-md mx-auto py-16">
 
@@ -63,6 +79,15 @@ export default function StylistLoginPage(){
         )}
 
       </form>
+
+      <p className="mt-4 text-sm text-center">
+        <button
+          onClick={handleResetPassword}
+          className="text-blue-600 underline"
+        >
+          Forgot password?
+        </button>
+      </p>
 
     </div>
   )

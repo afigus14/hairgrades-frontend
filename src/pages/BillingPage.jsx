@@ -63,7 +63,7 @@ export default function BillingPage() {
             <p className="text-sm text-gray-600">
             Current plan:{" "}
             <span className="font-semibold uppercase">
-                {stylist.tier || "free"}
+                {stylist.tier_active || "free"}
             </span>
             </p>
 

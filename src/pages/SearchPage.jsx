@@ -122,8 +122,8 @@ function stylistScore(stylist, userLocation) {
   let score = 0;
 
   // 💰 Tier boost (MAIN DRIVER)
-  if (stylist.tier === "premium") score += 80;
-  else if (stylist.tier === "pro") score += 50;
+  if (stylist.tier_active === "premium") score += 80;
+  else if (stylist.tier_active === "pro") score += 50;
   else score += 10;
 
   // 🔥 Featured boost

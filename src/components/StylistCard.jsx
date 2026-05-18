@@ -101,19 +101,19 @@ export default function StylistCard({
   return (
     <div
       className={`relative rounded-xl border-[2px] shadow-sm p-4 transition ${
-        stylist.tier === "premium"
+        stylist.tier_active === "premium"
           ? "bg-amber-50 border-amber-400 shadow-lg ring-2 ring-amber-200"
           : "bg-white border-[#2F3C4F]"
       }`}
     >
           
-      {stylist.tier === "premium" && (
+      {stylist.tier_active === "premium" && (
         <span className="absolute top-2 right-2 bg-amber-400 text-black text-xs font-semibold px-2 py-1 rounded">
           Premium
         </span>
       )}
 
-      {stylist.tier === "pro" && (
+      {stylist.tier_active === "pro" && (
         <span className="absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded font-semibold">
           Pro
         </span>
