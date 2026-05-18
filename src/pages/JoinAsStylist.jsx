@@ -515,14 +515,9 @@ export default function JoinAsStylist() {
       console.log("SUBMIT_URL:", SUBMIT_URL);
       console.log("🚀 SUBMITTING TO:", SUBMIT_URL);
 
-      const res = await fetch(SUBMIT_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: JSON.stringify(payload),
-      });
+      import { applications } from "../lib/api";
+
+      const result = await applications(payload);
 
       const result = await res.json();
 
