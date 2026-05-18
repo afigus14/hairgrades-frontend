@@ -84,6 +84,8 @@ export default function AdminReviewPage() {
 
   async function approveStylist(id) {
     try {
+      const stylist = applications.find((s) => s.id === id);
+
       const { error } = await supabase
         .from("stylists")
         .update({ status: "approved", verified: true })
@@ -91,11 +93,24 @@ export default function AdminReviewPage() {
 
       if (error) throw error;
 
+      // Remove from UI
       setApplications((prev) => prev.filter((s) => s.id !== id));
+
+      // ✉️ Send approval email
+      await fetch("https://stylegrades-api.vercel.app/api/send-approval-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: stylist?.email,
+          name: stylist?.fullName,
+        }),
+      });
 
       setStatus({
         type: "success",
-        message: "Stylist approved.",
+        message: "Stylist approved and email sent.",
       });
     } catch (e) {
       setStatus({ type: "error", message: e.message });

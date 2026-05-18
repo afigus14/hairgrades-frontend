@@ -471,9 +471,11 @@ export default function JoinAsStylist() {
         lng = coords.lng;
       }
     } catch (err) {
-      setStatus({ type: "error", message: "Invalid location." });
-      setSubmitting(false);
-      return;
+      console.warn("Location failed:", err);
+
+      // 👇 DO NOT BLOCK USER
+      lat = null;
+      lng = null;
     }
 
     setSubmitting(true);
