@@ -214,9 +214,14 @@ export default function AdminReviewPage() {
       ) : (
         <div className="space-y-6">
           {applications.map((app) => {
+            console.log("APP DATA:", app);
             const id = idSafe(app.id);
             const st = normalizeStatus(app.status);
             const isApproved = st === "approved";
+
+            // ✅ normalize location fields
+            const lat = app.lat ?? app.latitude ?? null;
+            const lng = app.lng ?? app.longitude ?? null;
 
             return (
               <div key={id || Math.random()} className="bg-white rounded-2xl border shadow-sm p-5">
@@ -228,6 +233,12 @@ export default function AdminReviewPage() {
                         ({st})
                       </span>
                     </div>
+
+                    {(!lat || !lng) && (
+                      <div className="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded mt-2 inline-block">
+                        ⚠️ Location needs verification
+                      </div>
+                    )}
 
                     <div className="text-sm text-gray-700 mt-1">
                       {app.email || ""} • {app.phone || "No phone"} • {app.city || ""} • Tier:{" "}
