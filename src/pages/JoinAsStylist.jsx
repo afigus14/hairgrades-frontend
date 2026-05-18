@@ -515,17 +515,12 @@ export default function JoinAsStylist() {
       console.log("SUBMIT_URL:", SUBMIT_URL);
       console.log("🚀 SUBMITTING TO:", SUBMIT_URL);
 
-      import { applications } from "../lib/api";
-
       const result = await applications(payload);
 
-      const result = await res.json();
+      console.log("🔥 FULL RESULT:", result);
 
-      console.log("🔥 RESPONSE STATUS:", res.status);
-      console.log("🔥 RESPONSE BODY:", result);
-
-      if (!res.ok || !result?.ok) { 
-        if (result?.error?.toLowerCase?.().includes("already exists")) {
+      if (!result?.ok) {
+        if (typeof result?.error === "string" && result.error.toLowerCase().includes("already exists")) {
           setStatus({
             type: "error",
             message: "User already exists. Please log in to continue.",
@@ -533,7 +528,12 @@ export default function JoinAsStylist() {
           return;
         }
 
-        throw new Error(result?.error || "Application submission failed.");
+        const errorMessage =
+          typeof result?.error === "string"
+            ? result.error
+            : result?.error?.message || JSON.stringify(result?.error);
+
+        throw new Error(errorMessage || "Application submission failed.");
       }
 
       // ✅ First submit application
@@ -544,12 +544,15 @@ export default function JoinAsStylist() {
       });
 
     } catch (err) {
+      console.error("Submission error:", err);
+
       setStatus({
         type: "error",
-        message: err?.message || "Submission failed.",
+        message:
+          typeof err === "string"
+            ? err
+            : err?.message || "Submission failed.",
       });
-    } finally {
-      setSubmitting(false);
     }
   }
 

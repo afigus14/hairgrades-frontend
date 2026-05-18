@@ -12,8 +12,17 @@ export async function applications(formData) {
   });
 
   if (!res.ok) {
-    const text = await res.text();
-    throw new Error(text || "Request failed");
+    let errorMessage = "Request failed";
+
+    try {
+      const data = await res.json();
+      errorMessage = data?.error || JSON.stringify(data);
+    } catch {
+      const text = await res.text();
+      errorMessage = text;
+    }
+
+    throw new Error(errorMessage);
   }
 
   return res.json();
