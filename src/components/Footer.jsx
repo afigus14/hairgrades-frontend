@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-[#345F82] to-[#2F4F6A] text-[#F7FAFF] mt-12">
+    <footer className="bg-[#101A2A] text-[#F7FAFF] mt-12">
       <div className="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 md:grid-cols-3 gap-6 text-sm">
         {/* About Section */}
         <div>
@@ -23,8 +23,19 @@ export default function Footer() {
 
         {/* Legal / Copyright */}
         <div className="text-[#F7FAFF]/70 md:text-right">
-          <Link to="/terms" className="hover:text-[#F7FAFF]">Terms</Link> ·{" "}
-          <Link to="/privacy" className="hover:text-[#F7FAFF]">Privacy</Link>
+          <Link to="/terms" className="hover:text-[#F7FAFF]">
+            Terms
+          </Link>{" "}
+          ·{" "}
+
+          <Link to="/privacy" className="hover:text-[#F7FAFF]">
+            Privacy
+          </Link>{" "}
+          ·{" "}
+
+          <Link to="/refund-policy" className="hover:text-[#F7FAFF]">
+            Refunds
+          </Link>
           <p className="mt-2 text-xs">&copy; 2025 Stylegrades. All rights reserved.</p>
         </div>
       </div>

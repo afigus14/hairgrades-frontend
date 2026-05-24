@@ -73,7 +73,7 @@ export default function AdminStylistsPage() {
 
   async function deleteStylist(id) {
     try {
-      const res = await fetch("/api/admin/deleteStylist", {
+      const res = await `${import.meta.env.VITE_API_BASE_URL}/api/admin/deleteStylist`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -236,13 +236,6 @@ export default function AdminStylistsPage() {
                   </div>
 
                   <div className="flex flex-wrap gap-2 items-center">
-                    <button
-                      onClick={() =>
-                        navigate(`/admin/stylists/${s.id}`)
-                      }
-                      className="px-4 py-2 rounded-lg bg-gray-800 text-white text-sm"
-                    >
-
                     <select
                       value={s.tier || "free"}
                       onChange={(e) => updateTier(s.id, e.target.value)}
@@ -251,8 +244,14 @@ export default function AdminStylistsPage() {
                       <option value="free">Free</option>
                       <option value="pro">Pro</option>
                       <option value="premium">Premium</option>
-                    </select>  
-                      
+                    </select>
+
+                    <button
+                      onClick={() =>
+                        navigate(`/admin/stylists/${s.id}`)
+                      }
+                      className="px-4 py-2 rounded-lg bg-gray-800 text-white text-sm"
+                    >
                       Edit
                     </button>
 

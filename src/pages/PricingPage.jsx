@@ -426,9 +426,17 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <p className="mt-5 text-center text-xs text-stone-500">
-            Stylegrades: Find a stylist that will make you feel good about your hair.
-          </p>
+          <div className="text-center mt-10 mb-2">
+
+            <h3 className="text-2xl md:text-3xl font-serif text-[#102A43]">
+              Stylegrades
+            </h3>
+
+            <p className="mt-2 text-base md:text-lg font-semibold italic text-[#102A43] tracking-wide">
+              Find a stylist that will make you feel good about your hair.
+            </p>
+
+          </div>
         </div>
       </section>
     </div>

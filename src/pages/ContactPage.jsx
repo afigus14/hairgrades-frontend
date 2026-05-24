@@ -4,9 +4,43 @@ import React, { useState } from "react";
 export default function ContactPage() {
   const [submitted, setSubmitted] = useState(false);
 
-  function handleSubmit(e) {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    setSubmitted(true);
+
+    try {
+      setLoading(true);
+
+      const res = await fetch(
+        "https://stylegrades-api.vercel.app/api/contact",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(form),
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to send");
+      }
+
+      setSubmitted(true);
+
+    } catch (err) {
+      console.error(err);
+      alert("Message failed to send.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -33,6 +67,10 @@ export default function ContactPage() {
               </label>
               <input
                 type="text"
+                value={form.name}
+                onChange={(e) =>
+                  setForm({ ...form, name: e.target.value })
+                }
                 className="w-full px-3 py-2 rounded-lg bg-[#101A2A] border border-[#30465B] text-[#F7FAFF]"
                 required
               />
@@ -44,6 +82,10 @@ export default function ContactPage() {
               </label>
               <input
                 type="email"
+                value={form.email}
+                onChange={(e) =>
+                  setForm({ ...form, email: e.target.value })
+                }
                 className="w-full px-3 py-2 rounded-lg bg-[#101A2A] border border-[#30465B] text-[#F7FAFF]"
                 required
               />
@@ -55,6 +97,10 @@ export default function ContactPage() {
               </label>
               <textarea
                 rows="4"
+                value={form.message}
+                onChange={(e) =>
+                  setForm({ ...form, message: e.target.value })
+                }
                 className="w-full px-3 py-2 rounded-lg bg-[#101A2A] border border-[#30465B] text-[#F7FAFF]"
                 required
               />
@@ -63,7 +109,7 @@ export default function ContactPage() {
             <button
               className="mt-4 bg-[#F4A731] text-black px-6 py-2 rounded-lg font-semibold hover:bg-[#F1B154] transition"
             >
-              Send Message
+              {loading ? "Sending..." : "Send Message"}
             </button>
 
           </form>

@@ -13,15 +13,19 @@ export default function BillingPage() {
       return;
     }
 
-    const res = await fetch("/api/create-portal-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        customer_id: stylist.stripe_customer_id,
-      }),
-    });
+    const res = await fetch(
+      `${import.meta.env.VITE_API_BASE_URL}/api/create-portal-session`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          customer_id: stylist.stripe_customer_id,
+        }),
+      }
+    );
 
     const data = await res.json();
+    console.log("PORTAL RESPONSE:", data);
     window.location.href = data.url;
   };
 
@@ -63,7 +67,7 @@ export default function BillingPage() {
             <p className="text-sm text-gray-600">
             Current plan:{" "}
             <span className="font-semibold uppercase">
-                {stylist.tier_active || "free"}
+                {stylist.tier || "free"}
             </span>
             </p>
 

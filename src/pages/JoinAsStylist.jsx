@@ -1,5 +1,5 @@
 // src/pages/JoinAsStylist.jsx
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { applications } from "../lib/api";
 import { supabase } from "../lib/supabase";
@@ -66,9 +66,15 @@ async function getCoordsFromCityState(input) {
 
   const result = data.results[0];
 
+  // Find ZIP code from address components
+  const zipComponent = result.address_components.find((component) =>
+    component.types.includes("postal_code")
+  );
+
   return {
     lat: result.geometry.location.lat,
     lng: result.geometry.location.lng,
+    zip: zipComponent?.long_name || "",
   };
 }
 
@@ -139,6 +145,18 @@ async function uploadToCloudinary(file, { folder }) {
 // ---------- component ----------
 export default function JoinAsStylist() {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    async function checkExistingUser() {
+      const { data } = await supabase.auth.getUser();
+
+      if (data?.user) {
+        navigate("/dashboard");
+      }
+    }
+
+    checkExistingUser();
+  }, [navigate]);
   
   const handleCheckout = async (plan) => {
   try {
@@ -455,6 +473,8 @@ export default function JoinAsStylist() {
 
     let finalCity = parsed.city;
     let state = parsed.state;
+    let zip = isZipCode(city) ? city : "";
+
     let lat = null;
     let lng = null;
 
@@ -467,13 +487,18 @@ export default function JoinAsStylist() {
         lng = loc.lng;
       } else {
         const coords = await getCoordsFromCityState(city);
+
         lat = coords.lat;
         lng = coords.lng;
-      }
+
+        // auto-fill ZIP from geocoder
+        if (coords.zip) {
+          zip = coords.zip;
+        }
+      }  
     } catch (err) {
       console.warn("Location failed:", err);
 
-      // 👇 DO NOT BLOCK USER
       lat = null;
       lng = null;
     }
@@ -483,12 +508,16 @@ export default function JoinAsStylist() {
     try {
       const payload = {
         fullName: fullName.trim(),
+        profile_slug: fullName
+          .trim()
+          .toLowerCase()
+          .replace(/\s+/g, "-"),
         email: email.trim(),
         phone: phone.trim(),
 
         city: finalCity,
         state,
-        zip: isZipCode(city) ? city : null,
+        zip: zip || null,
         lat,
         lng,
 
@@ -790,12 +819,22 @@ return (
             Upload Cosmetology License (optional)
           </span>
 
-          <input
-            type="file"
-            accept="image/*,.pdf"
-            onChange={handleLicenseUpload}
-            className="mt-1 w-full border rounded-lg px-3 py-2"
-          />
+          <label className="mt-1 inline-flex items-center gap-2 cursor-pointer">
+            <span className="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50 text-sm">
+              Choose File
+            </span>
+
+            <input
+              type="file"
+              accept="image/*,.pdf"
+              onChange={handleLicenseUpload}
+              className="hidden"
+            />
+          </label>
+
+          <p className="mt-1 text-xs text-slate-500">
+            {licenseUrl ? "1 file selected" : "No file chosen"}
+          </p>
 
           <div className="text-xs text-gray-500 mt-1">
             Only visible to Stylegrades admin for verification.
@@ -863,18 +902,23 @@ return (
                 </div>
               </div>
 
-              <label className="inline-flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <span className="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50 text-sm">
+                  Choose File
+                </span>
+
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleHeadshotChange}
                   disabled={disabledUploads}
-                  className="text-sm"
+                  className="hidden"
                 />
-                <p className="mt-1 text-xs text-slate-500">
-                  {photoUrl ? "1 file selected" : "No file chosen"}
-                </p>
               </label>
+
+              <p className="mt-1 text-xs text-slate-500">
+                {photoUrl ? "1 file selected" : "No file chosen"}
+              </p>
             </div>
 
             {/* shows selected name (helps avoid “No file chosen” confusion) */}
@@ -963,14 +1007,18 @@ return (
                 </div>
               )}
 
-              <label className="inline-flex items-center gap-2">
+              <label className="inline-flex items-center gap-2 cursor-pointer">
+                <span className="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50 text-sm">
+                  Choose Files
+                </span>
+
                 <input
                   type="file"
                   accept="image/*"
                   multiple
                   onChange={handleGalleryChange}
                   disabled={disabledUploads || gallery.length >= galleryLimit}
-                  className="text-sm"
+                  className="hidden"
                 />
               </label>
 

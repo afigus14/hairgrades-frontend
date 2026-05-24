@@ -1,3 +1,7 @@
+if (window.location.pathname === "/update-password") {
+  window.location.href = "/#/update-password";
+}
+
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -20,6 +24,10 @@ import EditProfilePage from "./pages/EditProfilePage";
 import AdminReviewPage from "./pages/AdminReviewPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import BillingPage from "./pages/BillingPage";
+import UpdatePasswordPage from "./pages/UpdatePasswordPage";
+import PrivacyPage from "./pages/PrivacyPage";
+import TermsPage from "./pages/TermsPage";
+import RefundPolicyPage from "./pages/RefundPolicyPage";
 
 function App() {
   return (
@@ -45,6 +53,10 @@ function App() {
         <Route path="admin-review" element={<AdminReviewPage />} />
         <Route path="dashboard/billing" element={<BillingPage />} />
         <Route path="reviews" element={<ReviewsPage />} />
+        <Route path="update-password" element={<UpdatePasswordPage />} />
+        <Route path="privacy" element={<PrivacyPage />} />
+        <Route path="terms" element={<TermsPage />} />
+        <Route path="refund-policy" element={<RefundPolicyPage />} />
 
       </Route>
     </Routes>

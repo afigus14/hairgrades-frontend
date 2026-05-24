@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
 
@@ -7,8 +7,18 @@ export default function StylistLoginPage(){
   const [email,setEmail] = useState("");
   const [password,setPassword] = useState("");
   const [error,setError] = useState("");
+  const [logoutMessage, setLogoutMessage] = useState("");
   const navigate = useNavigate();
 
+  useEffect(() => {
+    const reason = sessionStorage.getItem("logout_reason");
+
+    if (reason === "timeout") {
+      setLogoutMessage("You were logged out due to inactivity.");
+      sessionStorage.removeItem("logout_reason");
+    }
+  }, []);
+  
   async function handleLogin(e){
     e.preventDefault();
 
@@ -30,7 +40,7 @@ export default function StylistLoginPage(){
     if (!emailInput) return;
 
     const { error } = await supabase.auth.resetPasswordForEmail(emailInput, {
-      redirectTo: "https://www.stylegrades.com/#/update-password",
+      redirectTo: "https://www.stylegrades.com/update-password",
     });
 
     if (error) {
@@ -46,6 +56,12 @@ export default function StylistLoginPage(){
       <h1 className="text-2xl font-semibold mb-6">
         Stylist Login
       </h1>
+
+      {logoutMessage && (
+        <div className="mb-4 p-3 bg-yellow-100 text-yellow-800 rounded">
+          {logoutMessage}
+        </div>
+      )}
 
       <form onSubmit={handleLogin} className="space-y-4">
 

@@ -2,8 +2,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-console.log("AdminReviewPage render", window.location.pathname);
-
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function safeArray(v) {
@@ -27,6 +25,7 @@ export default function AdminReviewPage() {
   const [status, setStatus] = useState({ type: "idle", message: "" });
 
   const [applications, setApplications] = useState([]);
+  const [reviews, setReviews] = useState([]);
 
   const headers = useMemo(() => {
     return {
@@ -79,6 +78,25 @@ export default function AdminReviewPage() {
       setStatus({ type: "error", message: e?.message || "Server error" });
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function fetchReviews() {
+    try {
+      const { data, error } = await supabase
+        .from("reviews")
+        .select(`
+          *,
+          stylist:stylists(full_name)
+        `)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+
+      if (error) throw error;
+
+      setReviews(data || []);
+    } catch (e) {
+      console.error("Review fetch error:", e);
     }
   }
 
@@ -144,25 +162,63 @@ export default function AdminReviewPage() {
     });
   }
 
+  async function approveReview(id) {
+
+    console.log("APPROVING REVIEW:", id);
+
+    const { data, error } = await supabase
+      .from("reviews")
+      .update({
+        status: "approved"
+      })
+      .eq("id", id)
+      .select();
+
+    console.log("SUPABASE RESPONSE:", data);
+    console.log("SUPABASE ERROR:", error);
+
+    if (error) {
+
+      alert(
+        error.message ||
+        "Failed to approve review."
+      );
+
+      return;
+    }
+
+    alert("Review approved!");
+
+    fetchReviews();
+  }
+
+  async function rejectReview(id) {
+    const { error } = await supabase
+      .from("reviews")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    setReviews((prev) =>
+      prev.filter((r) => r.id !== id)
+    );
+  }
+
   useEffect(() => {
     // only auto-load if key exists; avoids confusing 401 spam
-    if (adminKey) fetchApplications();
+    if (adminKey) {
+      fetchApplications();
+      fetchReviews();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const stamp = useMemo(() => {
-    const d = new Date();
-    return `AdminReviewPage.jsx • ${d.toLocaleString()}`;
   }, []);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
-      {/* Build stamp */}
-      <div className="mb-6 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-xs text-green-800">
-        <div className="font-semibold">THIS PAGE IS RENDERING AdminReviewPage.jsx</div>
-        <div className="opacity-80">BUILD STAMP: {stamp}</div>
-      </div>
-
       <h1 className="text-3xl font-bold mb-2">Admin — Applications</h1>
       <p className="text-gray-600 mb-6">
         Review stylist submissions. Approve to add them to Managed Stylists.
@@ -212,7 +268,7 @@ export default function AdminReviewPage() {
       {applications.length === 0 ? (
         <div className="text-gray-700">No applications yet.</div>
       ) : (
-        <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {applications.map((app) => {
             console.log("APP DATA:", app);
             const id = idSafe(app.id);
@@ -242,7 +298,7 @@ export default function AdminReviewPage() {
 
                     <div className="text-sm text-gray-700 mt-1">
                       {app.email || ""} • {app.phone || "No phone"} • {app.city || ""} • Tier:{" "}
-                      {app.tierRequested || "free"}
+                      {app.tier_requested || app.tierRequested || "free"}
                     </div>
 
                     <div className="text-sm text-gray-700 mt-1">
@@ -353,6 +409,90 @@ export default function AdminReviewPage() {
           })}
         </div>
       )}
+
+      {/* Pending Reviews */}
+      <div className="mt-14">
+        <h2 className="text-2xl font-bold mb-4">
+          Pending Reviews
+        </h2>
+
+        {reviews.length === 0 ? (
+
+          <div className="text-gray-600">
+            No pending reviews.
+          </div>
+
+        ) : (
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            {reviews.map((review) => (
+
+              <div
+                key={review.id}
+                className="bg-white rounded-2xl border shadow-sm p-6"
+              >
+
+                <div className="flex items-center justify-between mb-3">
+
+                  <div>
+                    <div className="font-semibold text-lg">
+                      {review.reviewer_name}
+                    </div>
+
+                    <div className="text-sm text-gray-500">
+                      {review.reviewer_email}
+                    </div>
+                  </div>
+
+                  <div className="text-[#F4A731] text-lg">
+                    {"★".repeat(review.rating || 0)}
+                  </div>
+
+                </div>
+
+                <div className="text-sm text-gray-500 mb-3">
+                  Stylist:
+                  {" "}
+                  {review.stylist?.full_name || "Unknown"}
+                </div>
+
+                <div className="text-sm text-gray-500 mb-3">
+                  Date of Service:
+                  {" "}
+                  {review.service_date || "Not provided"}
+                </div>
+
+                <div className="border rounded-xl p-4 bg-gray-50 text-gray-700">
+                  {review.review_text}
+                </div>
+
+                <div className="flex gap-3 mt-5">
+
+                  <button
+                    onClick={() => approveReview(review.id)}
+                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  >
+                    Approve
+                  </button>
+
+                  <button
+                    onClick={() => rejectReview(review.id)}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  >
+                    Reject
+                  </button>
+
+                </div>
+
+              </div>
+
+            ))}
+
+          </div>
+
+        )}
+      </div>
     </div>
   );
 }

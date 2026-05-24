@@ -122,8 +122,8 @@ function stylistScore(stylist, userLocation) {
   let score = 0;
 
   // 💰 Tier boost (MAIN DRIVER)
-  if (stylist.tier_active === "premium") score += 80;
-  else if (stylist.tier_active === "pro") score += 50;
+  if (stylist.tier === "premium") score += 80;
+  else if (stylist.tier === "pro") score += 50;
   else score += 10;
 
   // 🔥 Featured boost
@@ -162,6 +162,9 @@ export default function SearchPage() {
   const [sortMode, setSortMode] = useState("featured");
   const [priceFilter, setPriceFilter] = useState("any");
   const [paymentFilter, setPaymentFilter] = useState("any");
+
+  const [mobileSearchOpen, setMobileSearchOpen] =
+    useState(false);
 
   useEffect(() => {
   async function loadStylists() {
@@ -204,6 +207,7 @@ export default function SearchPage() {
       if (!res.ok) return null;
 
       const data = await res.json();
+      console.log("GEOCODE RESPONSE:", data);
       const place = data?.places?.[0];
       if (!place) return null;
 
@@ -334,22 +338,28 @@ export default function SearchPage() {
     if (userLocation) {
       filtered = filtered
         .map((s) => {
+
+          const lat = Number(s.lat);
+          const lng = Number(s.lng);
+
           if (
-            typeof s.lat === "number" &&
-            typeof s.lng === "number"
+            Number.isFinite(lat) &&
+            Number.isFinite(lng)
           ) {
             return {
               ...s,
               distanceMiles: distanceMiles(userLocation, {
-                lat: s.lat,
-                lng: s.lng,
+                lat,
+                lng,
               }),
             };
           }
+
           return s;
         })
+
         .filter((s) => {
-          if (s.distanceMiles == null) return true; // allow missing coords
+          if (s.distanceMiles == null) return true;
           return s.distanceMiles <= radiusMiles;
         });
     }
@@ -419,15 +429,15 @@ export default function SearchPage() {
 
   return (
     <div className="w-full min-w-0 pb-10">
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="w-full max-w-6xl mx-auto px-3 md:px-4">
 
-      <header className="pt-4 pb-4">
-        <h2 className="text-xl md:text-2xl lg:text-3xl font-serif text-[#102A43] leading-snug">
+      <header className="pt-2 pb-4 md:pt-4 md:pb-6">
+        <h2 className="text-lg md:text-2xl lg:text-3xl font-serif text-[#102A43] leading-tight md:leading-snug">
           Discover stylists you’ll love. Compare work, reviews, and book with confidence.
         </h2>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3 mb-6">
+      <div className="flex flex-wrap items-center gap-4 mb-6">
         <FilterSelect
           label="Rating"
           value={minRating}
@@ -483,7 +493,91 @@ export default function SearchPage() {
           ]}
         />
       </div>
-      <section className="w-full rounded-3xl border border-[#1F3A4D] bg-[#101A2A] px-6 py-8 shadow-lg mb-8">
+
+      <div className="flex flex-wrap gap-2 mb-6">
+
+        {(
+          minRating !== "any" ||
+          priceFilter !== "any" ||
+          paymentFilter !== "any" ||
+          specialtyFilter !== "all" ||
+          term ||
+          location
+        ) && (
+
+          <button
+            onClick={handleClear}
+            className="bg-[#F0F4F8] text-[#486581] border border-[#D9E2EC] text-sm px-3 py-1 rounded-full font-medium hover:bg-[#E4ECF3] transition"
+          >
+            Clear All ✕
+          </button>
+
+        )}
+
+        {minRating !== "any" && (
+          <button
+            onClick={() => setMinRating("any")}
+            className="bg-[#102A43] text-white text-sm px-3 py-1 rounded-full"
+          >
+            {minRating}+ Stars ✕
+          </button>
+        )}
+
+        {priceFilter !== "any" && (
+          <button
+            onClick={() => setPriceFilter("any")}
+            className="bg-[#486581] text-white text-sm px-3 py-1 rounded-full"
+          >
+            {priceFilter} ✕
+          </button>
+        )}
+
+        {paymentFilter !== "any" && (
+          <button
+            onClick={() => setPaymentFilter("any")}
+            className="bg-[#829AB1] text-white text-sm px-3 py-1 rounded-full"
+          >
+            {paymentFilter.replace("_", " ")} ✕
+          </button>
+        )}
+
+        {specialtyFilter !== "all" && (
+          <button
+            onClick={() => setSpecialtyFilter("all")}
+            className="bg-[#F4A731] text-black text-sm px-3 py-1 rounded-full font-medium"
+          >
+            {specialtyFilter} ✕
+          </button>
+        )}
+
+      </div>
+
+      {/* Mobile Search Toggle */}
+      <div className="md:hidden mb-4">
+
+        <button
+          onClick={() =>
+            setMobileSearchOpen(!mobileSearchOpen)
+          }
+          className="w-full bg-[#102A43] text-white rounded-2xl px-5 py-4 flex items-center justify-between font-semibold shadow-sm"
+        >
+          <span>Search Near You</span>
+
+          <span className="text-xl">
+            {mobileSearchOpen ? "−" : "+"}
+          </span>
+        </button>
+
+      </div>
+
+      <section
+        className={`
+          w-full rounded-3xl border border-[#1F3A4D]
+          bg-[#101A2A] px-6 py-8 shadow-lg mb-8
+          ${mobileSearchOpen ? "block" : "hidden"}
+          md:block
+        `}
+      >
         <div className="mb-6">
           <h1 className="text-2xl md:text-3xl font-serif text-[#F7FAFF]">
             Find a stylist near you
@@ -506,7 +600,7 @@ export default function SearchPage() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               placeholder="e.g. balayage, curly hair, or Ava Lee"
-              className="w-full rounded-lg border border-[#30465B] bg-[#050B14] px-3 py-2 text-sm text-[#F7FAFF]"
+              className="w-full rounded-lg border border-[#30465B] bg-[#050B14] px-4 py-2.5 text-sm text-[#F7FAFF]"
             />
           </div>
 
@@ -575,14 +669,56 @@ export default function SearchPage() {
             {error}
           </p>
         )}
-      </section>
+
+        <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
+          <StylistMap stylists={stylists} userLocation={userLocation} />
+        </div>  
+
+        </section>
       <InlineSponsoredCard />
 
       <section className="mt-8">
 
-        <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
-          <StylistMap stylists={stylists} userLocation={userLocation} />
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-6">
+
+        <div>
+
+          <h2 className="text-2xl font-semibold text-[#102A43]">
+            {stylists.length} stylist
+            {stylists.length !== 1 ? "s" : ""} found
+          </h2>
+
+          <p className="text-sm text-gray-500 mt-1">
+
+            {location
+              ? `Showing results near ${location}`
+              : "Showing all approved stylists"}
+
+          </p>
+
         </div>
+
+        {(term || specialtyFilter !== "all") && (
+          <div className="text-sm text-[#486581] bg-[#F0F4F8] border border-[#D9E2EC] rounded-full px-4 py-2 w-fit">
+
+            {term && (
+              <span>
+                Search: <strong>{term}</strong>
+              </span>
+            )}
+
+            {term && specialtyFilter !== "all" && " • "}
+
+            {specialtyFilter !== "all" && (
+              <span>
+                Specialty: <strong>{specialtyFilter}</strong>
+              </span>
+            )}
+
+          </div>
+        )}
+
+      </div>  
 
         {/* TEMP REMOVED DUPLICATE FEATURED CARDS
           <h2 className="text-lg font-semibold">
@@ -597,12 +733,42 @@ export default function SearchPage() {
           */}
         
         {stylists.length === 0 ? (
-          <p>No stylists found.</p>
+
+          <div className="text-center py-16 px-6 bg-white border rounded-2xl shadow-sm">
+
+            <div className="text-5xl mb-4">
+              🔍
+            </div>
+
+            <h3 className="text-2xl font-semibold text-[#102A43] mb-3">
+              No stylists found
+            </h3>
+
+            <p className="text-gray-500 max-w-lg mx-auto mb-6">
+              Try adjusting your filters or searching a nearby city
+              to discover more stylists.
+            </p>
+
+            <button
+              onClick={handleClear}
+              className="bg-[#102A43] hover:bg-[#0B1F33] text-white px-6 py-3 rounded-xl font-semibold transition"
+            >
+              Reset Search
+            </button>
+
+          </div>
+
         ) : (
-          <div className="flex flex-col gap-6 max-w-4xl mx-auto">
+
+          <div className="flex flex-col gap-6 w-full px-0">
             {gridItems}
           </div>
+
         )}
+          <div className="flex flex-col gap-6 w-full px-0">
+            {gridItems}
+          </div>
+      
       </section>
     </div>
    </div> 

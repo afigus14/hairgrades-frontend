@@ -231,48 +231,45 @@ export default function AdminDashboardPage() {
     );
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-10">
+    <div className="max-w-7xl mx-auto px-8 py-12">
+      <div className="flex flex-col items-center w-full">
 
       {/* HEADER */}
-      <div className="flex flex-col md:flex-row md:justify-between gap-4 mb-6">
-        <div>
-          <h1 className="text-3xl font-bold">
-            Admin Dashboard
-          </h1>
-          <p className="text-gray-600 mt-1">
-            Revenue-ready analytics:
-            views → profile clicks → contact clicks.
-          </p>
-        </div>
+      <div className="text-center mb-10">
+        <h1 className="text-3xl font-bold">
+          Admin Dashboard
+        </h1>
 
-        <div className="flex flex-col gap-2 min-w-[280px]">
+        <p className="text-gray-600 mt-2">
+          Revenue-ready analytics: views → profile clicks → contact clicks.
+        </p>
+
+        <div className="mt-6 flex flex-col items-center gap-3">
           <label className="text-sm font-medium">
             Admin API Key
           </label>
+
           <input
             value={adminKey}
-            onChange={(e) =>
-              setAdminKey(e.target.value)
-            }
-            className="border rounded-lg px-3 py-2"
+            onChange={(e) => setAdminKey(e.target.value)}
+            className="border rounded-lg px-3 py-2 w-80 text-center"
           />
+
           <button
             onClick={refresh}
             disabled={loading}
-            className="rounded-lg bg-black text-white px-4 py-2"
+            className="rounded-lg bg-black text-white px-6 py-2"
           >
-            {loading
-              ? "Loading..."
-              : "Load dashboard"}
+            {loading ? "Loading..." : "Load dashboard"}
           </button>
         </div>
       </div>
 
       {/* KPI CARDS */}
-      <div className="mb-8 space-y-6">
+      <div className="mb-12 space-y-8">
 
         {/* PRIMARY ROW */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl mx-auto">
           <KpiCard
             label="Total Views"
             value={formatInt(kpis.views)}
@@ -288,7 +285,7 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* SECONDARY ROW */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 w-full max-w-4xl mx-auto">
 
           <KpiCard
             label="Favorites"
@@ -327,7 +324,8 @@ export default function AdminDashboardPage() {
       </div>
 
     </div>
-  );
+  </div>
+);
 }
 
 function KpiCard({ label, value }) {
@@ -336,7 +334,7 @@ function KpiCard({ label, value }) {
       <div className="text-xs uppercase text-gray-500">
         {label}
       </div>
-      <div className="text-2xl font-bold mt-1">
+      <div className="text-4xl font-bold mt-2">
         {value}
       </div>
     </div>

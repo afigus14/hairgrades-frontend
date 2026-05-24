@@ -43,7 +43,11 @@ export default function StylistCard({
 }) {
   const navigate = useNavigate();
 
-  const slug = stylist?.profileSlug || stylist?.slug || stylist?.id;
+  const slug =
+    stylist?.profile_slug ||
+    stylist?.profileSlug ||
+    stylist?.slug ||
+    stylist?.id;
   const name = stylist?.name || stylist?.fullName || "Stylist";
   const city = stylist?.city || "";
   const state = stylist?.state || "";
@@ -52,7 +56,10 @@ export default function StylistCard({
     (Array.isArray(stylist?.specialties) && stylist.specialties[0]) ||
     "Stylist";
 
-  const salon = stylist?.salon_name || "";
+  const salon =
+    stylist?.salon_name ||
+    stylist?.salonName ||
+    "";
 
   const photoUrl = stylist?.photo_url?.trim() || "";
 
@@ -100,20 +107,20 @@ export default function StylistCard({
 
   return (
     <div
-      className={`relative rounded-xl border-[2px] shadow-sm p-4 transition ${
-        stylist.tier_active === "premium"
+      className={`group relative rounded-xl border-[2px] shadow-sm p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl ${
+        stylist.tier === "premium"
           ? "bg-amber-50 border-amber-400 shadow-lg ring-2 ring-amber-200"
           : "bg-white border-[#2F3C4F]"
       }`}
     >
           
-      {stylist.tier_active === "premium" && (
+      {stylist.tier === "premium" && (
         <span className="absolute top-2 right-2 bg-amber-400 text-black text-xs font-semibold px-2 py-1 rounded">
           Premium
         </span>
       )}
 
-      {stylist.tier_active === "pro" && (
+      {stylist.tier === "pro" && (
         <span className="absolute top-2 right-2 bg-slate-700 text-white text-xs px-2 py-1 rounded font-semibold">
           Pro
         </span>
@@ -126,15 +133,15 @@ export default function StylistCard({
         className="block"
       >
         {/* Image area: show full image (no crop) */}
-        <div className="flex gap-4 p-6 pt-8">
+        <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-7 pt-8 sm:pt-9">
 
           {/* IMAGE */}
-          <div className="w-32 h-32 flex-shrink-0 overflow-hidden rounded-lg bg-[#F0F4F8]">
+          <div className="w-full sm:w-40 h-auto sm:h-40 aspect-square flex-shrink-0 overflow-hidden rounded-2xl bg-[#F0F4F8] shadow-sm">
             {photoUrl ? (
               <img
                 src={photoUrl}
                 alt={name}
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
             ) : (
@@ -150,7 +157,7 @@ export default function StylistCard({
             <div className="min-w-0">
               {/* NAME + VERIFIED */}
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-semibold text-[#102A43]">
+                <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#102A43] leading-tight">
                   {name}
                 </h3>
 
@@ -171,9 +178,18 @@ export default function StylistCard({
                   ({stylist.review_count || 0} Reviews)
                 </span>
               </div>
-              <div className="text-sm text-[#52606D] truncate">
-                {specialty}
-              </div>
+
+                <div className="mt-3 text-base sm:text-lg text-[#52606D]">
+                  <span className="font-semibold text-[#243B53]">
+                    Specialties:
+                  </span>{" "}
+                  
+                  <span className="font-medium">
+                    {Array.isArray(stylist?.specialties) && stylist.specialties.length > 0
+                      ? stylist.specialties.join(", ")
+                      : specialty}
+                  </span>
+                </div>
 
               {stylist?.featured ? (
                 <span className="absolute top-2 left-2 z-10 text-xs font-semibold text-[#7C5E10] bg-[#FFF7E6] border border-[#FFE8B5] px-2 py-1 rounded-full shadow-sm">
@@ -182,12 +198,12 @@ export default function StylistCard({
               ) : null}
 
               {salon && (
-                <div className="text-xs text-[#7B8794] truncate">
+                <div className="mt-3 text-base sm:text-lg text-[#243B53] font-medium truncate">
                   {salon}
                 </div>
               )}
 
-              <div className="text-xs text-[#7B8794] mt-1 truncate">
+              <div className="text-sm text-[#7B8794] mt-2 truncate">
                 {city}
                 {state ? `, ${state}` : ""}
                 {miles ? ` • ${miles}` : ""}
@@ -208,13 +224,12 @@ export default function StylistCard({
 
         {/* Footer */}
         <div className="mt-4">
-          <button
-            type="button"
-            onClick={handleContact}
-            className="w-full rounded-xl border border-[#D9E2EC] px-3 py-2 text-sm font-semibold text-[#102A43] hover:bg-[#F0F4F8]"
+          <Link
+            to={`/profile/${stylist.profile_slug || stylist.id}`}
+            className="block w-full rounded-xl border border-[#D9E2EC] bg-white px-4 py-3 text-center font-medium text-[#102A43] transition-all duration-300 hover:bg-[#F7FAFC] hover:shadow-md hover:-translate-y-0.5"
           >
-            Contact
-          </button>
+            View Profile
+          </Link>
         </div>
       </Link>
     </div>
