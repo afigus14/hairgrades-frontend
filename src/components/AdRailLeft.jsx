@@ -17,37 +17,68 @@ export default function AdRailLeft({
   const ad = useMemo(() => {
     // You can vary creative by slot so A/B/C aren’t identical
     const common = {
-      advertiserId: "salon_001",
-      campaignId: "launch_feb",
+      advertiserId: "manearbor_001",
+      campaignId: "beauty_partner",
       creativeId: `left_${String(variant).toLowerCase()}`,
-      headline: "Salon Partners Wanted",
+      headline: "Luxury Hair Extensions + Salon Services",
       body:
-        "Advertise next to top stylists in your area and reach clients who are ready to book.",
-      cta: "Learn more",
-      sponsorUrl: "", // Step 3 destination later
-      imageUrl:
-        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=900&q=60",
+        "The Mane Arbor blends elevated color, extensions, and modern salon artistry into a luxury beauty experience.",
+      cta: "View on Instagram",
+      sponsorUrl: "https://www.instagram.com/themanearbor/",
+      imageUrl: "/assets/sponsors/mane-arbor.jpg",
       disclaimer: "Sponsored placement",
-      badge: "Local partners",
+      badge: "Beauty Partner",
+      brand: "The Mane Arbor"
     };
-
+    
     if (variant === "B") {
       return {
         ...common,
-        headline: "Be the go-to salon in your city",
+        advertiserId: "onu_001",
+        headline: "Design Spaces That Shape Human Experience",
         body:
-          "Claim a premium placement beside searches in your metro area. Simple monthly sponsorships.",
-        badge: "City sponsor",
+          "Explore Olivet Nazarene University's Interior Design program where creativity, functionality, and human-centered environments come together.",
+        cta: "Explore the Program",
+        sponsorUrl:
+          "https://www.olivet.edu/area-study/interior-design-major-minor/",
+        imageUrl: "/assets/sponsors/onu-design.jpg",
+        badge: "Creative Partner",
+        brand: "ONU Interior & Architectural Design"
       };
     }
 
-    if (variant === "C") {
+    if (variant === "D") {
       return {
-        ...common,
-        headline: "Promote a seasonal offer",
+        advertiserId: "open_slot_001",
+        campaignId: "open_inventory",
+        creativeId: "placeholder_d",
+        label: "Featured Opportunity",
+        brand: "Your Brand Here",
+        sponsorUrl: "mailto:advertise@stylegrades.com?subject=Stylegrades Sponsorship Inquiry",
+        headline: "Reach clients actively searching for stylists",
         body:
-          "Highlight specials, events, or new services while clients are actively choosing who to contact.",
-        badge: "Limited spots",
+          "Promote your salon, beauty brand, education program, or local business directly beside stylist search results.",
+        cta: "Advertise with Stylegrades",
+        imageUrl: "/assets/sponsors/advertise-placeholder.jpg",
+        disclaimer: "Premium sponsor placement available",
+      };
+    }
+
+    if (variant === "GENERIC2") {
+      return {
+        advertiserId: "generic_002",
+        campaignId: "open_inventory",
+        creativeId: "placeholder_generic2",
+        label: "Available",
+        brand: "Feature Your Business",
+        sponsorUrl:
+          "mailto:advertise@stylegrades.com?subject=Stylegrades Sponsorship Inquiry",
+        headline: "Promote your business on Stylegrades",
+        body:
+          "Reach clients actively searching for stylists, salons, beauty products, education, and local services.",
+        cta: "Advertise with Stylegrades",
+        imageUrl: "/assets/sponsors/advertise-placeholder.jpg",
+        disclaimer: "Premium sponsor placement available",
       };
     }
 
@@ -80,15 +111,22 @@ export default function AdRailLeft({
 
     if (ad.sponsorUrl) params.set("to", ad.sponsorUrl);
 
-    navigate(`/advertise?${params.toString()}`);
-  }
+    if (
+      ad.sponsorUrl.startsWith("http") ||
+      ad.sponsorUrl.startsWith("mailto:")
+    ) {
+      window.open(ad.sponsorUrl, "_blank");
+    } else {
+      navigate(ad.sponsorUrl);
+    }
+  }  
 
   return (
     <aside
       ref={refEl}
       aria-label="Sponsored content"
       className={[
-        "w-full",
+        "w-full min-h-[365px]",
         "rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden",
       ].join(" ")}
     >
@@ -107,11 +145,11 @@ export default function AdRailLeft({
 
       {/* Creative */}
       {ad.imageUrl ? (
-        <div className="relative aspect-[16/9] bg-[#F0F4F8]">
+        <div className="relative aspect-[16/7] bg-[#F0F4F8]">
           <img
             src={ad.imageUrl}
             alt=""
-            className="absolute inset-0 h-full w-full object-cover"
+            className="absolute inset-0 h-full w-full object-cover object-center"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
@@ -124,11 +162,15 @@ export default function AdRailLeft({
         </div>
       ) : null}
 
-      {/* Copy */}
       <div className={compact ? "p-4" : "p-5"}>
+
+        <div className="text-lg font-bold text-[#102A43] leading-tight">
+          {ad.brand}
+        </div>
+
         <div
           className={[
-            "font-semibold text-[#102A43] leading-snug",
+            "mt-1 text-sm text-[#52606D] leading-snug",
             compact ? "text-base" : "text-lg",
           ].join(" ")}
         >
@@ -138,7 +180,7 @@ export default function AdRailLeft({
         <p
           className={[
             "mt-2 text-sm text-[#52606D] leading-relaxed",
-            "line-clamp-2", // ✅ keeps it short
+            "line-clamp-2",
           ].join(" ")}
         >
           {ad.body}
@@ -149,7 +191,9 @@ export default function AdRailLeft({
           onClick={handleCtaClick}
           className={[
             "inline-flex w-full items-center justify-center font-semibold",
-            compact ? "mt-4 rounded-2xl px-4 py-2.5 text-sm" : "mt-5 rounded-2xl px-4 py-3 text-sm",
+            compact
+              ? "mt-4 rounded-2xl px-4 py-2.5 text-sm"
+              : "mt-5 rounded-2xl px-4 py-3 text-sm",
             "bg-black text-white hover:opacity-90",
           ].join(" ")}
         >
@@ -159,21 +203,9 @@ export default function AdRailLeft({
         <div className="mt-3 text-[11px] text-[#7B8794]">
           {ad.disclaimer || "Sponsored"}
         </div>
+
       </div>
 
-      {/* Bottom “extra” block (removed in compact mode) */}
-      {!compact ? (
-        <div className="px-5 pb-5">
-          <div className="rounded-2xl border border-[#EDF2F7] bg-[#F8FAFC] p-4">
-            <div className="text-xs font-semibold text-[#102A43]">
-              Want visibility in your city?
-            </div>
-            <div className="mt-1 text-xs text-[#52606D]">
-              Featured placements + category sponsorships available.
-            </div>
-          </div>
-        </div>
-      ) : null}
     </aside>
   );
 }

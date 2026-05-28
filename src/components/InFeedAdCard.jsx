@@ -13,49 +13,55 @@ export default function InFeedAdCard({
   const navigate = useNavigate();
 
   const ad = useMemo(() => {
-    const common = {
-      advertiserId: "infeed_001",
-      campaignId: "launch_infeed",
-      creativeId: `infeed_${String(slot).toLowerCase()}`,
-      label: "Sponsored",
-      headline: "Advertise with Stylegrades",
-      body:
-        "Put your salon or brand in front of clients who are actively searching for stylists.",
-      cta: "Learn more",
-      sponsorUrl: "", // Step 3 later
-      imageUrl:
-        "https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=1200&q=60",
-    };
 
-    if (slot === "B") {
+    // HERO SPONSOR — THE MIC BIKE
+    if (slot === "A") {
       return {
-        ...common,
-        advertiserId: "infeed_002",
-        creativeId: "infeed_b",
-        headline: "Sponsor a specialty category",
+        advertiserId: "micbike_001",
+        campaignId: "hero_sponsor",
+        creativeId: "micbike_a",
+        label: "Featured Sponsor",
+        headline: "The Mic Bike - Palm Springs' Original Karaoke Party Bike",
         body:
-          "Own a category like Balayage or Curly Hair and stand out while clients browse.",
-        cta: "Sponsor a category",
-        imageUrl:
-          "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a389?auto=format&fit=crop&w=1200&q=60",
+          "Private rides, birthdays, bachelorettes, and unforgettable nights out - The Mic Bike brings karaoke and downtown Palm Springs together in one rolling party experience.",
+        cta: "Book Your Ride",
+        sponsorUrl: "https://www.themicbike.com/",
+        imageUrl: "/assets/sponsors/micbike.jpg",
       };
     }
 
-    if (slot === "C") {
+    // THE MANE ARBOR
+    if (slot === "B") {
       return {
-        ...common,
-        advertiserId: "infeed_003",
-        creativeId: "infeed_c",
-        headline: "Feature your local offer",
+        advertiserId: "manearbor_001",
+        campaignId: "beauty_partner",
+        creativeId: "manearbor_b",
+        label: "Beauty Partner",
+        headline: "Luxury Hair Extensions + Salon Services",
         body:
-          "Promote a limited-time deal or event in your city—right where decisions happen.",
-        cta: "Request placement",
+          "The Mane Arbor blends elevated color, extensions, and modern salon artistry into a luxury beauty experience designed to help clients feel confident and beautiful.",
+        cta: "View on Instagram",
+        sponsorUrl: "https://www.instagram.com/themanearbor/",
         imageUrl:
           "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=60",
       };
     }
 
-    return common;
+    // ELEMENTS SALON SUITES
+    return {
+      advertiserId: "elements_001",
+      campaignId: "industry_partner",
+      creativeId: "elements_c",
+      label: "Industry Partner",
+      headline: "Luxury Salon & Spa Suites for Independent Professionals",
+      body:
+        "Elements Salon & Spa Suites offers upscale salon spaces designed for beauty professionals who want independence, flexibility, and a premium client experience.",
+      cta: "Explore Suites",
+      sponsorUrl: "https://www.elementsssr.com/",
+      imageUrl:
+        "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=60",
+    };
+
   }, [slot]);
 
   const payload = {
@@ -82,14 +88,20 @@ export default function InFeedAdCard({
 
     if (ad.sponsorUrl) params.set("to", ad.sponsorUrl);
 
-    navigate(`/advertise?${params.toString()}`);
+    if (ad.sponsorUrl) {
+      window.open(ad.sponsorUrl, "_blank", "noopener,noreferrer");
+    } else {
+      navigate(`/advertise?${params.toString()}`);
+    }
   }
 
   return (
     <article
       ref={refEl}
       className={[
-        "rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden",
+        slot === "A"
+          ? "rounded-3xl border-2 border-[#0F172A] bg-white shadow-md overflow-hidden"
+          : "rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden",
         "w-full",
       ].join(" ")}
       aria-label="Sponsored in-feed card"
@@ -103,11 +115,23 @@ export default function InFeedAdCard({
         </div>
 
         {ad.imageUrl ? (
-          <div className="mt-3 relative aspect-[16/9] rounded-2xl overflow-hidden bg-[#F0F4F8]">
+          <div
+            className={[
+              "mt-3 overflow-hidden bg-[#F0F4F8]",
+              slot === "A"
+                ? "relative aspect-[21/10] rounded-2xl"
+                : "relative aspect-[16/9] rounded-2xl",
+            ].join(" ")}
+          >
             <img
               src={ad.imageUrl}
               alt=""
-              className="absolute inset-0 h-full w-full object-cover"
+              className={[
+                "absolute inset-0 h-full w-full",
+                slot === "A"
+                  ? "object-contain bg-white"
+                  : "object-contain bg-white",
+              ].join(" ")}
               loading="lazy"
             />
           </div>

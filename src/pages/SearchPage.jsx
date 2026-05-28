@@ -399,7 +399,6 @@ export default function SearchPage() {
 
   const gridItems = useMemo(() => {
     const items = [];
-    const AD_EVERY = 8;
 
     stylists.forEach((stylist, i) => {
       items.push(
@@ -412,13 +411,14 @@ export default function SearchPage() {
         />
       );
 
-      if ((i + 1) % AD_EVERY === 0) {
+      if (i === 2) {
         items.push(
           <InFeedAdCard
-            key={`ad_${i}`}
+            key="micbike-feature"
             page="search"
             enabled
-            compact
+            compact={false}
+            slot="A"
           />
         );
       }
@@ -675,7 +675,6 @@ export default function SearchPage() {
         </div>  
 
         </section>
-      <InlineSponsoredCard />
 
       <section className="mt-8">
 
@@ -765,10 +764,7 @@ export default function SearchPage() {
           </div>
 
         )}
-          <div className="flex flex-col gap-6 w-full px-0">
-            {gridItems}
-          </div>
-      
+                
       </section>
     </div>
    </div> 

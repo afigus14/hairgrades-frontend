@@ -25,19 +25,19 @@ function PricingComparisonTable({ rows }) {
           </p>
         </div>
 
-        {/* Desktop table */}
-        <div className="mt-6 hidden md:block">
-          <div className="grid grid-cols-4 gap-0 rounded-2xl border border-stone-200">
-            <div className="p-4 text-sm font-semibold text-stone-900 bg-stone-50 rounded-tl-2xl">
+        {/* Responsive comparison table */}
+        <div className="mt-6 overflow-x-auto pb-2">
+          <div className="grid min-w-[560px] grid-cols-4 gap-0 rounded-2xl border border-stone-200">
+            <div className="p-3 text-sm font-semibold text-stone-900 bg-stone-50 rounded-tl-2xl">
               Features
             </div>
-            <div className="p-4 text-sm font-semibold text-stone-900 bg-stone-50 text-center">
+            <div className="p-3 text-sm font-semibold text-stone-900 bg-stone-50 text-center">
               Free
             </div>
-            <div className="p-4 text-sm font-semibold text-stone-900 bg-stone-50 text-center">
+            <div className="p-3 text-sm font-semibold text-stone-900 bg-stone-50 text-center">
               Pro
             </div>
-            <div className="p-4 text-sm font-semibold text-stone-900 bg-stone-50 text-center rounded-tr-2xl">
+            <div className="p-3 text-sm font-semibold text-stone-900 bg-stone-50 text-center rounded-tr-2xl">
               Premium
             </div>
 
@@ -45,7 +45,7 @@ function PricingComparisonTable({ rows }) {
               <React.Fragment key={r.label}>
                 <div
                   className={classNames(
-                    "p-4 text-sm text-stone-800 border-t border-stone-200",
+                    "3 text-sm text-stone-800 border-t border-stone-200",
                     idx % 2 === 0 ? "bg-white" : "bg-stone-50/60"
                   )}
                 >
@@ -101,39 +101,9 @@ function PricingComparisonTable({ rows }) {
           </div>
         </div>
 
-        {/* Mobile comparison (stacked cards) */}
-        <div className="mt-6 grid grid-cols-1 gap-4 md:hidden">
-          {["Starter", "Signature", "Elite"].map((plan) => (
-            <div key={plan} className="rounded-2xl border border-stone-200 bg-stone-50 p-5">
-              <p className="text-sm font-semibold text-stone-900">{plan}</p>
-              <ul className="mt-3 space-y-2 text-sm text-stone-700">
-                {rows.map((r) => {
-                  const ok =
-                    plan === "Free"
-                      ? r.free
-                      : plan === "Pro"
-                      ? r.pro
-                      : r.Premium;
-                  return (
-                    <li key={r.label} className="flex items-start gap-3">
-                      <span
-                        className={classNames(
-                          "mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full border text-xs font-semibold",
-                          ok
-                            ? "border-amber-200 bg-amber-50 text-amber-900"
-                            : "border-stone-200 bg-white text-stone-400"
-                        )}
-                      >
-                        {ok ? "✓" : "—"}
-                      </span>
-                      <span>{r.label}</span>
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
+        <p className="md:hidden mt-2 text-center text-xs text-stone-500">
+          ← Scroll sideways for full comparison →
+        </p>
 
         <p className="mt-5 text-xs text-stone-500">
           “Verified” and review snippets appear only after admin review for accuracy and quality.

@@ -56,8 +56,15 @@ export default function AdminReviewPage() {
           ...s,
           name: s.full_name || s.name,
           fullName: s.full_name || s.fullName,
-          photoUrl: s.photo_urls?.[0] || null,
-          gallery: s.photo_urls || [],
+          photoUrl:
+          s.photo_url ||
+          s.photo_urls?.[0] ||
+          null,
+
+        gallery:
+          s.gallery ||
+          s.photo_urls ||
+          [],
           licenseUrl: s.license_url || s.licenseUrl,
           yearsExperience: s.years_experience || s.yearsExperience,
           bio: s.bio || "",
@@ -104,9 +111,19 @@ export default function AdminReviewPage() {
     try {
       const stylist = applications.find((s) => s.id === id);
 
+      const slug = stylist.fullName
+        ?.toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-")
+        .replace(/[^a-z0-9-]/g, "");
+
       const { error } = await supabase
         .from("stylists")
-        .update({ status: "approved", verified: true })
+        .update({
+          status: "approved",
+          verified: true,
+          profile_slug: slug,
+        })
         .eq("id", id);
 
       if (error) throw error;

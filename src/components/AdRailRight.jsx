@@ -16,36 +16,57 @@ export default function AdRailRight({
   const ad = useMemo(() => {
     const common = {
       advertiserId: "brand_001",
-      campaignId: "premium_products",
+      campaignId: "premium_inventory",
       creativeId: `right_${String(variant).toLowerCase()}`,
-      headline: "Pro Haircare for Pros",
-      body: "Premium products + partner-ready offers designed for working stylists.",
-      cta: "See offers",
+      headline: "Premium Sponsor Placement",
+      brand: "Reserved Sponsor Placement",
+      body:
+        "Reach beauty professionals and clients actively searching for stylists on Stylegrades.",
+      cta: "",
       sponsorUrl: "",
-      imageUrl:
-        "https://images.unsplash.com/photo-1527799820374-dcf8d9d4a389?auto=format&fit=crop&w=900&q=60",
+      imageUrl: "/assets/sponsors/advertise-placeholder.jpg",
       disclaimer: "Sponsored placement",
-      badge: "Partner offer",
-      tag: "For professionals",
+      badge: "",
+      tag: "Advertise",
     };
 
     if (variant === "B") {
       return {
         ...common,
-        headline: "Education + tools that pay off",
+        headline: "Premium visibility for beauty brands",
         body:
           "Sponsor a category and reach clients looking for specific services—right at decision time.",
         badge: "Category sponsor",
       };
     }
 
-    if (variant === "C") {
+    if (variant === "ELEMENTS") {
       return {
         ...common,
-        headline: "Launch your next product",
+        advertiserId: "elements_001",
+        headline: "Luxury Salon & Spa Suites",
         body:
-          "High-visibility placements beside search results. Track clicks and performance over time.",
-        badge: "Limited run",
+          "Upscale salon suites designed for beauty professionals who want independence, flexibility, and a premium client experience.",
+        cta: "Explore Suites",
+        sponsorUrl: "https://www.elementsssr.com/",
+        badge: "Industry Partner",
+        brand: "Elements Salon & Spa Suites",
+        imageUrl: "/assets/sponsors/elements.jpg",
+      };
+    }
+
+    if (variant === "B") {
+      return {
+        ...common,
+        advertiserId: "elements_001",
+        headline: "Luxury Salon & Spa Suites",
+        body:
+          "Upscale salon suites designed for beauty professionals who want independence, flexibility, and a premium client experience.",
+        cta: "Explore Suites",
+        sponsorUrl: "https://www.elementsssr.com/",
+        badge: "Industry Partner",
+        brand: "Elements Salon & Spa Suites",
+        imageUrl: "/assets/sponsors/elements.jpg",
       };
     }
 
@@ -77,7 +98,11 @@ export default function AdRailRight({
 
     if (ad.sponsorUrl) params.set("to", ad.sponsorUrl);
 
-    navigate(`/advertise?${params.toString()}`);
+    if (ad.sponsorUrl) {
+      window.open(ad.sponsorUrl, "_blank");
+    } else {
+      navigate(`/advertise?${params.toString()}`);
+    }
   }
 
   return (
@@ -85,7 +110,7 @@ export default function AdRailRight({
       ref={refEl}
       aria-label="Sponsored content"
       className={[
-        "w-full",
+        "w-full min-h-[360px]",
         "rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden",
       ].join(" ")}
     >
@@ -104,7 +129,7 @@ export default function AdRailRight({
       </div>
 
       {ad.imageUrl ? (
-        <div className="relative aspect-[16/9] bg-[#F0F4F8]">
+        <div className="relative aspect-[16/7] bg-[#F0F4F8]">
           <img
             src={ad.imageUrl}
             alt=""
@@ -122,9 +147,13 @@ export default function AdRailRight({
       ) : null}
 
       <div className={compact ? "p-4" : "p-5"}>
+        <div className="text-lg font-bold text-[#102A43] leading-tight">
+          {ad.brand || "Reserved Sponsor Placement"}
+        </div>
+
         <div
           className={[
-            "font-semibold text-[#102A43] leading-snug",
+            "mt-1 text-sm text-[#52606D] leading-snug",
             compact ? "text-base" : "text-lg",
           ].join(" ")}
         >
@@ -135,37 +164,26 @@ export default function AdRailRight({
           {ad.body}
         </p>
 
-        <a
-          href="/advertise"
-          onClick={handleCtaClick}
-          className={[
-            "inline-flex w-full items-center justify-center font-semibold",
-            compact
-              ? "mt-4 rounded-2xl px-4 py-2.5 text-sm"
-              : "mt-5 rounded-2xl px-4 py-3 text-sm",
-            "border border-[#D9E2EC] bg-white text-[#102A43] hover:bg-[#F0F4F8]",
-          ].join(" ")}
-        >
-          {ad.cta}
-        </a>
+        {ad.sponsorUrl && ad.brand === "Elements Salon & Spa Suites" ? (
+          <a
+            href={ad.sponsorUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex w-full items-center justify-center rounded-2xl border border-[#D9E2EC] bg-white px-4 py-3 text-sm font-semibold text-[#102A43] hover:bg-[#F0F4F8]"
+          >
+            Explore Suites
+          </a>
+        ) : (
+          <div className="mt-5 rounded-2xl bg-[#F8FAFC] px-4 py-3 text-center text-sm font-medium text-[#486581]">
+            Advertise your business here.
+          </div>
+        )}
 
         <div className="mt-3 text-[11px] text-[#7B8794]">
           {ad.disclaimer || "Sponsored"}
         </div>
       </div>
 
-      {!compact ? (
-        <div className="px-5 pb-5">
-          <div className="rounded-2xl border border-[#EDF2F7] bg-[#F8FAFC] p-4">
-            <div className="text-xs font-semibold text-[#102A43]">
-              Sponsor a category
-            </div>
-            <div className="mt-1 text-xs text-[#52606D]">
-              e.g. “Balayage” or “Curly Hair” — claim exclusive placement.
-            </div>
-          </div>
-        </div>
-      ) : null}
     </aside>
   );
 }

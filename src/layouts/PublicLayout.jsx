@@ -38,13 +38,13 @@ function TopNav() {
   }
 
   const linkBase =
-    "text-[13px] font-semibold px-2 py-2 rounded-xl transition hover:bg-white/30 focus:outline-none focus:ring-2 focus:ring-white/50";
+    "text-[13px] font-semibold px-2 py-2 rounded-xl transition hover:bg-white/10 hover:text-[#F7FAFF] focus:outline-none focus:ring-2 focus:ring-white/50";
 
-  const linkActive = "bg-white/40 text-[#102A43]";
-  const linkIdle = "text-[#102A43]";
+  const linkActive = "bg-white/10 text-[#F7FAFF]";
+  const linkIdle = "text-[#F7FAFF]/80";
 
   return (
-      <header className="sticky top-0 z-50 backdrop-blur bg-[#9FD0D6]/85 border-b border-white/25">
+      <header className="sticky top-0 z-50 bg-[#101A2A] border-b border-white/10 shadow-sm">
         <div className="mx-auto w-full max-w-[1280px] px-4 lg:px-6">
           <div className="flex items-center justify-between py-2.5">
 
@@ -52,12 +52,12 @@ function TopNav() {
             <div className="flex items-baseline gap-3 mr-10 lg:mr-16 shrink-0">
 
               <NavLink to="/">
-                <span className="text-2xl md:text-3xl font-serif font-bold text-[#102A43]">
+                <span className="text-2xl md:text-3xl font-serif font-bold text-[#F7FAFF]">
                   Stylegrades
                 </span>
               </NavLink>
 
-              <span className="hidden sm:inline text-sm md:text-base text-[#102A43] leading-tight">
+              <span className="hidden sm:inline text-sm md:text-base text-[#F7FAFF]/80 leading-tight">
                 Find a stylist that will make you feel good about your hair.
               </span>
 
@@ -270,7 +270,7 @@ function pageFromPath(pathname) {
 }
 
 function LeftRail({ page }) {
-  const slots = ["A", "B", "C", "D"];
+  const slots = ["A", "B", "D", "GENERIC2"];
 
   return (
     <div className="w-full min-w-0 space-y-5">
@@ -290,7 +290,7 @@ function LeftRail({ page }) {
 }
 
 function RightRail({ page }) {
-  const slots = ["A", "B", "C", "D"];
+  const slots = ["ELEMENTS", "A", "B", "C"];
 
   return (
     <div className="w-full min-w-0 space-y-5">
@@ -328,6 +328,67 @@ export default function PublicLayout() {
       <TopNav />
 
       <div className="mx-auto w-full max-w-[1280px] px-4 lg:px-6">
+
+      {/* Featured Sponsor Banner */}
+      <div className="mb-5">
+        <div className="overflow-hidden rounded-3xl border border-[#E9B949] bg-[#FDFCF9] shadow-sm max-w-full">
+
+          <div className="flex items-center justify-between gap-8 px-6 xl:px-8 py-5">
+
+            {/* LEFT SIDE */}
+            <div className="flex items-center gap-6">
+
+              {/* Badge */}
+              <div className="flex shrink-0 items-center rounded-2xl border border-[#F0D58A] bg-[#FFF7E1] px-5 py-3 text-[#B7791F]">
+                <span className="mr-2 text-lg">★</span>
+
+                <div className="text-xs font-semibold uppercase tracking-[0.16em] leading-tight">
+                  Featured<br />
+                  Sponsor
+                </div>
+              </div>
+
+              {/* Image */}
+              <img
+                src="/assets/sponsors/micbike.jpg"
+                alt="The Mic Bike"
+                className="h-24 w-48 rounded-2xl object-cover shrink-0"
+              />
+
+              {/* Text */}
+              <div>
+                <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7B8794]">
+                  Premium placement
+                </div>
+
+                <h2 className="mt-1 text-3xl font-semibold text-[#102A43]">
+                  The Mic Bike
+                </h2>
+
+                <p className="mt-1 max-w-2xl text-[#52606D] leading-relaxed">
+                  Private rides, birthdays, bachelorettes, and unforgettable nights out - 
+                  The Mic Bike brings karaoke and downtown Palm Springs together in one rolling party.
+                </p>
+              </div>
+            </div>
+
+            {/* RIGHT SIDE BUTTON */}
+            <div className="shrink-0 border-l border-[#E9B949] pl-8">
+              <a
+                href="https://www.themicbike.com/"
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center rounded-2xl bg-[#102A43] px-8 py-4 text-base font-semibold text-white hover:opacity-95"
+              >
+                Visit The Mic Bike
+              </a>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      
         <div
           className={[
             "grid gap-5",
@@ -335,7 +396,7 @@ export default function PublicLayout() {
               ? "grid-cols-1"
               : "grid-cols-1 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)_minmax(0,260px)] xl:grid-cols-[minmax(0,300px)_minmax(0,1fr)_minmax(0,300px)]",
             "items-start",
-            "py-5",
+            "pt-0 pb-5",
           ].join(" ")}
         >
           {!isAdminPage && (

@@ -9,10 +9,10 @@ function useQuery() {
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
-function TierCard({ title, price, bullets, badge, ctaLabel, to }) {
+function TierCard({ title, price, bullets, badge, ctaLabel, href }) {
   return (
-    <div className="rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden">
-      <div className="p-6">
+    <div className="flex h-full flex-col rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden">
+      <div className="flex h-full flex-col p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
             <h3 className="text-lg md:text-xl font-semibold text-[#102A43]">
@@ -39,17 +39,13 @@ function TierCard({ title, price, bullets, badge, ctaLabel, to }) {
           ))}
         </ul>
 
-        <div className="mt-6">
-          <Link
-            to={to}
+        <div className="mt-auto pt-6">
+          <a
+            href={href}
             className="inline-flex w-full items-center justify-center rounded-2xl bg-[#102A43] px-4 py-3 text-sm font-semibold text-white hover:opacity-95"
           >
             {ctaLabel}
-          </Link>
-        </div>
-
-        <div className="mt-3 text-[11px] text-[#7B8794]">
-          No long-term contracts. We’ll help you pick the best placement.
+          </a>
         </div>
       </div>
     </div>
@@ -89,6 +85,7 @@ Thanks!
 
   return (
     <div className="w-full min-w-0 pb-10">
+
       {/* Hero */}
       <section className="rounded-3xl border border-[#1F3A4D] bg-[#101A2A] px-6 py-8 shadow-lg">
         <div className="max-w-3xl">
@@ -102,39 +99,15 @@ Thanks!
             people are deciding who to contact.
           </p>
 
-          <div className="mt-6 flex flex-col sm:flex-row gap-3">
+          <div className="mt-10 flex justify-center">
             <a
               href={mailto}
-              className="inline-flex items-center justify-center rounded-2xl bg-[#F4A731] px-5 py-3 text-sm font-semibold text-black shadow hover:opacity-95"
+              className="flex w-full max-w-[520px] items-center justify-center rounded-2xl bg-[#F6AE2D] px-8 py-5 text-xl font-semibold text-[#102A43] shadow-sm transition hover:brightness-95"
             >
-              Email us to sponsor
+              Email us to claim your ad location
             </a>
-
-            <a
-              href="#placements"
-              className="inline-flex items-center justify-center rounded-2xl border border-[#30465B] bg-transparent px-5 py-3 text-sm font-semibold text-[#F7FAFF] hover:bg-[#0E1625]"
-            >
-              See placements
-            </a>
-
-            {/* Optional: after email, you can also click through to sponsor site */}
-            {sponsorTo ? (
-              <a
-                href={sponsorTo}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-2xl border border-[#30465B] bg-transparent px-5 py-3 text-sm font-semibold text-[#F7FAFF] hover:bg-[#0E1625]"
-                title="Sponsor website"
-              >
-                Continue to sponsor website
-              </a>
-            ) : null}
           </div>
 
-          <div className="mt-4 text-xs text-[#9FB3C8]">
-            Tip: Start with a city placement or a category sponsorship for the
-            fastest results.
-          </div>
         </div>
       </section>
 
@@ -143,12 +116,8 @@ Thanks!
         <h2 className="text-xl md:text-2xl font-serif text-[#102A43]">
           Sponsorship options
         </h2>
-        <p className="mt-2 text-sm text-[#52606D]">
-          Choose a starting package. Later we can add sponsor landing pages and
-          advanced targeting.
-        </p>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-3">
+        <div className="mt-6 grid gap-10 md:grid-cols-2">
           <TierCard
             title="Local Rail Placement"
             price="Best for salons + local services"
@@ -157,23 +126,14 @@ Thanks!
               "Shown next to search + directory pages",
               "High visibility while users browse stylists",
               "Great for city-based campaigns",
-              "Simple creative: image + headline + CTA",
+              "Easy setup with image, headline, and link",
             ]}
             ctaLabel="Sponsor a rail spot"
-            to={`/advertise?placement=Rail%20Placement`}
-          />
-
-          <TierCard
-            title="Category Sponsorship"
-            price="Best for specialty targeting"
-            bullets={[
-              "Exclusive placement for a specialty (e.g., Balayage, Curly Hair)",
-              "Ideal for educators + premium product brands",
-              "Pairs well with verified review messaging",
-              "Add your offer + brand badge",
-            ]}
-            ctaLabel="Sponsor a category"
-            to={`/advertise?placement=Category%20Sponsorship`}
+            href={`mailto:${EMAIL}?subject=${encodeURIComponent(
+              "Stylegrades Rail Placement Inquiry"
+            )}&body=${encodeURIComponent(
+              "Hi Stylegrades,\n\nI would like to sponsor a rail spot on Stylegrades.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
+            )}`}
           />
 
           <TierCard
@@ -182,11 +142,16 @@ Thanks!
             bullets={[
               "Top-of-page visibility for limited spots",
               "Great for launches, seasonal promos, events",
+              "Displayed directly within stylist browsing",
               "Optional: “Verified partner” badge",
               "Add tracking + reporting",
             ]}
             ctaLabel="Request featured placement"
-            to={`/advertise?placement=Featured%20Placement`}
+            href={`mailto:${EMAIL}?subject=${encodeURIComponent(
+              "Stylegrades Featured Placement Inquiry"
+            )}&body=${encodeURIComponent(
+              "Hi Stylegrades,\n\nI would like to run a featured placement ad on Stylegrades.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
+            )}`}
           />
         </div>
       </section>
@@ -247,10 +212,6 @@ Thanks!
             </Link>
           </div>
 
-          <div className="mt-4 text-xs text-[#7B8794]">
-            For now, ad CTAs route through the Stylegrades “Advertise” flow. Later,
-            sponsors can link directly to their own websites.
-          </div>
         </div>
       </section>
     </div>

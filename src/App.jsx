@@ -28,38 +28,43 @@ import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
+import ScrollToTop from "./components/ScrollToTop";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<PublicLayout />}>
+    <>
+      <ScrollToTop />
 
-        {/* ✅ HOME */}
-        <Route index element={<HomePage />} />
+      <Routes>
+        <Route path="/" element={<PublicLayout />}>
 
-        {/* ✅ ALL CHILD ROUTES — NO LEADING SLASH */}
-        <Route path="admin/dashboard" element={<AdminDashboardPage />} />
-        <Route path="search" element={<SearchPage />} />
-        <Route path="profile/:id" element={<ProfilePage />} />
-        <Route path="pricing" element={<PricingPage />} />
-        <Route path="join" element={<JoinAsStylist />} />
-        <Route path="about" element={<AboutPage />} />
-        <Route path="contact" element={<ContactPage />} />
-        <Route path="advertise" element={<AdvertisePage />} />
-        <Route path="login" element={<StylistLoginPage />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="edit-profile" element={<EditProfilePage />} />
-        <Route path="admin/review" element={<AdminReviewPage />} />
-        <Route path="admin-review" element={<AdminReviewPage />} />
-        <Route path="dashboard/billing" element={<BillingPage />} />
-        <Route path="reviews" element={<ReviewsPage />} />
-        <Route path="update-password" element={<UpdatePasswordPage />} />
-        <Route path="privacy" element={<PrivacyPage />} />
-        <Route path="terms" element={<TermsPage />} />
-        <Route path="refund-policy" element={<RefundPolicyPage />} />
+          {/* ✅ HOME */}
+          <Route index element={<HomePage />} />
 
-      </Route>
-    </Routes>
+          {/* ✅ ALL CHILD ROUTES — NO LEADING SLASH */}
+          <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="profile/:id" element={<ProfilePage />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="join" element={<JoinAsStylist />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="advertise" element={<AdvertisePage />} />
+          <Route path="login" element={<StylistLoginPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="edit-profile" element={<EditProfilePage />} />
+          <Route path="admin/review" element={<AdminReviewPage />} />
+          <Route path="admin-review" element={<AdminReviewPage />} />
+          <Route path="dashboard/billing" element={<BillingPage />} />
+          <Route path="reviews" element={<ReviewsPage />} />
+          <Route path="update-password" element={<UpdatePasswordPage />} />
+          <Route path="privacy" element={<PrivacyPage />} />
+          <Route path="terms" element={<TermsPage />} />
+          <Route path="refund-policy" element={<RefundPolicyPage />} />
+
+        </Route>
+      </Routes>
+    </>
   );
 }
 

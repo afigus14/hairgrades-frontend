@@ -7,13 +7,15 @@ export default function InlineSponsoredCard({
   page = "search",
   stylistId = "",
   enabled = true,
-  ad = {
-    advertiserId: "salon_002",
-    campaignId: "featured_slot",
-    creativeId: "inline_1",
-    headline: "Sponsored placement",
-    body: "Reserve a featured spot in your city.",
-    cta: "Inquire",
+    ad = {
+    advertiserId: "micbike_001",
+    campaignId: "hero_sponsor",
+    creativeId: "micbike_inline",
+    headline: "Palm Springs’ Original Karaoke Party Bike",
+    body:
+      "Private rides, birthdays, bachelorettes, and unforgettable nights out—The Mic Bike brings karaoke and downtown Palm Springs together in one rolling party experience.",
+    cta: "Book Your Ride",
+    url: "https://www.themicbike.com/",
   },
 }) {
   const loc = useLocation();
@@ -32,9 +34,13 @@ export default function InlineSponsoredCard({
 
   const refEl = useAdImpression({ enabled, payload });
 
-  function handleClick(e) {
-    e.preventDefault();
+  function handleClick() {
     trackAdClick(payload);
+
+    if (ad.url) {
+      window.open(ad.url, "_blank", "noopener,noreferrer");
+      return;
+    }
 
     const params = new URLSearchParams({
       src: "inline_feed",
