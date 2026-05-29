@@ -95,7 +95,6 @@ export default function EditProfilePage() {
     email: "",
     instagram: "",
     website: "",
-    instagram: "",
     facebook: "",
     tiktok: "",
     pinterest: "",
