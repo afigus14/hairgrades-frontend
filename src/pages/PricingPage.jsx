@@ -221,7 +221,7 @@ export default function PricingPage() {
       <div className="h-2" />
 
       {/* Hero */}
-      <section className="px-4 pt-10 pb-8">
+      <section className="px-4 pt-2 pb-8">
         <div className="mx-auto max-w-6xl">
           <div className="rounded-3xl bg-slate-900 text-white shadow-xl">
             <div className="p-8 sm:p-12">

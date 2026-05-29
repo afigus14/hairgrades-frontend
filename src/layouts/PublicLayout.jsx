@@ -333,41 +333,41 @@ export default function PublicLayout() {
       <div className="mb-5">
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl border border-[#E9B949] bg-[#FDFCF9] shadow-sm max-w-full">
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 lg:gap-6 px-4 py-4 lg:px-6 lg:py-5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-6 px-4 py-3 lg:px-6 lg:py-5">
 
             {/* LEFT SIDE */}
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-5 w-full">
 
               {/* Badge */}
-              <div className="flex shrink-0 items-center rounded-2xl border border-[#F0D58A] bg-[#FFF7E1] px-4 py-2 text-[#B7791F]">
-                <span className="mr-2 text-lg">★</span>
+              <div className="flex shrink-0 items-center gap-2 rounded-xl border border-[#F0D58A] bg-[#FFF7E1] px-3 py-1.5 text-[#B7791F]">
+                <span className="text-lg">★</span>
 
-                <div className="text-xs font-semibold uppercase tracking-[0.16em] leading-tight">
+                <div className="text-center text-xs font-semibold uppercase tracking-[0.16em] leading-tight">
                   Featured<br />
-                  Sponsor
+                  Advertiser
                 </div>
               </div>
 
               {/* Image */}
               <img
-                src="/assets/sponsors/micbike.jpg"
-                alt="The Mic Bike"
+                src="/assets/sponsors/advertise-placeholder.jpg"
+                alt="Advertise on Stylegrades"
                 className="h-24 w-48 rounded-2xl object-cover shrink-0"
               />
 
               {/* Text */}
               <div className="text-center lg:text-left">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7B8794]">
-                  Premium placement
+                  Reserve this Placement
                 </div>
 
-                <h2 className="mt-1 text-xl md:text-3xl font-semibold text-[#102A43]">
-                  The Mic Bike
+                <h2 className="mt-1 text-lg md:text-3xl font-semibold text-[#102A43]">
+                  Feature Your Business
                 </h2>
 
-                <p className="mt-1 max-w-2xl text-sm md:text-base text-[#52606D] leading-relaxed">
-                  Private rides, birthdays, bachelorettes, and unforgettable nights out - 
-                  The Mic Bike brings karaoke and downtown Palm Springs together in one rolling party.
+                <p className="mt-1 max-w-2xl text-sm md:text-base text-[#52606D] leading-normal">
+                  Put your salon, beauty brand, school, product, or local business in front of
+                  clients actively searching for stylists on Stylegrades.
                 </p>
               </div>
             </div>
@@ -375,12 +375,10 @@ export default function PublicLayout() {
             {/* RIGHT SIDE BUTTON */}
             <div className="w-full lg:w-auto flex justify-center lg:block lg:border-l border-[#E9B949] lg:pl-8">
               <a
-                href="https://www.themicbike.com/"
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-6 py-3 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
+                href="/advertise"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2.5 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
               >
-                Visit The Mic Bike
+                Advertise with Stylegrades
               </a>
             </div>
 
