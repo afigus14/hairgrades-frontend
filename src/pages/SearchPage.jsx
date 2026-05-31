@@ -270,12 +270,25 @@ export default function SearchPage() {
 
   const specialtyOptions = useMemo(() => {
     const set = new Set();
+
     allStylists.forEach((s) => {
-      if (s.specialty) set.add(String(s.specialty).trim());
-      safeArray(s.specialties).forEach((x) => set.add(String(x).trim()));
+      if (s.specialty) {
+        set.add(String(s.specialty).trim().toLowerCase());
+      }
+
+      safeArray(s.specialties).forEach((x) => {
+        set.add(String(x).trim().toLowerCase());
+      });
     });
 
-    return ["all", ...Array.from(set).sort()];
+    return [
+      "all",
+      ...Array.from(set)
+        .sort()
+        .map(
+          (s) => s.charAt(0).toUpperCase() + s.slice(1)
+        ),
+    ];
   }, [allStylists]);
 
   const stylists = useMemo(() => {

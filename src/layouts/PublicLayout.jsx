@@ -314,6 +314,7 @@ export default function PublicLayout() {
   const page = pageFromPath(loc.pathname);
 
   const isAdminPage = loc.pathname.includes("/admin");
+  const [featuredAdvertiser, setFeaturedAdvertiser] = useState(null);
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -321,6 +322,23 @@ export default function PublicLayout() {
     if (hash.includes("access_token") && hash.includes("type=recovery")) {
       window.location.replace("/#/update-password");
     }
+  }, []);
+
+  useEffect(() => {
+    async function loadFeaturedAdvertiser() {
+      const { data, error } = await supabase
+        .from("advertisers")
+        .select("*")
+        .eq("status", "approved")
+        .order("priority_level", { ascending: false })
+        .limit(1);
+
+      if (!error && data?.length) {
+        setFeaturedAdvertiser(data[0]);
+      }
+    }
+
+    loadFeaturedAdvertiser();
   }, []);
 
   return (
@@ -350,8 +368,14 @@ export default function PublicLayout() {
 
               {/* Image */}
               <img
-                src="/assets/sponsors/advertise-placeholder.jpg"
-                alt="Advertise on Stylegrades"
+                src={
+                  featuredAdvertiser?.creative_url ||
+                  "/assets/sponsors/advertise-placeholder.jpg"
+                }
+                alt={
+                  featuredAdvertiser?.company_name ||
+                  "Advertise on Stylegrades"
+                }
                 className="h-24 w-48 rounded-2xl object-cover shrink-0"
               />
 
