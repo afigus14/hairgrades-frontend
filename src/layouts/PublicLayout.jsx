@@ -351,7 +351,7 @@ export default function PublicLayout() {
       <div className="mb-5">
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl border border-[#E9B949] bg-[#FDFCF9] shadow-sm max-w-full">
 
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 lg:gap-6 px-4 py-3 lg:px-6 lg:py-5">
+          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-6 px-4 py-2 lg:px-6 lg:py-5">
 
             {/* LEFT SIDE */}
             <div className="flex flex-col lg:flex-row items-center lg:items-start gap-5 w-full">
@@ -376,7 +376,7 @@ export default function PublicLayout() {
                   featuredAdvertiser?.company_name ||
                   "Advertise on Stylegrades"
                 }
-                className="h-24 w-48 rounded-2xl object-cover shrink-0"
+                className="h-16 w-32 lg:h-24 lg:w-48 rounded-2xl object-cover shrink-0"
               />
 
               {/* Text */}
@@ -389,7 +389,7 @@ export default function PublicLayout() {
                   Feature Your Business
                 </h2>
 
-                <p className="mt-1 max-w-2xl text-sm md:text-base text-[#52606D] leading-normal">
+                <p className="hidden lg:block mt-1 max-w-2xl text-sm md:text-base text-[#52606D] leading-normal">
                   Put your salon, beauty brand, school, product, or local business in front of
                   clients actively searching for stylists on Stylegrades.
                 </p>
@@ -400,7 +400,7 @@ export default function PublicLayout() {
             <div className="w-full lg:w-auto flex justify-center lg:block lg:border-l border-[#E9B949] lg:pl-8">
               <a
                 href="/advertise"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2.5 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
               >
                 Advertise with Stylegrades
               </a>

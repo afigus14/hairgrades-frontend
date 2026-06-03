@@ -181,28 +181,43 @@ export default function AdminReviewPage() {
 
   async function approveReview(id) {
 
-    console.log("APPROVING REVIEW:", id);
+    const review = reviews.find(
+      (r) => r.id === id
+    );
 
     const { data, error } = await supabase
       .from("reviews")
       .update({
-        status: "approved"
+        status: "approved",
       })
       .eq("id", id)
       .select();
 
-    console.log("SUPABASE RESPONSE:", data);
-    console.log("SUPABASE ERROR:", error);
-
     if (error) {
-
       alert(
         error.message ||
         "Failed to approve review."
       );
-
       return;
     }
+
+    await fetch(
+      "https://stylegrades-api.vercel.app/api/send-review-notification",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "approved",
+          reviewerName: review?.reviewer_name,
+          reviewerEmail: review?.reviewer_email,
+          stylistName: review?.stylist?.full_name,
+          reviewText: review?.review_text,
+          rating: review?.rating,
+        }),
+      }
+    );
 
     alert("Review approved!");
 
@@ -210,6 +225,11 @@ export default function AdminReviewPage() {
   }
 
   async function rejectReview(id) {
+
+    const review = reviews.find(
+      (r) => r.id === id
+    );
+
     const { error } = await supabase
       .from("reviews")
       .delete()
@@ -219,6 +239,24 @@ export default function AdminReviewPage() {
       console.error(error);
       return;
     }
+
+    await fetch(
+      "https://stylegrades-api.vercel.app/api/send-review-notification",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          action: "rejected",
+          reviewerName: review?.reviewer_name,
+          reviewerEmail: review?.reviewer_email,
+          stylistName: review?.stylist?.full_name,
+          reviewText: review?.review_text,
+          rating: review?.rating,
+        }),
+      }
+    );
 
     setReviews((prev) =>
       prev.filter((r) => r.id !== id)
