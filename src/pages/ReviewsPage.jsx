@@ -4,7 +4,73 @@ import { supabase } from "../lib/supabase";
 export default function ReviewsPage() {
   const [reviews, setReviews] = useState([]);
   const [user, setUser] = useState(null);
+  const [responses, setResponses] = useState({});
 
+  async function saveResponse(reviewId) {
+    const response = responses[reviewId];
+
+    if (!response?.trim()) {
+      alert("Please enter a response first.");
+      return;
+    }
+
+    const review = reviews.find(
+      (r) => r.id === reviewId
+    );
+
+    const { error } = await supabase
+      .from("reviews")
+      .update({
+        stylist_response: response,
+        stylist_response_date:
+          new Date().toISOString(),
+      })
+      .eq("id", reviewId);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    await fetch(
+      "https://stylegrades-api.vercel.app/api/send-review-response",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          reviewerName:
+            review.reviewer_name,
+          reviewerEmail:
+            review.reviewer_email,
+          stylistName: 
+            "Your stylist",
+          reviewText:
+            review.review_text,
+          stylistResponse:
+            response,
+        }),
+      }
+    );
+
+    setReviews((prev) =>
+      prev.map((r) =>
+        r.id === reviewId
+          ? {
+              ...r,
+              stylist_response: response,
+              stylist_response_date:
+                new Date().toISOString(),
+            }
+          : r
+      )
+    );
+
+    alert("Response saved!");
+  }
+  
   useEffect(() => {
     async function loadData() {
       const { data } = await supabase.auth.getUser();
@@ -37,6 +103,17 @@ export default function ReviewsPage() {
       }
 
       setReviews(reviewData || []);
+
+      const existingResponses = {};
+
+      (reviewData || []).forEach((review) => {
+        if (review.stylist_response) {
+          existingResponses[review.id] =
+            review.stylist_response;
+        }
+      });
+
+      setResponses(existingResponses);
     }
 
     loadData();
@@ -81,17 +158,33 @@ export default function ReviewsPage() {
                   {review.review_text}
                 </p>
 
-                {review.stylist_response && (
-                  <div className="mt-3 border-l-4 border-[#F4A731] pl-4">
-                    <div className="font-semibold text-[#102A43] mb-1">
-                      Your Response
-                    </div>
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Your Response
+                  </label>
 
-                    <p className="text-gray-700">
-                      {review.stylist_response}
-                    </p>
-                  </div>
-                )}
+                  <textarea
+                    rows={4}
+                    value={responses[review.id] || ""}
+                    onChange={(e) =>
+                      setResponses((prev) => ({
+                        ...prev,
+                        [review.id]: e.target.value,
+                      }))
+                    }
+                    placeholder="Write a response to this review..."
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => saveResponse(review.id)}
+                    className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  >
+                    Save Response
+                  </button>
+                </div>
+
               </div>
             ))}
           </div>
