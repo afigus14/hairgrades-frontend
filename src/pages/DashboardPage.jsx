@@ -7,6 +7,69 @@ export default function DashboardPage() {
   const [stylist, setStylist] = useState(null);
   const [reviews, setReviews] = useState([]);
 
+  const [clientName, setClientName] = useState("");
+  const [clientEmail, setClientEmail] = useState("");
+
+  async function sendInvitation() {
+    if (!clientName || !clientEmail) {
+      alert("Please enter a client name and email.");
+      return;
+    }
+
+    if (!stylist?.id) {
+      alert("Stylist record not found.");
+      return;
+    }
+
+    const token =
+      crypto.randomUUID() +
+      "-" +
+      Date.now();
+
+    const { error } = await supabase
+      .from("review_invitations")
+      .insert([
+        {
+          stylist_id: stylist.id,
+          client_name: clientName,
+          client_email: clientEmail,
+          token,
+        },
+      ]);
+
+    if (error) {
+      console.error(error);
+      alert(error.message);
+      return;
+    }
+
+    console.log("INVITATION TOKEN:", token);
+
+    await fetch(
+      "https://stylegrades-api.vercel.app/api/send-review-invitation",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          clientName,
+          clientEmail,
+          stylistName:
+            stylist?.full_name ||
+            stylist?.name ||
+            "Your Stylist",
+          token,
+        }),
+      }
+    );
+
+    alert("Invitation created!");
+
+    setClientName("");
+    setClientEmail("");
+  }
+  
   useEffect(() => {
     async function loadUser() {
       const { data } = await supabase.auth.getUser();
@@ -40,45 +103,6 @@ export default function DashboardPage() {
 
     loadUser();
   }, []);
-
-  async function handleUpgrade(plan) {
-    try {
-      const { data } = await supabase.auth.getUser();
-      const user = data?.user;
-
-      if (!user) {
-        alert("You must be logged in");
-        return;
-      }
-
-      const res = await fetch(
-        "https://stylegrades-api.vercel.app/api/create-checkout-session",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            plan,
-            user_id: user.id,
-            email: user.email,
-          }),
-        }
-      );
-
-      const dataRes = await res.json();
-
-      if (!res.ok) {
-        throw new Error(dataRes.error || "Checkout failed");
-      }
-
-      window.location.href = dataRes.url;
-
-    } catch (err) {
-      console.error("❌ Upgrade error:", err);
-      alert(err.message || "Something went wrong");
-    }
-  }
 
   if (!user) {
     return (
@@ -121,35 +145,13 @@ export default function DashboardPage() {
                 </p>
               </div>
 
-              <div className="flex gap-2">
-
-                {tier === "free" && (
-                  <>
-                    <button
-                      onClick={() => handleUpgrade("pro")}
-                      className="px-3 py-1 text-xs border border-[#1F6FEB] rounded-full text-[#1F6FEB]"
-                    >
-                      Pro
-                    </button>
-
-                    <button
-                      onClick={() => handleUpgrade("premium")}
-                      className="px-3 py-1 text-xs bg-[#1F6FEB] text-white rounded-full"
-                    >
-                      Premium
-                    </button>
-                  </>
-                )}
-
-                {tier === "pro" && (
-                  <button
-                    onClick={() => handleUpgrade("premium")}
-                    className="px-3 py-1 text-xs bg-[#1F6FEB] text-white rounded-full"
-                  >
-                    Upgrade to Premium
-                  </button>
-                )}
-
+              <div>
+                <Link
+                  to="/dashboard/billing"
+                  className="px-3 py-2 text-sm bg-[#1F6FEB] text-white rounded-lg font-medium"
+                >
+                  Manage Subscription
+                </Link>
               </div>
             </div>
 
@@ -174,6 +176,44 @@ export default function DashboardPage() {
             Billing
           </Link>
 
+        </div>
+
+        <div className="mt-8 border border-[#D9E2EC] rounded-2xl p-6">
+          <h2 className="text-xl font-semibold text-[#102A43] mb-4">
+            Invite Client to Leave a Review
+          </h2>
+
+          <div className="space-y-4">
+
+            <input
+              type="text"
+              placeholder="Client Name"
+              value={clientName}
+              onChange={(e) =>
+                setClientName(e.target.value)
+              }
+              className="w-full border rounded-lg px-3 py-2"
+            />
+
+            <input
+              type="email"
+              placeholder="Client Email"
+              value={clientEmail}
+              onChange={(e) =>
+                setClientEmail(e.target.value)
+              }
+              className="w-full border rounded-lg px-3 py-2"
+            />
+
+            <button
+              type="button"
+              onClick={sendInvitation}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
+            >
+              Send Invitation
+            </button>
+
+          </div>
         </div>
       </div>
 
