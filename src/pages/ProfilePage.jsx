@@ -102,17 +102,20 @@ export default function ProfilePage() {
         setStylist(data);
         document.title =
           `${data.full_name} | Stylegrades`;
+
+        // Load reviews using the actual stylist UUID
+        fetchReviews(data.id);
       }
 
       setLoading(false);
     }
 
-    async function fetchReviews() {
+    async function fetchReviews(stylistId) {
 
       const { data, error } = await supabase
         .from("reviews")
         .select("*")
-        .eq("stylist_id", id)
+        .eq("stylist_id", stylistId)
         .eq("status", "approved")
         .order("created_at", {
           ascending: false,
@@ -129,7 +132,6 @@ export default function ProfilePage() {
     }
 
     fetchStylist();
-    fetchReviews();
   }, [id]);
 
   if (loading) {

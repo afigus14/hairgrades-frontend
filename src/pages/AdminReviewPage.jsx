@@ -186,6 +186,8 @@ export default function AdminReviewPage() {
       (r) => r.id === id
     );
 
+    const stylistId = review?.stylist_id;
+
     const { data, error } = await supabase
       .from("reviews")
       .update({
@@ -219,6 +221,31 @@ export default function AdminReviewPage() {
         }),
       }
     );
+
+    // Recalculate rating and review count
+    const { data: approvedReviews } = await supabase
+      .from("reviews")
+      .select("rating")
+      .eq("stylist_id", stylistId)
+      .eq("status", "approved");
+
+    const reviewCount = approvedReviews?.length || 0;
+
+    const averageRating =
+      reviewCount > 0
+        ? approvedReviews.reduce(
+            (sum, r) => sum + Number(r.rating || 0),
+            0
+          ) / reviewCount
+        : 0;
+
+    await supabase
+      .from("stylists")
+      .update({
+        reviews_count: reviewCount,
+        rating: averageRating,
+      })
+      .eq("id", stylistId);
 
     alert("Review approved!");
 
