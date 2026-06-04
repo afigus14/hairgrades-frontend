@@ -9,12 +9,34 @@ export default function ReviewsPage() {
     async function loadData() {
       const { data } = await supabase.auth.getUser();
       const user = data?.user;
+
       setUser(user);
 
       if (!user) return;
 
-      // 🔥 later we will connect real reviews
-      setReviews([]);
+      const { data: stylistData } = await supabase
+        .from("stylists")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (!stylistData) return;
+
+      const { data: reviewData, error } = await supabase
+        .from("reviews")
+        .select("*")
+        .eq("stylist_id", stylistData.id)
+        .eq("status", "approved")
+        .order("created_at", {
+          ascending: false,
+        });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setReviews(reviewData || []);
     }
 
     loadData();
@@ -39,8 +61,39 @@ export default function ReviewsPage() {
             </p>
           </div>
         ) : (
-          <div>
-            {/* future reviews list */}
+          <div className="space-y-4">
+            {reviews.map((review) => (
+              <div
+                key={review.id}
+                className="border rounded-xl p-4 bg-gray-50"
+              >
+                <div className="flex justify-between items-center mb-2">
+                  <div className="font-semibold">
+                    {review.reviewer_name}
+                  </div>
+
+                  <div className="text-[#F4A731]">
+                    {"★".repeat(review.rating || 0)}
+                  </div>
+                </div>
+
+                <p className="text-gray-700 mb-3">
+                  {review.review_text}
+                </p>
+
+                {review.stylist_response && (
+                  <div className="mt-3 border-l-4 border-[#F4A731] pl-4">
+                    <div className="font-semibold text-[#102A43] mb-1">
+                      Your Response
+                    </div>
+
+                    <p className="text-gray-700">
+                      {review.stylist_response}
+                    </p>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         )}
 

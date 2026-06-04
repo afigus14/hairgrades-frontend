@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
   const [stylist, setStylist] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     async function loadUser() {
@@ -21,6 +22,19 @@ export default function DashboardPage() {
           .maybeSingle();
 
         setStylist(stylistData);
+      }
+
+      if (stylistData) {
+        const { data: reviewData } = await supabase
+          .from("reviews")
+          .select("*")
+          .eq("stylist_id", stylistData.id)
+          .eq("status", "approved")
+          .order("created_at", {
+            ascending: false,
+          });
+
+        setReviews(reviewData || []);
       }
     }
 
