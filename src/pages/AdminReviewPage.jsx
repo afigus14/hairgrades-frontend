@@ -131,8 +131,6 @@ export default function AdminReviewPage() {
       // Remove from UI
       setApplications((prev) => prev.filter((s) => s.id !== id));
 
-      console.log("MESSAGE BEING SENT:", stylist?._message);
-
       // ✉️ Send approval email
       await fetch("https://stylegrades-api.vercel.app/api/send-approval-email", {
         method: "POST",
