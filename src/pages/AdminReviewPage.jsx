@@ -131,6 +131,8 @@ export default function AdminReviewPage() {
       // Remove from UI
       setApplications((prev) => prev.filter((s) => s.id !== id));
 
+      console.log("MESSAGE BEING SENT:", stylist?._message);
+
       // ✉️ Send approval email
       await fetch("https://stylegrades-api.vercel.app/api/send-approval-email", {
         method: "POST",
@@ -140,6 +142,7 @@ export default function AdminReviewPage() {
         body: JSON.stringify({
           email: stylist?.email,
           name: stylist?.fullName,
+          message: stylist?._message || "",
         }),
       });
 
@@ -226,37 +229,23 @@ export default function AdminReviewPage() {
 
   async function rejectReview(id) {
 
-    const review = reviews.find(
-      (r) => r.id === id
-    );
+    console.log("REJECTING REVIEW:", id);
 
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("reviews")
       .delete()
-      .eq("id", id);
+      .eq("id", id)
+      .select();
+
+    console.log("DELETE DATA:", data);
+    console.log("DELETE ERROR:", error);
 
     if (error) {
-      console.error(error);
+      alert(error.message);
       return;
     }
 
-    await fetch(
-      "https://stylegrades-api.vercel.app/api/send-review-notification",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          action: "rejected",
-          reviewerName: review?.reviewer_name,
-          reviewerEmail: review?.reviewer_email,
-          stylistName: review?.stylist?.full_name,
-          reviewText: review?.review_text,
-          rating: review?.rating,
-        }),
-      }
-    );
+    alert("Review deleted");
 
     setReviews((prev) =>
       prev.filter((r) => r.id !== id)
