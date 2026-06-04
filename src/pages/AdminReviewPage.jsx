@@ -27,6 +27,8 @@ export default function AdminReviewPage() {
   const [applications, setApplications] = useState([]);
   const [reviews, setReviews] = useState([]);
 
+  const [responses, setResponses] = useState({});
+
   const headers = useMemo(() => {
     return {
       "Content-Type": "application/json",
@@ -102,6 +104,17 @@ export default function AdminReviewPage() {
       if (error) throw error;
 
       setReviews(data || []);
+
+      const existingResponses = {};
+
+      (data || []).forEach((review) => {
+        if (review.stylist_response) {
+          existingResponses[review.id] =
+            review.stylist_response;
+        }
+      });
+
+      setResponses(existingResponses);
     } catch (e) {
       console.error("Review fetch error:", e);
     }
@@ -252,6 +265,53 @@ export default function AdminReviewPage() {
     fetchReviews();
   }
 
+  async function saveResponse(reviewId) {
+    const response = responses[reviewId];
+
+    if (!response?.trim()) {
+      alert("Please enter a response first.");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("reviews")
+      .update({
+        stylist_response: response,
+        stylist_response_date: new Date().toISOString(),
+      })
+      .eq("id", reviewId);
+
+    if (error) {
+      alert(error.message);
+      return;
+    }
+
+    const review = reviews.find(
+      (r) => r.id === reviewId
+    );
+
+    await fetch(
+      "https://stylegrades-api.vercel.app/api/send-review-response",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          reviewerName: review.reviewer_name,
+          reviewerEmail: review.reviewer_email,
+          stylistName:
+            review.stylist?.full_name ||
+            "Your stylist",
+          reviewText: review.review_text,
+          stylistResponse: response,
+        }),
+      }
+    );
+
+    alert("Response saved!");
+  }
+  
   async function rejectReview(id) {
 
     console.log("REJECTING REVIEW:", id);
@@ -534,6 +594,33 @@ export default function AdminReviewPage() {
 
                 <div className="border rounded-xl p-4 bg-gray-50 text-gray-700">
                   {review.review_text}
+                </div>
+
+                <div className="mt-4">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Stylist Response
+                  </label>
+
+                  <textarea
+                    placeholder="Write a response to this review..."
+                    rows={4}
+                    value={responses[review.id] || ""}
+                    onChange={(e) =>
+                      setResponses((prev) => ({
+                        ...prev,
+                        [review.id]: e.target.value,
+                      }))
+                    }
+                    className="w-full border rounded-lg px-3 py-2"
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => saveResponse(review.id)}
+                    className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
+                  >
+                    Save Response
+                  </button>
                 </div>
 
                 <div className="flex gap-3 mt-5">

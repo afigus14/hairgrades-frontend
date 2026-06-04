@@ -88,6 +88,9 @@ export default function ProfilePage() {
   const [reviewSubmitted, setReviewSubmitted] =
     useState(false);
 
+  const [verificationAccepted, setVerificationAccepted] =
+    useState(false);  
+
   useEffect(() => {
     async function fetchStylist() {
       const { data, error } = await supabase
@@ -437,6 +440,26 @@ export default function ProfilePage() {
                       {review.review_text}
                     </p>
 
+                    {review.stylist_response && (
+                      <div className="mt-4 ml-4 border-l-4 border-[#F4A731] pl-4">
+                        <div className="text-sm font-semibold text-[#102A43] mb-1">
+                          Response from {stylist.full_name}
+                        </div>
+
+                        <p className="text-gray-700">
+                          {review.stylist_response}
+                        </p>
+
+                        {review.stylist_response_date && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            {new Date(
+                              review.stylist_response_date
+                            ).toLocaleDateString()}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                   </div>
 
                 ))}
@@ -565,9 +588,30 @@ export default function ProfilePage() {
               required
             />
 
+            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-gray-700">
+              Your email address will be used to verify the authenticity of your review and for communication from Stylegrades if needed. Your email address will never be displayed publicly on the website.
+            </div>
+
+            <label className="flex items-start gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={verificationAccepted}
+                onChange={(e) =>
+                  setVerificationAccepted(e.target.checked)
+                }
+                className="mt-1"
+              />
+
+              <span>
+                I understand that my email address will be used only for verification purposes
+                and will not be displayed publicly.
+              </span>
+            </label>
+
             <button
               type="submit"
-              className="bg-[#F4A731] hover:bg-[#e59a25] text-black font-semibold px-6 py-3 rounded-xl transition"
+              disabled={!verificationAccepted}
+              className="bg-[#F4A731] hover:bg-[#e59a25] text-black font-semibold px-6 py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Submit Review
             </button>
