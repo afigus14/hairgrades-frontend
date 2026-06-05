@@ -503,6 +503,24 @@ export default function JoinAsStylist() {
       lng = null;
     }
 
+    if (!photoUrl) {
+      setStatus({
+        type: "error",
+        message: "Please upload a headshot before submitting.",
+      });
+      return;
+    }
+
+    const bioWords = bio.trim().split(/\s+/).filter(Boolean).length;
+
+    if (bioWords > 500) {
+      setStatus({
+        type: "error",
+        message: "Your bio cannot exceed 500 words.",
+      });
+      return;
+    }
+    
     setSubmitting(true);
 
     try {
@@ -877,7 +895,10 @@ return (
           </label>
 
           <label className="block md:col-span-2">
-            <span className="text-sm font-medium">Professional Bio</span>
+            <span className="text-sm font-medium">
+              Professional Bio (Maximum 500 words)
+            </span>
+
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
@@ -885,6 +906,14 @@ return (
               className="mt-1 w-full border rounded-lg px-3 py-2"
               placeholder="Tell clients about your experience, specialties, and style."
             />
+
+            <div className="text-xs text-gray-500 mt-1">
+              Share your experience, specialties, and approach to working with clients.
+            </div>
+
+            <div className="text-xs text-gray-500 mt-1">
+              {bio.trim().split(/\s+/).filter(Boolean).length}/500 words
+            </div>
           </label>
          </div>
 
