@@ -121,8 +121,8 @@ export default function EditProfilePage() {
       const { data: stylistData, error } = await supabase
         .from("stylists")
         .select("*")
-        .eq("full_name", "Gina Burgess")
-        .single();
+        .eq("user_id", currentUser.id)
+        .maybeSingle();
 
       if (stylistData) {
         setStylist(stylistData);
