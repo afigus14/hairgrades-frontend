@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../lib/supabase";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function StylistLoginPage(){
 
@@ -103,6 +104,15 @@ export default function StylistLoginPage(){
         >
           Forgot password?
         </button>
+
+        <p className="mt-3 text-sm text-center">
+          <Link
+            to="/signup"
+            className="text-blue-600 underline"
+          >
+            New stylist? Create account
+          </Link>
+        </p>
       </p>
 
     </div>

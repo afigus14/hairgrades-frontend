@@ -10,16 +10,56 @@ export default function StylistSignupPage() {
   async function handleSignup(e){
     e.preventDefault();
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password
-    });
+    setMessage("");
 
-    if(error){
-      setMessage(error.message);
-    }else{
-      setMessage("Account created! You can now log in.");
+    // Find approved stylist profile
+
+    const { data: stylist } = await supabase
+      .from("stylists")
+      .select("*")
+      .eq("email", email.toLowerCase())
+      .eq("status", "approved")
+      .maybeSingle();
+
+    if (!stylist) {
+      setMessage(
+        "No approved stylist profile was found for this email."
+      );
+      return;
     }
+
+    if (stylist.user_id) {
+      setMessage(
+        "This stylist profile is already linked to an account."
+      );
+      return;
+    }
+
+    const { data, error } =
+      await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+    if (error) {
+      setMessage(error.message);
+      return;
+    }
+
+    const userId = data?.user?.id;
+
+    if (userId) {
+      await supabase
+        .from("stylists")
+        .update({
+          user_id: userId,
+        })
+        .eq("id", stylist.id);
+    }
+
+    setMessage(
+      "Account created! You can now log in."
+    );
   }
 
   return (

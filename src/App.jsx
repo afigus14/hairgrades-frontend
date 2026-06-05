@@ -30,6 +30,7 @@ import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
 import ScrollToTop from "./components/ScrollToTop";
+import StylistSignupPage from "./pages/StylistSignupPage";
 
 
 function App() {
@@ -53,6 +54,7 @@ function App() {
           <Route path="contact" element={<ContactPage />} />
           <Route path="advertise" element={<AdvertisePage />} />
           <Route path="login" element={<StylistLoginPage />} />
+          <Route path="signup" element={<StylistSignupPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
           <Route path="admin/review" element={<AdminReviewPage />} />
