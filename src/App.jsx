@@ -24,11 +24,13 @@ import EditProfilePage from "./pages/EditProfilePage";
 import AdminReviewPage from "./pages/AdminReviewPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import BillingPage from "./pages/BillingPage";
+import LeaveVerifiedReviewPage from "./pages/LeaveVerifiedReviewPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
 import ScrollToTop from "./components/ScrollToTop";
+
 
 function App() {
   return (
@@ -61,6 +63,7 @@ function App() {
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="refund-policy" element={<RefundPolicyPage />} />
+          <Route path="review" element={<LeaveVerifiedReviewPage />} />
 
         </Route>
       </Routes>

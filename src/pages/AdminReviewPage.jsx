@@ -187,10 +187,46 @@ export default function AdminReviewPage() {
   }
 
   async function requestInfo(id, message) {
-    setStatus({
-      type: "success",
-      message: "Request info feature coming next.",
-    });
+    try {
+      const stylist = applications.find(
+        (s) => s.id === id
+      );
+
+      const res = await fetch(
+        "https://stylegrades-api.vercel.app/api/send-request-info",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: stylist?.email,
+            name: stylist?.fullName,
+            message,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(
+          data.error || "Failed to send email."
+        );
+      }
+
+      setStatus({
+        type: "success",
+        message:
+          "Request for additional information sent.",
+      });
+
+    } catch (e) {
+      setStatus({
+        type: "error",
+        message: e.message,
+      });
+    }
   }
 
   async function approveReview(id) {
