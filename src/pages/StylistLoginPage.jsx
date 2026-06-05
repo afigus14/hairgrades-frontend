@@ -40,7 +40,7 @@ export default function StylistLoginPage(){
     if (!emailInput) return;
 
     const { error } = await supabase.auth.resetPasswordForEmail(emailInput, {
-      redirectTo: "https://www.stylegrades.com/update-password",
+      redirectTo: "https://www.stylegrades.com/#/update-password",
     });
 
     if (error) {
