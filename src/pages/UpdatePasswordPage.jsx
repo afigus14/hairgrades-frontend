@@ -15,7 +15,8 @@ export default function UpdatePasswordPage() {
     });
 
     if (error) {
-      setMessage("Error updating password");
+      console.error(error);
+      setMessage(error.message);
     } else {
       setMessage("Password updated successfully!");
       setTimeout(() => navigate("/login"), 2000);
