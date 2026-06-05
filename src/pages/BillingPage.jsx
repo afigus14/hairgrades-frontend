@@ -86,6 +86,11 @@ export default function BillingPage() {
           </button>
         </div>
 
+        <p className="mt-3 text-sm text-gray-500">
+          Upgrades, downgrades, and cancellations made through the billing portal
+          take effect at the end of your current billing period.
+        </p>
+
       </div>
     </div>
   );
