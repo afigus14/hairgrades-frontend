@@ -124,6 +124,11 @@ export default function EditProfilePage() {
         .eq("user_id", currentUser.id)
         .maybeSingle();
 
+      console.log("CURRENT USER:", currentUser);
+      console.log("CURRENT USER ID:", currentUser.id);
+      console.log("STYLIST DATA:", stylistData);
+      console.log("STYLIST ERROR:", error);  
+
       if (stylistData) {
         setStylist(stylistData);
 
