@@ -48,13 +48,28 @@ export default function StylistSignupPage() {
 
     const userId = data?.user?.id;
 
-    if (userId) {
-      await supabase
-        .from("stylists")
-        .update({
-          user_id: userId,
-        })
-        .eq("id", stylist.id);
+    if (!userId) {
+      setMessage(
+        "Account created, but user linking failed. Please contact Stylegrades."
+      );
+      return;
+    }
+
+    const { error: linkError } = await supabase
+      .from("stylists")
+      .update({
+        user_id: userId,
+      })
+      .eq("id", stylist.id);
+
+    if (linkError) {
+      console.error(linkError);
+
+      setMessage(
+        "Account created, but profile linking failed. Please contact Stylegrades."
+      );
+
+      return;
     }
 
     setMessage(
