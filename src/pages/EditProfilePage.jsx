@@ -188,24 +188,39 @@ export default function EditProfilePage() {
 
     setSaving(true);
 
-    const { error } = await supabase
-      .from("stylists")
-      .update(form)
-      .eq("id", stylist.id);
+    try {
 
-    if (error) {
+      // Update Auth email if changed
 
-      console.error(error);
+      if (
+        form.email &&
+        user?.email &&
+        form.email.toLowerCase() !== user.email.toLowerCase()
+      ) {
+        const { error: authError } =
+          await supabase.auth.updateUser({
+            email: form.email,
+          });
 
-      setErrorMessage(
-        "Something went wrong while saving your profile."
-      );
+        if (authError) {
+          throw authError;
+        }
 
-      setTimeout(() => {
-        setErrorMessage("");
-      }, 4000);
+        alert(
+          "A confirmation email has been sent to your new email address. Please verify it to complete the change."
+        );
+      }
 
-    } else {
+      // Update stylist profile
+
+      const { error } = await supabase
+        .from("stylists")
+        .update(form)
+        .eq("id", stylist.id);
+
+      if (error) {
+        throw error;
+      }
 
       setErrorMessage("");
 
@@ -216,6 +231,19 @@ export default function EditProfilePage() {
       setTimeout(() => {
         setSaveMessage("");
       }, 3000);
+
+    } catch (error) {
+
+      console.error(error);
+
+      setErrorMessage(
+        error.message ||
+        "Something went wrong while saving your profile."
+      );
+
+      setTimeout(() => {
+        setErrorMessage("");
+      }, 4000);
     }
 
     setSaving(false);
@@ -503,6 +531,9 @@ export default function EditProfilePage() {
 
         <div className="bg-white border rounded-2xl p-6">
           <h2 className="text-xl font-semibold mb-4">Contact</h2>
+          <p className="text-sm text-gray-500 mb-4">
+            Changing your email address will also update your login email.
+          </p>
 
           <input
             name="email"
