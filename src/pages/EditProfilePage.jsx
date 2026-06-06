@@ -159,6 +159,30 @@ export default function EditProfilePage() {
     setForm({ ...form, [e.target.name]: e.target.value });
   }
 
+  async function handlePasswordReset() {
+    if (!user?.email) {
+      alert("No email found for this account.");
+      return;
+    }
+
+    const { error } =
+      await supabase.auth.resetPasswordForEmail(
+        user.email,
+        {
+          redirectTo:
+            "https://www.stylegrades.com/#/update-password",
+        }
+      );
+
+    if (error) {
+      alert(error.message);
+    } else {
+      alert(
+        "Password reset email sent. Please check your inbox."
+      );
+    }
+  }
+
   async function handleSave() {
     if (!stylist) return;
 
@@ -706,6 +730,24 @@ export default function EditProfilePage() {
               </div>
             ))}
           </div>
+        </div>
+
+        <div className="bg-white border rounded-2xl p-6">
+          <h2 className="text-xl font-semibold mb-4">
+            Account Security
+          </h2>
+
+          <p className="text-sm text-gray-600 mb-4">
+            Need to change your password?
+          </p>
+
+          <button
+            type="button"
+            onClick={handlePasswordReset}
+            className="bg-[#102A43] text-white px-4 py-2 rounded-lg"
+          >
+            Send Password Reset Email
+          </button>
         </div>
 
         <div className="sticky bottom-0 left-0 right-0 bg-white/95 backdrop-blur border-t p-4 flex justify-end mt-8">

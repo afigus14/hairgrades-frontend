@@ -58,7 +58,7 @@ export default function StylistSignupPage() {
     }
 
     setMessage(
-      "Account created! You can now log in."
+      "Account created! You can now log into your account and manage your dasboard."
     );
   }
 
