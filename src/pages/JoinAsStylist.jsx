@@ -52,29 +52,24 @@ async function getLocationFromZip(zip) {
 }
 
 async function getCoordsFromCityState(input) {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
   const res = await fetch(
-    `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(input)}&key=${apiKey}`
+    `https://stylegrades-api.vercel.app/api/geocode?city=${encodeURIComponent(input)}`
   );
 
   const data = await res.json();
 
-  if (!data.results || data.results.length === 0) {
-    throw new Error("Location not found");
+  console.log("GEOCODE RESPONSE:", data);
+
+  if (!res.ok) {
+    throw new Error(
+      data.error || "Location not found"
+    );
   }
 
-  const result = data.results[0];
-
-  // Find ZIP code from address components
-  const zipComponent = result.address_components.find((component) =>
-    component.types.includes("postal_code")
-  );
-
   return {
-    lat: result.geometry.location.lat,
-    lng: result.geometry.location.lng,
-    zip: zipComponent?.long_name || "",
+    lat: data.lat,
+    lng: data.lng,
+    zip: data.zip || "",
   };
 }
 

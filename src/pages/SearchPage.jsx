@@ -217,20 +217,19 @@ export default function SearchPage() {
       };
     }
 
-    // CITY / STATE (Google Geocoding)
-    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+    // CITY / STATE (Backend Geocoding)
 
     const res = await fetch(
-      `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(trimmed)}&key=${apiKey}`
+      `https://stylegrades-api.vercel.app/api/geocode?city=${encodeURIComponent(trimmed)}`
     );
+
+    if (!res.ok) return null;
 
     const data = await res.json();
 
-    if (!data.results || data.results.length === 0) return null;
-
     return {
-      lat: data.results[0].geometry.location.lat,
-      lng: data.results[0].geometry.location.lng,
+      lat: data.lat,
+      lng: data.lng,
     };
   }
 
