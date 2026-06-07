@@ -371,8 +371,13 @@ export default function SearchPage() {
         })
 
         .filter((s) => {
-          if (s.distanceMiles == null) return false;
-          return s.distanceMiles <= radiusMiles;
+          if (userLocation && s.distanceMiles == null) return false;
+
+          if (userLocation) {
+            return s.distanceMiles <= radiusMiles;
+          }
+
+          return true;
         });
     }
 
