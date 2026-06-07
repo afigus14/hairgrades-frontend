@@ -25,6 +25,7 @@ import AdminReviewPage from "./pages/AdminReviewPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import BillingPage from "./pages/BillingPage";
 import LeaveVerifiedReviewPage from "./pages/LeaveVerifiedReviewPage";
+import ReviewPage from "./pages/ReviewPage";
 import UpdatePasswordPage from "./pages/UpdatePasswordPage";
 import PrivacyPage from "./pages/PrivacyPage";
 import TermsPage from "./pages/TermsPage";
@@ -65,6 +66,12 @@ function App() {
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="refund-policy" element={<RefundPolicyPage />} />
+
+          <Route
+            path="review/invite/:token"
+            element={<ReviewPage />}
+          />
+          
           <Route path="review" element={<LeaveVerifiedReviewPage />} />
 
         </Route>
