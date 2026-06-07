@@ -493,6 +493,7 @@ export default function ProfilePage() {
         </div>
       </div>
 
+      {false && (
       <div className="bg-white rounded-2xl border shadow-sm p-6 mt-6">
 
         <h3 className="text-xl font-semibold text-[#102A43] mb-4">
@@ -627,6 +628,7 @@ export default function ProfilePage() {
 
         )}
       </div>
+  )}
 
       {selectedImage && (
 
