@@ -371,7 +371,7 @@ export default function SearchPage() {
         })
 
         .filter((s) => {
-          if (s.distanceMiles == null) return true;
+          if (s.distanceMiles == null) return false;
           return s.distanceMiles <= radiusMiles;
         });
     }

@@ -233,6 +233,8 @@ export default function JoinAsStylist() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [zip, setZip] = useState("");
   const [specialtiesText, setSpecialtiesText] = useState("");
   const [instagram, setInstagram] = useState("");
   const [website, setWebsite] = useState("");
@@ -397,6 +399,10 @@ export default function JoinAsStylist() {
     setEmail("");
     setPhone("");
     setCity("");
+    setState("");
+    setZip("");
+    setLicense("");
+    setLicenseUrl("");
     setSpecialtiesText("");
     setInstagram("");
     setWebsite("");
@@ -407,38 +413,7 @@ export default function JoinAsStylist() {
     setHeadshotFileName("");
     setGalleryFileNames([]);
   }
-
-  function parseCityState(input) {
-    const cleaned = input.replace(/[.]/g, "").trim();
-
-    // Case: "Chicago, IL"
-    if (cleaned.includes(",")) {
-      const [cityPart, statePart] = cleaned.split(",");
-      return {
-        city: cityPart.trim(),
-        state: (statePart || "").trim().toUpperCase(),
-      };
-    }
-
-    // Case: "Chicago IL"
-    const parts = cleaned.split(" ");
-    if (parts.length >= 2) {
-      const stateCandidate = parts[parts.length - 1];
-      if (stateCandidate.length === 2) {
-        return {
-          city: parts.slice(0, -1).join(" "),
-          state: stateCandidate.toUpperCase(),
-        };
-      }
-    }
-
-    // fallback: just city
-    return {
-      city: cleaned,
-      state: "",
-    };
-  }
-  
+ 
   async function handleSubmit(e) {
     e.preventDefault();
     setStatus({ type: "idle", message: "" });
@@ -451,8 +426,30 @@ export default function JoinAsStylist() {
       setStatus({ type: "error", message: "Please enter your email." });
       return;
     }
+    if (!license.trim()) {
+      setStatus({
+        type: "error",
+        message: "Please enter your license or certification number.",
+      });
+      return;
+    }
+
+    if (!licenseUrl) {
+      setStatus({
+        type: "error",
+        message: "Please upload your license or professional certificate.",
+      });
+      return;
+    }
     if (!city.trim()) {
       setStatus({ type: "error", message: "Please enter your city." });
+      return;
+    }
+    if (!state.trim()) {
+      setStatus({
+        type: "error",
+        message: "Please select a state.",
+      });
       return;
     }
     if (gallery.length > galleryLimit) {
@@ -464,38 +461,35 @@ export default function JoinAsStylist() {
       return;
     }
 
-    const parsed = parseCityState(city);
-
-    let finalCity = parsed.city;
-    let state = parsed.state;
-    let zip = isZipCode(city) ? city : "";
+    let finalCity = city.trim();
+    let finalState = state.trim();
+    let finalZip = zip.trim();
 
     let lat = null;
     let lng = null;
 
     try {
-      if (isZipCode(city)) {
-        const loc = await getLocationFromZip(city);
+      if (finalZip) {
+        const loc = await getLocationFromZip(finalZip);
+
         finalCity = loc.city;
-        state = loc.state;
+        finalState = loc.state;
         lat = loc.lat;
         lng = loc.lng;
       } else {
-        const coords = await getCoordsFromCityState(city);
+        const coords = await getCoordsFromCityState(
+          `${city}, ${state}`
+        );
 
         lat = coords.lat;
         lng = coords.lng;
 
-        // auto-fill ZIP from geocoder
         if (coords.zip) {
-          zip = coords.zip;
+          finalZip = coords.zip;
         }
-      }  
+      }
     } catch (err) {
       console.warn("Location failed:", err);
-
-      lat = null;
-      lng = null;
     }
 
     if (!photoUrl) {
@@ -529,8 +523,8 @@ export default function JoinAsStylist() {
         phone: phone.trim(),
 
         city: finalCity,
-        state,
-        zip: zip || null,
+        state: finalState,
+        zip: finalZip || null,
         lat,
         lng,
 
@@ -782,14 +776,87 @@ return (
           </label>
 
           <label className="block">
-            <span className="text-sm font-medium">City or ZIP *</span>
-            <input
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="mt-1 w-full border rounded-lg px-3 py-2"
-              placeholder="e.g. Oak Brook, IL"
-            />
-          </label>
+  <span className="text-sm font-medium">City *</span>
+  <input
+    value={city}
+    onChange={(e) => setCity(e.target.value)}
+    className="mt-1 w-full border rounded-lg px-3 py-2"
+    placeholder="e.g. Fishers"
+    required
+  />
+</label>
+
+<label className="block">
+  <span className="text-sm font-medium">State *</span>
+  <select
+    value={state}
+    onChange={(e) => setState(e.target.value)}
+    className="mt-1 w-full border rounded-lg px-3 py-2"
+    required
+  >
+    <option value="">Select State</option>
+    <option value="AL">Alabama</option>
+    <option value="AK">Alaska</option>
+    <option value="AZ">Arizona</option>
+    <option value="AR">Arkansas</option>
+    <option value="CA">California</option>
+    <option value="CO">Colorado</option>
+    <option value="CT">Connecticut</option>
+    <option value="DE">Delaware</option>
+    <option value="FL">Florida</option>
+    <option value="GA">Georgia</option>
+    <option value="HI">Hawaii</option>
+    <option value="ID">Idaho</option>
+    <option value="IL">Illinois</option>
+    <option value="IN">Indiana</option>
+    <option value="IA">Iowa</option>
+    <option value="KS">Kansas</option>
+    <option value="KY">Kentucky</option>
+    <option value="LA">Louisiana</option>
+    <option value="ME">Maine</option>
+    <option value="MD">Maryland</option>
+    <option value="MA">Massachusetts</option>
+    <option value="MI">Michigan</option>
+    <option value="MN">Minnesota</option>
+    <option value="MS">Mississippi</option>
+    <option value="MO">Missouri</option>
+    <option value="MT">Montana</option>
+    <option value="NE">Nebraska</option>
+    <option value="NV">Nevada</option>
+    <option value="NH">New Hampshire</option>
+    <option value="NJ">New Jersey</option>
+    <option value="NM">New Mexico</option>
+    <option value="NY">New York</option>
+    <option value="NC">North Carolina</option>
+    <option value="ND">North Dakota</option>
+    <option value="OH">Ohio</option>
+    <option value="OK">Oklahoma</option>
+    <option value="OR">Oregon</option>
+    <option value="PA">Pennsylvania</option>
+    <option value="RI">Rhode Island</option>
+    <option value="SC">South Carolina</option>
+    <option value="SD">South Dakota</option>
+    <option value="TN">Tennessee</option>
+    <option value="TX">Texas</option>
+    <option value="UT">Utah</option>
+    <option value="VT">Vermont</option>
+    <option value="VA">Virginia</option>
+    <option value="WA">Washington</option>
+    <option value="WV">West Virginia</option>
+    <option value="WI">Wisconsin</option>
+    <option value="WY">Wyoming</option>
+  </select>
+</label>
+
+<label className="block">
+  <span className="text-sm font-medium">ZIP Code</span>
+  <input
+    value={zip}
+    onChange={(e) => setZip(e.target.value)}
+    className="mt-1 w-full border rounded-lg px-3 py-2"
+    placeholder="e.g. 46037"
+  />
+</label>
         </div>
 
         {/* Professional Details */}
@@ -818,18 +885,21 @@ return (
         </div>
 
         <label className="block">
-          <span className="text-sm font-medium">License / Certification</span>
+          <span className="text-sm font-medium">
+            License / Certification Number *
+          </span>
           <input
             value={license}
             onChange={(e) => setLicense(e.target.value)}
             className="mt-1 w-full border rounded-lg px-3 py-2"
             placeholder="e.g. Illinois Licensed Cosmetologist"
+            required
           />
         </label>
 
         <label className="block">
           <span className="text-sm font-medium">
-            Upload Cosmetology License (optional)
+            Upload License or Professional Certificate *
           </span>
 
           <label className="mt-1 inline-flex items-center gap-2 cursor-pointer">
@@ -1149,7 +1219,9 @@ return (
               </div>
 
               <div className="text-sm text-gray-500">
-                {city || "City"}
+                {city && state
+                  ? `${city}, ${state}`
+                  : "City, State"}
               </div>
 
               {licenseUrl && (
@@ -1189,7 +1261,9 @@ return (
                     </div>
 
                     <div className="text-sm text-gray-500">
-                      {city || "City"}
+                      {city && state
+                        ? `${city}, ${state}`
+                        : "City, State"}
                     </div>
 
                     {specialties.length > 0 && (
