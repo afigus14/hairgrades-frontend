@@ -352,14 +352,14 @@ export default function AdminReviewPage() {
 
     console.log("REJECTING REVIEW:", id);
 
-    const { data, error } = await supabase
+    const { error } = await supabase
       .from("reviews")
-      .delete()
-      .eq("id", id)
-      .select();
+      .update({
+        status: "rejected",
+      })
+      .eq("id", id);
 
-    console.log("DELETE DATA:", data);
-    console.log("DELETE ERROR:", error);
+    console.log("REJECT ERROR:", error);
 
     if (error) {
       alert(error.message);

@@ -72,7 +72,10 @@ function App() {
             element={<ReviewPage />}
           />
           
-          <Route path="review" element={<LeaveVerifiedReviewPage />} />
+          <Route
+            path="review/invite/:token"
+            element={<LeaveVerifiedReviewPage />}
+          />
 
         </Route>
       </Routes>
