@@ -1,14 +1,12 @@
 // src/pages/LeaveVerifiedReviewPage.jsx
 import React, { useEffect, useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 export default function LeaveVerifiedReviewPage() {
-  const [params] = useSearchParams();
+  const { token } = useParams();
   const navigate = useNavigate();
-
-  const token = params.get("token");
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

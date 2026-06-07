@@ -66,11 +66,6 @@ function App() {
           <Route path="privacy" element={<PrivacyPage />} />
           <Route path="terms" element={<TermsPage />} />
           <Route path="refund-policy" element={<RefundPolicyPage />} />
-
-          <Route
-            path="review/invite/:token"
-            element={<ReviewPage />}
-          />
           
           <Route
             path="review/invite/:token"
