@@ -124,38 +124,31 @@ export default function AdminReviewPage() {
     try {
       const stylist = applications.find((s) => s.id === id);
 
-      const slug = stylist.fullName
-        ?.toLowerCase()
-        .trim()
-        .replace(/\s+/g, "-")
-        .replace(/[^a-z0-9-]/g, "");
+      const res = await fetch(
+        `${API_BASE}/api/applicationAction`,
+        {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            action: "approve",
+            id,
+            message: stylist?._message || "",
+          }),
+        }
+      );
 
-      const { error } = await supabase
-        .from("stylists")
-        .update({
-          status: "approved",
-          verified: true,
-          profile_slug: slug,
-        })
-        .eq("id", id);
+      const data = await res.json();
 
-      if (error) throw error;
+      if (!res.ok) {
+        throw new Error(
+          data.error || "Approval failed."
+        );
+      }
 
       // Remove from UI
-      setApplications((prev) => prev.filter((s) => s.id !== id));
-
-      // ✉️ Send approval email
-      await fetch("https://stylegrades-api.vercel.app/api/send-approval-email", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: stylist?.email,
-          name: stylist?.fullName,
-          message: stylist?._message || "",
-        }),
-      });
+      setApplications((prev) =>
+        prev.filter((s) => s.id !== id)
+      );
 
       setStatus({
         type: "success",
