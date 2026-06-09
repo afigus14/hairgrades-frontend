@@ -293,7 +293,20 @@ export default function SearchPage() {
   const stylists = useMemo(() => {
     let filtered = [...allStylists];
 
-    filtered = filtered.filter((s) => normalizeStatus(s.status) === "approved");
+    filtered = filtered.filter((s) => {
+
+      const approved =
+        normalizeStatus(s.status) === "approved";
+
+      const activeSubscription =
+        s.subscription_status === "active";
+
+      const freePlan =
+        (s.tier || "free") === "free";
+
+      return approved &&
+        (freePlan || activeSubscription);
+    });
 
     const q = term.trim().toLowerCase();
     if (q) {
