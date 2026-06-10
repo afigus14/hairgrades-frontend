@@ -36,7 +36,7 @@ export default function Footer() {
           <Link to="/refund-policy" className="hover:text-[#F7FAFF]">
             Refunds
           </Link>
-          <p className="mt-2 text-xs">&copy; 2025 Stylegrades. All rights reserved.</p>
+          <p className="mt-2 text-xs">&copy; 2026 Stylegrades. All Rights Reserved.</p>
         </div>
       </div>
     </footer>
