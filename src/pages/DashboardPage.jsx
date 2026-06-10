@@ -10,6 +10,38 @@ export default function DashboardPage() {
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
 
+  async function activateSubscription() {
+
+    if (!stylist?.tier || stylist.tier === "free") {
+      alert("No paid subscription is required.");
+      return;
+    }
+
+    const res = await fetch(
+      "https://stylegrades-api.vercel.app/api/create-checkout-session",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plan: stylist.tier,
+          user_id: user.id,
+          email: user.email,
+        }),
+      }
+    );
+
+    const data = await res.json();
+
+    if (!data.url) {
+      alert("Unable to start checkout.");
+      return;
+    }
+
+    window.location.href = data.url;
+  }
+
   async function sendInvitation() {
     if (!clientName || !clientEmail) {
       alert("Please enter a client name and email.");
@@ -146,12 +178,26 @@ export default function DashboardPage() {
               </div>
 
               <div>
-                <Link
-                  to="/dashboard/billing"
-                  className="px-3 py-2 text-sm bg-[#1F6FEB] text-white rounded-lg font-medium"
-                >
-                  Manage Subscription
-                </Link>
+                  {stylist?.subscription_status ===
+                  "pending_payment" ? (
+
+                    <button
+                      onClick={activateSubscription}
+                      className="px-3 py-2 text-sm bg-[#1F6FEB] text-white rounded-lg font-medium"
+                    >
+                      Activate Subscription
+                    </button>
+
+                  ) : (
+
+                    <Link
+                      to="/dashboard/billing"
+                      className="px-3 py-2 text-sm bg-[#1F6FEB] text-white rounded-lg font-medium"
+                    >
+                      Manage Subscription
+                    </Link>
+
+                  )}
               </div>
             </div>
 
