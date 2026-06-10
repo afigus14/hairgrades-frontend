@@ -21,9 +21,9 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            We may collect information such as your name, email address,
-            stylist profile details, uploaded photos, payment information,
-            and communications submitted through the platform.
+            We may collect names, email addresses, phone numbers, stylist profile
+            information, uploaded photos, subscription information, and
+            communications submitted through the platform.
           </p>
         </div>
 
@@ -33,9 +33,31 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            Information collected through Stylegrades is used to provide
-            platform functionality, improve user experience, process
-            subscriptions, and communicate important updates.
+            Information collected through Stylegrades may be used to operate the
+            platform, process subscriptions, manage accounts, improve user
+            experience, and communicate important updates.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold mb-2">
+            Payment Processing
+          </h2>
+
+          <p>
+            Payments are securely processed through Stripe. Stylegrades does not
+            store complete credit card information.
+          </p>
+        </div>
+
+        <div>
+          <h2 className="text-2xl font-semibold mb-2">
+            Third-Party Service Providers
+          </h2>
+
+          <p>
+            Stylegrades utilizes trusted third-party providers including Stripe,
+            Supabase, and Cloudinary to operate the platform.
           </p>
         </div>
 
@@ -46,8 +68,8 @@ export default function PrivacyPage() {
 
           <p>
             Stylegrades does not sell personal information to third parties.
-            Limited information may be shared with trusted service providers
-            required to operate the platform.
+            Information may be shared only when necessary to operate the platform
+            or comply with legal obligations.
           </p>
         </div>
 
@@ -57,8 +79,8 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            We take reasonable measures to protect user information and
-            maintain platform security.
+            Reasonable measures are used to protect user information and maintain
+            platform security.
           </p>
         </div>
 
@@ -68,8 +90,8 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            Questions regarding this Privacy Policy may be submitted through
-            the Stylegrades contact page.
+            Questions regarding this Privacy Policy may be submitted through the
+            Stylegrades Contact page.
           </p>
         </div>
 
