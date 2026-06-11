@@ -11,8 +11,8 @@ export default function PrivacyPage() {
       <div className="space-y-6 leading-relaxed">
 
         <p>
-          Stylegrades respects your privacy and is committed to protecting your
-          personal information.
+          Stylegrades LLC respects your privacy and is committed to protecting your
+          personal information when you use the Stylegrades platform.
         </p>
 
         <div>
@@ -45,7 +45,7 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            Payments are securely processed through Stripe. Stylegrades does not
+            Payments are securely processed through Stripe. Stylegrades LLC does not
             store complete credit card information.
           </p>
         </div>
@@ -56,7 +56,7 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            Stylegrades utilizes trusted third-party providers including Stripe,
+            Stylegrades LLC utilizes trusted third-party providers including Stripe,
             Supabase, and Cloudinary to operate the platform.
           </p>
         </div>
@@ -67,7 +67,7 @@ export default function PrivacyPage() {
           </h2>
 
           <p>
-            Stylegrades does not sell personal information to third parties.
+            Stylegrades LLC does not sell personal information to third parties.
             Information may be shared only when necessary to operate the platform
             or comply with legal obligations.
           </p>

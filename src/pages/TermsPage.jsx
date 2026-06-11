@@ -12,7 +12,8 @@ export default function TermsPage() {
 
         <p>
           Welcome to Stylegrades. By accessing or using the Stylegrades platform,
-          you agree to comply with and be bound by these Terms of Service.
+          you agree to comply with and be bound by these Terms of Service. These Terms
+          are provided by Stylegrades LLC, the owner and operator of the platform.
         </p>
 
         <div>
@@ -44,7 +45,7 @@ export default function TermsPage() {
 
           <p>
             Stylist profiles may be reviewed, approved, edited, suspended, or
-            removed by Stylegrades at its sole discretion.
+            removed by Stylegrades LLC at its sole discretion.
           </p>
         </div>
 
@@ -54,7 +55,7 @@ export default function TermsPage() {
           </h2>
 
           <p>
-            Users agree to provide honest and accurate reviews. Stylegrades
+            Users agree to provide honest and accurate reviews. Stylegrades LLC
             reserves the right to remove content that is fraudulent,
             misleading, offensive, or otherwise inappropriate.
           </p>
@@ -78,7 +79,7 @@ export default function TermsPage() {
           </h2>
 
           <p>
-            Stylegrades is not responsible for the quality, safety, results, or
+            Stylegrades LLC is not responsible for the quality, safety, results, or
             satisfaction associated with services provided by independent beauty
             professionals listed on the platform.
           </p>

@@ -11,7 +11,7 @@ export default function RefundPolicyPage() {
       <div className="space-y-6 text-gray-700 leading-7">
 
         <p>
-          Stylegrades subscriptions are billed on a recurring monthly basis.
+          Stylegrades LLC subscriptions are billed on a recurring monthly basis.
         </p>
 
         <section>
@@ -32,7 +32,7 @@ export default function RefundPolicyPage() {
           </h2>
 
           <p>
-            Stylegrades does not provide prorated refunds, partial refunds, or
+            Stylegrades LLC does not provide prorated refunds, partial refunds, or
             credits for unused subscription time. Payments already processed are
             generally non-refundable except where required by law.
           </p>
