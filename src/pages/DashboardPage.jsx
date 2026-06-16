@@ -160,7 +160,7 @@ export default function DashboardPage() {
 
       <div className="bg-white border border-[#D9E2EC] rounded-2xl p-6 shadow-sm">
         <p className="font-semibold text-[#102A43]">
-          Welcome, {user.email}!
+          Welcome, {stylist?.full_name || user?.email}!
         </p>
 
         {stylist && (

@@ -15,11 +15,11 @@ function TierCard({ title, price, bullets, badge, ctaLabel, href }) {
       <div className="flex h-full flex-col p-6">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <h3 className="text-lg md:text-xl font-semibold text-[#102A43]">
+            <h3 className="text-xl font-semibold text-[#102A43] whitespace-nowrap">
               {title}
             </h3>
             {price ? (
-              <div className="mt-1 text-sm text-[#52606D]">{price}</div>
+              <div className="mt-2 text-lg font-semibold text-[#102A43]">{price}</div>
             ) : null}
           </div>
 
@@ -114,71 +114,98 @@ Thanks!
       {/* Placements */}
       <section id="placements" className="mt-10">
         <h2 className="text-xl md:text-2xl font-serif text-[#102A43]">
-          Sponsorship options
+          Advertising Packages
         </h2>
+
+        <p className="mt-2 text-[#52606D]">
+          Promote your business directly to clients actively searching for beauty
+          professionals and local services.
+        </p>
 
         <div className="mt-6 grid gap-10 md:grid-cols-2">
           <TierCard
-            title="Local Rail Placement"
-            price="Best for salons + local services"
-            badge="Popular"
+            title="Local Advertiser"
+            price="$49/month"
             bullets={[
-              "Shown next to search + directory pages",
-              "High visibility while users browse stylists",
-              "Great for city-based campaigns",
-              "Easy setup with image, headline, and link",
+              "Displayed alongside stylist search results",
+              "Visible to clients actively researching local professionals",
+              "Includes desktop placements and future mobile placements",
+              "Ideal for salons, boutiques, spas, schools, and local businesses",
             ]}
-            ctaLabel="Sponsor a rail spot"
+            ctaLabel="Become a Local Advertiser"
             href={`mailto:${EMAIL}?subject=${encodeURIComponent(
-              "Stylegrades Rail Placement Inquiry"
+              "Stylegrades Local Advertising Inquiry"
             )}&body=${encodeURIComponent(
-              "Hi Stylegrades,\n\nI would like to sponsor a rail spot on Stylegrades.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
+              "Hi Stylegrades,\n\nI am interested in becoming a Local Advertiser.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
             )}`}
           />
 
           <TierCard
-            title="Featured Placement"
-            price="Best for maximum impact"
+            title="Featured Advertiser"
+            price="$99/month"
             bullets={[
-              "Top-of-page visibility for limited spots",
-              "Great for launches, seasonal promos, events",
-              "Displayed directly within stylist browsing",
-              "Optional: “Verified partner” badge",
-              "Add tracking + reporting",
+              "Premium visibility throughout the platform",
+              "Featured placement opportunities on key pages",
+              "Priority advertising rotation",
+              "Ideal for multi-location businesses and regional brands",
+              "Limited availability",
             ]}
-            ctaLabel="Request featured placement"
+            ctaLabel="Become a Featured Advertiser"
             href={`mailto:${EMAIL}?subject=${encodeURIComponent(
-              "Stylegrades Featured Placement Inquiry"
+              "Stylegrades Featured Advertising Inquiry"
             )}&body=${encodeURIComponent(
-              "Hi Stylegrades,\n\nI would like to run a featured placement ad on Stylegrades.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
+              "Hi Stylegrades,\n\nI am interested in becoming a Featured Advertiser.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
             )}`}
           />
+        </div>
+      </section>
+
+      <section className="mt-10 rounded-3xl border border-[#D9E2EC] bg-[#F8FAFC]">
+        <div className="p-6 md:p-8">
+
+          <h3 className="text-lg md:text-xl font-semibold text-[#102A43]">
+            Founding Advertiser Rates
+          </h3>
+
+          <p className="mt-3 text-[#52606D] leading-relaxed">
+            Stylegrades is currently offering introductory advertising rates to a
+            limited number of founding advertisers. These rates provide an
+            opportunity to establish visibility on the platform before future rate
+            increases as traffic and advertiser demand grow.
+          </p>
+
+          <p className="mt-3 text-[#52606D] leading-relaxed">
+            Founding Advertiser rates are introductory launch rates available for a
+            limited time. Advertising packages and pricing may be adjusted as the
+            platform grows and additional advertising opportunities become available.
+          </p>
+
         </div>
       </section>
 
       {/* How it works */}
       <section className="mt-10 rounded-3xl border border-[#D9E2EC] bg-white shadow-sm">
         <div className="p-6 md:p-8">
-          <h3 className="text-lg md:text-xl font-semibold text-[#102A43]">
-            How sponsorships work
+          <h3 className="text-xl md:text-2xl font-semibold text-[#102A43]">
+            How advertising with Stylegrades works
           </h3>
 
           <div className="mt-4 grid gap-5 md:grid-cols-3">
             {[
               {
                 n: "1",
-                t: "Pick a placement",
-                d: "Choose rail, category, or featured placement. Start local, then expand.",
+                t: "Choose an advertising package",
+                d: "Select the advertising option that best fits your business and goals.",
               },
               {
                 n: "2",
-                t: "Email us your info",
-                d: "Send your business, city, and what you want to promote. We’ll confirm availability.",
+                t: "Tell us about your business",
+                d: "Send your business information, location, website, and advertising goals.",
               },
               {
                 n: "3",
-                t: "Launch + track",
-                d: "We’ll track impressions + clicks so you can see performance over time.",
+                t: "Launch your campaign",
+                d: "We'll create your placement and help connect you with Stylegrades visitors.",
               },
             ].map((x) => (
               <div
