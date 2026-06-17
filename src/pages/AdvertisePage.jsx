@@ -1,5 +1,6 @@
 // src/pages/AdvertisePage.jsx
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const EMAIL = "advertise@stylegrades.com"; // change later to hello@stylegrades.com
@@ -55,11 +56,54 @@ function TierCard({ title, price, bullets, badge, ctaLabel, href }) {
 export default function AdvertisePage() {
   const q = useQuery();
 
-  // where did the user come from? (rails, in-feed, sponsored block, etc.)
   const src = q.get("src") || "";
   const ad = q.get("ad") || "";
-  const placement = q.get("placement") || ""; // optional (rail/category/featured)
-  const sponsorTo = q.get("to") || ""; // optional sponsor website
+  const placement = q.get("placement") || "";
+  const sponsorTo = q.get("to") || "";
+
+  const [companyName, setCompanyName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+
+  async function startAdvertiserCheckout(
+    placementType
+  ) {
+    try {
+      if (!companyName || !contactEmail) {
+        alert(
+          "Please enter your company name and email."
+        );
+        return;
+      }
+
+      const res = await fetch(
+        "https://stylegrades-api.vercel.app/api/create-advertiser-checkout-session",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            company_name: companyName,
+            contact_email: contactEmail,
+            placement_type: placementType,
+          }),
+        }
+      );
+
+      const data = await res.json();
+
+      if (!data.url) {
+        alert("Unable to start checkout.");
+        return;
+      }
+
+      window.location.href = data.url;
+
+    } catch (err) {
+      console.error(err);
+      alert("Unable to start checkout.");
+    }
+  }
 
   const subject = `Stylegrades Advertising Inquiry${placement ? ` — ${placement}` : ""}`;
 
@@ -111,6 +155,40 @@ Thanks!
         </div>
       </section>
 
+      {/* Advertiser Information */}
+
+      <section className="mt-8 rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
+
+        <h2 className="text-xl font-semibold text-[#102A43]">
+          Advertiser Information
+        </h2>
+
+        <div className="mt-4 space-y-4">
+
+          <input
+            type="text"
+            placeholder="Company Name"
+            value={companyName}
+            onChange={(e) =>
+              setCompanyName(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+          <input
+            type="email"
+            placeholder="Contact Email"
+            value={contactEmail}
+            onChange={(e) =>
+              setContactEmail(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+        </div>
+
+      </section>
+
       {/* Placements */}
       <section id="placements" className="mt-10">
         <h2 className="text-xl md:text-2xl font-serif text-[#102A43]">
@@ -123,40 +201,62 @@ Thanks!
         </p>
 
         <div className="mt-6 grid gap-10 md:grid-cols-2">
-          <TierCard
-            title="Local Advertiser"
-            price="$49/month"
-            bullets={[
-              "Displayed alongside stylist search results",
-              "Visible to clients actively researching local professionals",
-              "Includes desktop placements and future mobile placements",
-              "Ideal for salons, boutiques, spas, schools, and local businesses",
-            ]}
-            ctaLabel="Become a Local Advertiser"
-            href={`mailto:${EMAIL}?subject=${encodeURIComponent(
-              "Stylegrades Local Advertising Inquiry"
-            )}&body=${encodeURIComponent(
-              "Hi Stylegrades,\n\nI am interested in becoming a Local Advertiser.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
-            )}`}
-          />
+          <div className="rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
 
-          <TierCard
-            title="Featured Advertiser"
-            price="$99/month"
-            bullets={[
-              "Premium visibility throughout the platform",
-              "Featured placement opportunities on key pages",
-              "Priority advertising rotation",
-              "Ideal for multi-location businesses and regional brands",
-              "Limited availability",
-            ]}
-            ctaLabel="Become a Featured Advertiser"
-            href={`mailto:${EMAIL}?subject=${encodeURIComponent(
-              "Stylegrades Featured Advertising Inquiry"
-            )}&body=${encodeURIComponent(
-              "Hi Stylegrades,\n\nI am interested in becoming a Featured Advertiser.\n\nBusiness name:\nWebsite:\nCity/Region:\nWhat would you like to promote?\n\nThanks!"
-            )}`}
-          />
+            <h3 className="text-xl font-semibold text-[#102A43]">
+              Local Advertiser
+            </h3>
+
+            <p className="mt-2 text-lg font-semibold">
+              $49/month
+            </p>
+
+            <ul className="mt-4 space-y-2 text-sm text-[#243B53]">
+              <li>Displayed alongside stylist search results</li>
+              <li>Visible to clients actively researching local professionals</li>
+              <li>Includes desktop placements and future mobile placements</li>
+              <li>Ideal for salons, boutiques, spas, schools, and local businesses</li>
+            </ul>
+
+            <button
+              onClick={() =>
+                startAdvertiserCheckout("local")
+              }
+              className="mt-6 w-full rounded-2xl bg-[#102A43] px-4 py-3 text-white font-semibold"
+            >
+              Become a Local Advertiser
+            </button>
+
+          </div>
+
+          <div className="rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
+
+            <h3 className="text-xl font-semibold text-[#102A43]">
+              Featured Advertiser
+            </h3>
+
+            <p className="mt-2 text-lg font-semibold">
+              $99/month
+            </p>
+
+            <ul className="mt-4 space-y-2 text-sm text-[#243B53]">
+              <li>Premium visibility throughout the platform</li>
+              <li>Featured placement opportunities on key pages</li>
+              <li>Priority advertising rotation</li>
+              <li>Ideal for multi-location businesses and regional brands</li>
+              <li>Limited availability</li>
+            </ul>
+
+            <button
+              onClick={() =>
+                startAdvertiserCheckout("featured")
+              }
+              className="mt-6 w-full rounded-2xl bg-[#102A43] px-4 py-3 text-white font-semibold"
+            >
+              Become a Featured Advertiser
+            </button>
+
+          </div>
         </div>
       </section>
 
