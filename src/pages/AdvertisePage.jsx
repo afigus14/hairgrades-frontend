@@ -143,12 +143,12 @@ Thanks!
           </p>
 
           <div className="mt-10 flex justify-center">
-            <a
-              href={mailto}
+            <button
+              onClick={() => startAdvertiserCheckout("local")}
               className="flex w-full max-w-[520px] items-center justify-center rounded-2xl bg-[#F6AE2D] px-8 py-5 text-xl font-semibold text-[#102A43] shadow-sm transition hover:brightness-95"
             >
-              Email us to claim your ad location
-            </a>
+              Start Advertising
+            </button>
           </div>
 
         </div>
@@ -327,7 +327,7 @@ Thanks!
               href={mailto}
               className="inline-flex items-center justify-center rounded-2xl bg-[#102A43] px-5 py-3 text-sm font-semibold text-white hover:opacity-95"
             >
-              Email us: {EMAIL}
+              Questions? Contact Us
             </a>
 
             <Link
