@@ -398,12 +398,12 @@ export default function PublicLayout() {
 
             {/* RIGHT SIDE BUTTON */}
             <div className="w-full lg:w-auto flex justify-center lg:block lg:border-l border-[#E9B949] lg:pl-8">
-              <a
-                href="/advertise"
+              <NavLink
+                to="/advertise"
                 className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
               >
                 Advertise with Stylegrades
-              </a>
+              </NavLink>
             </div>
 
           </div>
