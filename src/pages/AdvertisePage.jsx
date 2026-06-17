@@ -223,9 +223,9 @@ Thanks!
             </p>
 
             <ul className="mt-4 space-y-2 text-sm text-[#243B53]">
-              <li>Displayed alongside stylist search results</li>
-              <li>Visible to clients actively researching local professionals</li>
-              <li>Includes desktop placements and future mobile placements</li>
+              <li>Displayed throughout Stylegrades search results</li>
+              <li>Rotates alongside other approved advertisers</li>
+              <li>Visible on desktop and mobile placements</li>
               <li>Ideal for salons, boutiques, spas, schools, and local businesses</li>
             </ul>
 
@@ -251,9 +251,9 @@ Thanks!
             </p>
 
             <ul className="mt-4 space-y-2 text-sm text-[#243B53]">
-              <li>Premium visibility throughout the platform</li>
-              <li>Featured placement opportunities on key pages</li>
-              <li>Priority advertising rotation</li>
+              <li>Appears up to 3× more often than Local Advertisers</li>
+              <li>Priority placement throughout the platform</li>
+              <li>Premium visibility on desktop and mobile placements</li>
               <li>Ideal for multi-location businesses and regional brands</li>
               <li>Limited availability</li>
             </ul>
@@ -270,6 +270,12 @@ Thanks!
           </div>
         </div>
       </section>
+
+      <div className="mt-6 rounded-2xl border border-[#D9E2EC] bg-white p-4 text-sm text-[#52606D]">
+        Advertising placements rotate automatically throughout the platform.
+        Featured Advertisers receive priority rotation and increased visibility
+        compared to Local Advertisers.
+      </div>
 
       <section className="mt-10 rounded-3xl border border-[#D9E2EC] bg-[#F8FAFC]">
         <div className="p-6 md:p-8">
