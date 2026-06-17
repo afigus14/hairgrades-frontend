@@ -62,6 +62,7 @@ export default function AdvertisePage() {
 
   const [companyName, setCompanyName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
+  const [website, setWebsite] = useState("");
 
   async function startAdvertiserCheckout(
     placementType
@@ -84,6 +85,7 @@ export default function AdvertisePage() {
           body: JSON.stringify({
             company_name: companyName,
             contact_email: contactEmail,
+            website: website,
             placement_type: placementType,
           }),
         }
@@ -180,6 +182,16 @@ Thanks!
             value={contactEmail}
             onChange={(e) =>
               setContactEmail(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+          <input
+            type="text"
+            placeholder="Business Website (https://...)"
+            value={website}
+            onChange={(e) =>
+              setWebsite(e.target.value)
             }
             className="w-full border rounded-xl px-4 py-3"
           />
