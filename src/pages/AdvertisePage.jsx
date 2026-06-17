@@ -1,6 +1,5 @@
 // src/pages/AdvertisePage.jsx
 import React, { useMemo, useState } from "react";
-import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const EMAIL = "advertise@stylegrades.com"; // change later to hello@stylegrades.com
