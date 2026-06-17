@@ -263,6 +263,31 @@ export default function AdminDashboardPage() {
             {loading ? "Loading..." : "Load dashboard"}
           </button>
         </div>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-4">
+
+          <Link
+            to="/admin/stylists"
+            className="px-4 py-2 bg-gray-100 rounded-lg border"
+          >
+            Stylists
+          </Link>
+
+          <Link
+            to="/admin/review"
+            className="px-4 py-2 bg-gray-100 rounded-lg border"
+          >
+            Reviews
+          </Link>
+
+          <Link
+            to="/admin/advertisers"
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg border"
+          >
+            Advertisers
+          </Link>
+
+        </div>
       </div>
 
       {/* KPI CARDS */}

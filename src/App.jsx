@@ -32,6 +32,7 @@ import TermsPage from "./pages/TermsPage";
 import RefundPolicyPage from "./pages/RefundPolicyPage";
 import ScrollToTop from "./components/ScrollToTop";
 import StylistSignupPage from "./pages/StylistSignupPage";
+import AdminAdvertisersPage from "./pages/AdminAdvertisersPage";
 
 
 function App() {
@@ -70,6 +71,11 @@ function App() {
           <Route
             path="review/invite/:token"
             element={<LeaveVerifiedReviewPage />}
+          />
+
+          <Route
+            path="/admin/advertisers"
+            element={<AdminAdvertisersPage />}
           />
 
         </Route>
