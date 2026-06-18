@@ -7,15 +7,60 @@ export default function AdRailLeft({
   page = "search",
   stylistId = "",
   enabled = true,
-  compact = false, // ✅ NEW
-  variant = "A",   // ✅ NEW (lets you vary content per slot)
+  compact = false,
+  variant = "A",
+  advertiser = null,
 }) {
   const loc = useLocation();
   const navigate = useNavigate();
 
   // Replace later with real advertiser inventory from backend
   const ad = useMemo(() => {
-    // You can vary creative by slot so A/B/C aren’t identical
+
+    if (advertiser) {
+
+      console.log(
+        "DATABASE AD:",
+        advertiser.company_name
+      );
+      
+      return {
+        advertiserId: advertiser.id,
+        campaignId: "database_ad",
+        creativeId: advertiser.id,
+
+        brand:
+          advertiser.brand_name ||
+          advertiser.company_name,
+
+        headline:
+          advertiser.headline ||
+          advertiser.company_name,
+
+        body:
+          advertiser.body ||
+          "Sponsored advertiser",
+
+        cta:
+          advertiser.cta ||
+          "Learn More",
+
+        sponsorUrl:
+          advertiser.website,
+
+        imageUrl:
+          advertiser.image_url,
+
+        disclaimer:
+          "Sponsored placement",
+
+        badge:
+          advertiser.is_founding_partner
+            ? "Founding Partner"
+            : "Sponsor",
+      };
+    }
+    
     const common = {
       advertiserId: "manearbor_001",
       campaignId: "beauty_partner",
@@ -83,7 +128,7 @@ export default function AdRailLeft({
     }
 
     return common;
-  }, [variant]);
+  }, [variant, advertiser]);
 
   const payload = {
     placement: "rail_left",

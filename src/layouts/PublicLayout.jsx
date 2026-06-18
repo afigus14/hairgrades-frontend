@@ -6,6 +6,9 @@ import AdRailRight from "../components/AdRailRight";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
 
+import { loadAdvertisers } from "../lib/loadAdvertisers";
+import { selectAdvertisers } from "../lib/advertiserSelector";
+
 console.log("PublicLayout render", window.location.pathname);
 
 function TopNav() {
@@ -269,18 +272,23 @@ function pageFromPath(pathname) {
   return "home";
 }
 
-function LeftRail({ page }) {
+function LeftRail({
+  page,
+  selectedAds = [],
+}) {
+
   const slots = ["A", "B", "D", "GENERIC2"];
 
   return (
     <div className="w-full min-w-0 space-y-5">
-      {slots.map((slot) => (
+      {slots.map((slot, index) => (
         <div key={slot} className="w-full min-w-0">
           <AdRailLeft
             page={page}
             enabled
             stylistId={`rail_left_${slot}`}
             variant={slot}
+            advertiser={selectedAds[index]}
             compact={slot !== "A"}
           />
         </div>
@@ -289,7 +297,10 @@ function LeftRail({ page }) {
   );
 }
 
-function RightRail({ page }) {
+function RightRail({
+  page,
+  selectedAds = [],
+}) {
   const slots = ["ELEMENTS", "A", "B", "C"];
 
   return (
@@ -316,6 +327,9 @@ export default function PublicLayout() {
   const isAdminPage = loc.pathname.includes("/admin");
   const [featuredAdvertiser, setFeaturedAdvertiser] = useState(null);
 
+  const [advertisers, setAdvertisers] = useState([]);
+  const [selectedAds, setSelectedAds] = useState([]);
+
   useEffect(() => {
     const hash = window.location.hash;
 
@@ -339,6 +353,24 @@ export default function PublicLayout() {
     }
 
     loadFeaturedAdvertiser();
+  }, []);
+
+  useEffect(() => {
+    async function loadAdInventory() {
+      const ads = await loadAdvertisers();
+
+      setAdvertisers(ads);
+
+      const selected =
+        selectAdvertisers(
+          ads,
+          8
+        );
+
+      setSelectedAds(selected);
+    }
+
+    loadAdInventory();
   }, []);
 
   return (
@@ -423,7 +455,10 @@ export default function PublicLayout() {
         >
           {!isAdminPage && (
             <div className="hidden lg:block min-w-0">
-              <LeftRail page={page} />
+              <LeftRail
+                page={page}
+                selectedAds={selectedAds}
+              />
             </div>
 )}
 
@@ -433,7 +468,10 @@ export default function PublicLayout() {
 
           {!isAdminPage && (
             <div className="hidden lg:block min-w-0">
-              <RightRail page={page} />
+              <RightRail
+                page={page}
+                selectedAds={selectedAds}
+              />
             </div>
           )}
         </div>
