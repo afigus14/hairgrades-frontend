@@ -18,11 +18,6 @@ export default function AdRailLeft({
   const ad = useMemo(() => {
 
     if (advertiser) {
-
-      console.log(
-        "DATABASE AD:",
-        advertiser.company_name
-      );
       
       return {
         advertiserId: advertiser.id,
@@ -56,7 +51,7 @@ export default function AdRailLeft({
 
         badge:
           advertiser.is_founding_partner
-            ? "Founding Partner"
+            ? "Founding Advertiser"
             : "Sponsor",
       };
     }

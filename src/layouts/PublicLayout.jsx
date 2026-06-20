@@ -299,20 +299,18 @@ function LeftRail({
 
 function RightRail({
   page,
-  selectedAds = [],
 }) {
-  const slots = ["ELEMENTS", "A", "B", "C"];
+  const slots = ["A", "B", "C", "D"];
 
   return (
     <div className="w-full min-w-0 space-y-5">
-      {slots.map((slot) => (
+      {slots.map((slot, index) => (
         <div key={slot} className="w-full min-w-0">
           <AdRailRight
             page={page}
             enabled
             stylistId={`rail_right_${slot}`}
             variant={slot}
-            compact={slot !== "A"}
           />
         </div>
       ))}
@@ -359,6 +357,9 @@ export default function PublicLayout() {
     async function loadAdInventory() {
       const ads = await loadAdvertisers();
 
+      console.log("LOADED ADS:", ads);
+      console.log("SELECTED ADS:", selectedAds);
+
       setAdvertisers(ads);
 
       const selected =
@@ -366,6 +367,8 @@ export default function PublicLayout() {
           ads,
           8
         );
+
+      console.log("SELECTED FROM FUNCTION:", selected);
 
       setSelectedAds(selected);
     }
@@ -470,7 +473,6 @@ export default function PublicLayout() {
             <div className="hidden lg:block min-w-0">
               <RightRail
                 page={page}
-                selectedAds={selectedAds}
               />
             </div>
           )}

@@ -7,13 +7,53 @@ export default function AdRailRight({
   page = "search",
   stylistId = "",
   enabled = true,
-  compact = false, // ✅ NEW
-  variant = "A",   // ✅ NEW
+  compact = false,
+  variant = "A",
+  advertiser = null,
 }) {
   const loc = useLocation();
   const navigate = useNavigate();
 
+  console.log("RIGHT RAIL ADVERTISER:", advertiser);
+
   const ad = useMemo(() => {
+    if (advertiser) {
+      return {
+        advertiserId: advertiser.id,
+        campaignId: "database_ad",
+        creativeId: advertiser.id,
+
+        brand:
+          advertiser.brand_name ||
+          advertiser.company_name,
+
+        headline:
+          advertiser.headline ||
+          advertiser.company_name,
+
+        body:
+          advertiser.body ||
+          "Sponsored advertiser",
+
+        cta:
+          advertiser.cta ||
+          "Learn More",
+
+        sponsorUrl:
+          advertiser.website,
+
+        imageUrl:
+          advertiser.image_url,
+
+        disclaimer:
+          "Sponsored placement",
+
+        badge:
+          advertiser.is_founding_partner
+            ? "Founding Advertiser"
+            : "Sponsor",
+      };
+    }
     const common = {
       advertiserId: "brand_001",
       campaignId: "premium_inventory",
@@ -30,13 +70,15 @@ export default function AdRailRight({
       tag: "Advertise",
     };
 
-    if (variant === "B") {
+    if (variant === "A") {
       return {
         ...common,
-        headline: "Premium visibility for beauty brands",
+        brand: "Featured Advertiser",
+        headline:
+          "Premium placement throughout Stylegrades",
         body:
-          "Sponsor a category and reach clients looking for specific services—right at decision time.",
-        badge: "Category sponsor",
+          "Put your salon, beauty brand, education program, or local business in front of clients actively searching for stylists.",
+        badge: "Premium Placement",
       };
     }
 
@@ -58,20 +100,29 @@ export default function AdRailRight({
     if (variant === "B") {
       return {
         ...common,
-        advertiserId: "elements_001",
-        headline: "Luxury Salon & Spa Suites",
+        brand: "Local Market Sponsor",
+        headline:
+          "Own visibility in your local market",
         body:
-          "Upscale salon suites designed for beauty professionals who want independence, flexibility, and a premium client experience.",
-        cta: "Explore Suites",
-        sponsorUrl: "https://www.elementsssr.com/",
-        badge: "Industry Partner",
-        brand: "Elements Salon & Spa Suites",
-        imageUrl: "/assets/sponsors/elements.jpg",
+          "Reach clients searching for stylists in your city and surrounding communities.",
+        badge: "Local Targeting",
+      };
+    }
+
+    if (variant === "C") {
+      return {
+        ...common,
+        brand: "Category Sponsor",
+        headline:
+          "Sponsor a beauty specialty category",
+        body:
+          "Extensions, color, bridal, barbers, curly hair, skincare, education, and more.",
+        badge: "Category Sponsor",
       };
     }
 
     return common;
-  }, [variant]);
+  }, [variant, advertiser]);
 
   const payload = {
     placement: "rail_right",
@@ -164,20 +215,13 @@ export default function AdRailRight({
           {ad.body}
         </p>
 
-        {ad.sponsorUrl && ad.brand === "Elements Salon & Spa Suites" ? (
-          <a
-            href={ad.sponsorUrl}
-            target="_blank"
-            rel="noreferrer"
-            className="mt-5 inline-flex w-full items-center justify-center rounded-2xl border border-[#D9E2EC] bg-white px-4 py-3 text-sm font-semibold text-[#102A43] hover:bg-[#F0F4F8]"
-          >
-            Explore Suites
-          </a>
-        ) : (
-          <div className="mt-5 rounded-2xl bg-[#F8FAFC] px-4 py-3 text-center text-sm font-medium text-[#486581]">
-            Advertise your business here.
-          </div>
-        )}
+        <a
+          href={ad.sponsorUrl || "#"}
+          onClick={handleCtaClick}
+          className="mt-5 inline-flex w-full items-center justify-center rounded-2xl border border-[#D9E2EC] bg-white px-4 py-3 text-sm font-semibold text-[#102A43] hover:bg-[#F0F4F8]"
+        >
+          {ad.cta || "Learn More"}
+        </a>
 
         <div className="mt-3 text-[11px] text-[#7B8794]">
           {ad.disclaimer || "Sponsored"}

@@ -53,7 +53,7 @@ export default function ContactPage() {
 
       {/* Sub-heading */}
       <p className="text-[#2F3C4F] mb-6 max-w-xl">
-        Have questions, feedback, or partnership inquiries? We'd love to hear from you.
+        Have questions, feedback, or advertising inquiries? We'd love to hear from you.
       </p>
 
       {/* Contact Card */}
