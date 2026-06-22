@@ -454,43 +454,8 @@ async function uploadToCloudinary(file) {
               </button>
 
               <button
-                onClick={async () => {
-
-                  if (
-                    !advertiser.stripe_customer_id
-                  ) {
-                    alert(
-                      "No Stripe customer found."
-                    );
-                    return;
-                  }
-
-                  const res = await fetch(
-                    "https://stylegrades-api.vercel.app/api/create-advertiser-portal-session",
-                    {
-                      method: "POST",
-
-                      headers: {
-                        "Content-Type":
-                          "application/json",
-                      },
-
-                      body: JSON.stringify({
-                        customerId:
-                          advertiser.stripe_customer_id,
-                      }),
-                    }
-                  );
-
-                  const data =
-                    await res.json();
-
-                  if (data.url) {
-                    window.open(
-                      data.url,
-                      "_blank"
-                    );
-                  }
+                onClick={() => {
+                  console.log("BILLING CLICKED");
                 }}
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg"
               >
