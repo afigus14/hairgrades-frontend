@@ -203,7 +203,7 @@ async function uploadToCloudinary(file) {
         Advertiser Management
       </h1>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
 
         <div className="bg-white rounded-xl shadow-sm border p-4">
           <div className="text-sm text-gray-500">
@@ -253,6 +253,37 @@ async function uploadToCloudinary(file) {
               advertisers.filter(
                 a => a.status === "pending"
               ).length
+            }
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-sm border p-4">
+          <div className="text-sm text-gray-500">
+            Monthly Revenue
+          </div>
+
+          <div className="text-3xl font-bold">
+            $
+            {
+              advertisers.reduce((sum, a) => {
+
+                if (
+                  a.subscription_status !==
+                  "active"
+                ) {
+                  return sum;
+                }
+
+                if (
+                  a.placement_type ===
+                  "featured"
+                ) {
+                  return sum + 99;
+                }
+
+                return sum + 49;
+
+              }, 0)
             }
           </div>
         </div>
@@ -340,11 +371,54 @@ async function uploadToCloudinary(file) {
                   <strong>Clicks:</strong>{" "}
                   {advertiser.clicks || 0}
                 </p>
+
+                <p>
+                  <strong>CTR:</strong>{" "}
+                  {advertiser.impressions > 0
+                    ? (
+                        (advertiser.clicks /
+                          advertiser.impressions) *
+                        100
+                      ).toFixed(2)
+                    : "0.00"}
+                  %
+                </p>
+
+                <p>
+                  <strong>Stripe Customer:</strong>{" "}
+                  {advertiser.stripe_customer_id || "—"}
+                </p>
+
+                <p>
+                  <strong>Stripe Subscription:</strong>{" "}
+                  {advertiser.stripe_subscription_id || "—"}
+                </p>
+
+                <p>
+                  <strong>Target City:</strong>{" "}
+                  {advertiser.target_city || "—"}
+                </p>
+
+                <p>
+                  <strong>Target State:</strong>{" "}
+                  {advertiser.target_state || "—"}
+                </p>
+
+                <p>
+                  <strong>Target Zip:</strong>{" "}
+                  {advertiser.target_zip || "—"}
+                </p>
+
+                <p>
+                  <strong>Radius:</strong>{" "}
+                  {advertiser.radius_miles || "—"}
+                </p>
+                
               </div>
 
             </div>
 
-            <div className="mt-4 flex gap-3">
+            <div className="mt-4 flex gap-3 flex-wrap">
 
               <button
                 onClick={() =>
@@ -377,6 +451,50 @@ async function uploadToCloudinary(file) {
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg"
               >
                 Edit
+              </button>
+
+              <button
+                onClick={async () => {
+
+                  if (
+                    !advertiser.stripe_customer_id
+                  ) {
+                    alert(
+                      "No Stripe customer found."
+                    );
+                    return;
+                  }
+
+                  const res = await fetch(
+                    "https://stylegrades-api.vercel.app/api/create-advertiser-portal-session",
+                    {
+                      method: "POST",
+
+                      headers: {
+                        "Content-Type":
+                          "application/json",
+                      },
+
+                      body: JSON.stringify({
+                        customerId:
+                          advertiser.stripe_customer_id,
+                      }),
+                    }
+                  );
+
+                  const data =
+                    await res.json();
+
+                  if (data.url) {
+                    window.open(
+                      data.url,
+                      "_blank"
+                    );
+                  }
+                }}
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg"
+              >
+                Billing
               </button>
 
             </div>
