@@ -61,7 +61,7 @@ function TopNav() {
               </NavLink>
 
               <span className="hidden sm:inline text-sm md:text-base text-[#F7FAFF]/80 leading-tight">
-                Find a stylist that will make you feel good about your hair.
+                Find a stylist that will make you feel great about your hair.
               </span>
 
             </div>

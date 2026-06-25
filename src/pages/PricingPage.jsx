@@ -236,11 +236,11 @@ export default function PricingPage() {
                   </h1>
 
                   <p className="mt-4 text-sm md:text-base text-[#C7D5E2] max-w-xl">
-                    Get discovered by clients who value quality, professionalism, and a great experience.
+                    Join Stylegrades and get discovered by clients who value quality, professionalism, and a great experience.
                   </p>
 
                   <p className="mt-4 text-sm md:text-base text-[#C7D5E2] max-w-xl">
-                    Apply to join Stylegrades and get discovered by clients in your area. No commissions. No booking fees. Clients contact you directly.
+                    No commissions. No booking fees. Clients contact you directly.
                   </p>
 
                 </div>
@@ -403,7 +403,7 @@ export default function PricingPage() {
             </h3>
 
             <p className="mt-2 text-base md:text-lg font-semibold italic text-[#102A43] tracking-wide">
-              Find a stylist that will make you feel good about your hair.
+              Find a stylist that will make you feel great about your hair.
             </p>
 
           </div>

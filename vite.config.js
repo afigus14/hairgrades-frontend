@@ -15,7 +15,7 @@ export default defineConfig({
         name: "Stylegrades",
         short_name: "Stylegrades",
         description:
-          "Find a stylist that will make you feel good about your hair.",
+          "Find a stylist that will make you feel great about your hair.",
         theme_color: "#101A2A",
         background_color: "#9FD0D6",
         display: "standalone",

@@ -441,14 +441,20 @@ export default function SearchPage() {
         />
       );
 
-      if (i === 2) {
+      if ((i + 1) % 3 === 0) {
         items.push(
           <InFeedAdCard
-            key="micbike-feature"
+            key={`mobile-ad-${i}`}
             page="search"
             enabled
             compact={false}
-            slot="A"
+            slot={
+              Math.floor(i / 3) % 3 === 0
+                ? "A"
+                : Math.floor(i / 3) % 3 === 1
+                ? "B"
+                : "C"
+            }
           />
         );
       }
