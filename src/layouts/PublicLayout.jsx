@@ -52,17 +52,33 @@ function TopNav() {
           <div className="flex items-center justify-between py-2.5">
 
             {/* Logo + Tagline */}
-            <div className="flex items-baseline gap-3 mr-10 lg:mr-16 shrink-0">
+            <div className="flex items-center shrink-0">
 
               <NavLink to="/">
-                <span className="text-2xl md:text-3xl font-serif font-bold text-[#F7FAFF]">
-                  Stylegrades
-                </span>
+                <img
+                  src="/assets/branding/stylegrades-logo.png"
+                  alt="Stylegrades"
+                  className="h-10 md:h-12 w-auto"
+                />
               </NavLink>
 
-              <span className="hidden sm:inline text-sm md:text-base text-[#F7FAFF]/80 leading-tight">
-                Find a stylist that will make you feel great about your hair.
-              </span>
+              <div className="flex-1 flex justify-center">
+                <div className="hidden lg:flex items-center text-white text-[17px] font-medium whitespace-nowrap">
+                  Find a stylist that will make you feel{" "}
+                  <span
+                    style={{
+                      fontFamily: "AboveTheBeyond",
+                      fontSize: "1.45rem",
+                      position: "relative",
+                      top: "2px",
+                      margin: "0 4px",
+                    }}
+                  >
+                    great
+                  </span>
+                  about your hair.
+                </div>
+              </div>
 
             </div>
 

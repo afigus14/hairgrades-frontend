@@ -17,11 +17,12 @@ export default function Navbar() {
       <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
         
         {/* Logo */}
-        <Link
-          to="/"
-          className="text-3xl font-serif font-bold text-[#F7FAFF] tracking-wide"
-        >
-          Stylegrades
+        <Link to="/" className="flex items-center">
+          <img
+            src="/assets/branding/stylegrades-logo.png"
+            alt="Stylegrades"
+            className="h-10 w-auto"
+          />
         </Link>
 
         {/* Navigation Links */}

@@ -163,7 +163,16 @@ export default function StylistCard({
 
                 {stylist.status === "approved" && stylist.verified && (
                   <span className="inline-flex items-center bg-emerald-50 text-emerald-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                    ✔ Verified
+                    <div className="flex items-center gap-1">
+                      <img
+                        src="/assets/branding/stylegrades-icon.png"
+                        alt="Verified by Stylegrades"
+                        className="w-8 h-8"
+                      />
+                      <span className="text-xs font-semibold text-emerald-600">
+                        Verified
+                      </span>
+                    </div>
                   </span>
                 )}
               </div>
