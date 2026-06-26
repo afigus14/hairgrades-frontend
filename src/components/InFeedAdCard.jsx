@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAdImpression, trackAdClick } from "../lib/useAdTracking";
+import { getInFeedAd } from "../lib/adManager";
 
 export default function InFeedAdCard({
   page = "search",
@@ -13,55 +14,14 @@ export default function InFeedAdCard({
   const navigate = useNavigate();
 
   const ad = useMemo(() => {
+    const index =
+      slot === "A"
+        ? 0
+        : slot === "B"
+        ? 1
+        : 2;
 
-    // HERO SPONSOR — THE MIC BIKE
-    if (slot === "A") {
-      return {
-        advertiserId: "micbike_001",
-        campaignId: "hero_sponsor",
-        creativeId: "micbike_a",
-        label: "Featured Sponsor",
-        headline: "The Mic Bike - Palm Springs' Original Karaoke Party Bike",
-        body:
-          "Private rides, birthdays, bachelorettes, and unforgettable nights out - The Mic Bike brings karaoke and downtown Palm Springs together in one rolling party experience.",
-        cta: "Book Your Ride",
-        sponsorUrl: "https://www.themicbike.com/",
-        imageUrl: "/assets/sponsors/micbike.jpg",
-      };
-    }
-
-    // THE MANE ARBOR
-    if (slot === "B") {
-      return {
-        advertiserId: "manearbor_001",
-        campaignId: "beauty_partner",
-        creativeId: "manearbor_b",
-        label: "Beauty Partner",
-        headline: "Luxury Hair Extensions + Salon Services",
-        body:
-          "The Mane Arbor blends elevated color, extensions, and modern salon artistry into a luxury beauty experience designed to help clients feel confident and beautiful.",
-        cta: "View on Instagram",
-        sponsorUrl: "https://www.instagram.com/themanearbor/",
-        imageUrl:
-          "https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=1200&q=60",
-      };
-    }
-
-    // ELEMENTS SALON SUITES
-    return {
-      advertiserId: "elements_001",
-      campaignId: "industry_partner",
-      creativeId: "elements_c",
-      label: "Industry Partner",
-      headline: "Luxury Salon & Spa Suites for Independent Professionals",
-      body:
-        "Elements Salon & Spa Suites offers upscale salon spaces designed for beauty professionals who want independence, flexibility, and a premium client experience.",
-      cta: "Explore Suites",
-      sponsorUrl: "https://www.elementsssr.com/",
-      imageUrl:
-        "https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=1200&q=60",
-    };
-
+    return getInFeedAd(index);
   }, [slot]);
 
   const payload = {
