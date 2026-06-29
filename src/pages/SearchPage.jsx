@@ -404,6 +404,10 @@ export default function SearchPage() {
         return (a.distanceMiles || 9999) - (b.distanceMiles || 9999);
       }
 
+      if (sortMode === "alpha") {
+        return alphaName(a).localeCompare(alphaName(b));
+      }
+
       const scoreA = stylistScore(a, userLocation);
       const scoreB = stylistScore(b, userLocation);
 

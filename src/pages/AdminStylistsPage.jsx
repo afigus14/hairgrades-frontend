@@ -73,16 +73,19 @@ export default function AdminStylistsPage() {
 
   async function deleteStylist(id) {
     try {
-      const res = await `${import.meta.env.VITE_API_BASE_URL}/api/admin/deleteStylist`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          id,
-          adminKey
-        })
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_BASE_URL}/api/admin/deleteStylist`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id,
+            adminKey,
+          }),
+        }
+      );
 
       const data = await res.json();
 

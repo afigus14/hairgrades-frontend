@@ -22,6 +22,8 @@ import StylistLoginPage from "./pages/StylistLoginPage";
 import DashboardPage from "./pages/DashboardPage"
 import EditProfilePage from "./pages/EditProfilePage";
 import AdminReviewPage from "./pages/AdminReviewPage";
+import AdminStylistsPage from "./pages/AdminStylistsPage";
+import AdminEditStylistPage from "./pages/AdminEditStylistPage";
 import ReviewsPage from "./pages/ReviewsPage";
 import BillingPage from "./pages/BillingPage";
 import LeaveVerifiedReviewPage from "./pages/LeaveVerifiedReviewPage";
@@ -49,6 +51,16 @@ function App() {
 
           {/* ✅ ALL CHILD ROUTES — NO LEADING SLASH */}
           <Route path="admin/dashboard" element={<AdminDashboardPage />} />
+          <Route
+            path="admin/stylists"
+            element={<AdminStylistsPage />}
+          />
+
+          <Route
+            path="admin/stylists/:id"
+            element={<AdminEditStylistPage />}
+          />
+          
           <Route path="search" element={<SearchPage />} />
           <Route path="profile/:id" element={<ProfilePage />} />
           <Route path="pricing" element={<PricingPage />} />
@@ -75,12 +87,12 @@ function App() {
           />
 
           <Route
-            path="/admin/advertisers"
+            path="admin/advertisers"
             element={<AdminAdvertisersPage />}
           />
 
           <Route
-            path="/advertiser-dashboard"
+            path="advertiser-dashboard"
             element={<AdvertiserDashboardPage />}
           />
 

@@ -78,6 +78,10 @@ export default function AdminEditStylistPage() {
         website: stylist.website,
         instagram: stylist.instagram,
         years_experience: stylist.years_experience,
+
+        license: stylist.license,
+        license_url: stylist.license_url,
+        
         verified: stylist.verified,
         tier: tierActive,
         featured: stylist.featured,
@@ -299,6 +303,49 @@ export default function AdminEditStylistPage() {
               placeholder="Years Experience"
               className="w-full border rounded-lg px-3 py-2"
             />
+          </section>
+
+          <section className="bg-white border rounded-xl p-6 space-y-4">
+            <h2 className="text-xl font-semibold">
+              Professional Information
+            </h2>
+
+            <input
+              value={stylist.license || ""}
+              onChange={(e) =>
+                setStylist({
+                  ...stylist,
+                  license: e.target.value,
+                })
+              }
+              placeholder="License Number"
+              className="w-full border rounded-lg px-3 py-2"
+            />
+
+            {stylist.license_url && (
+              <a
+                href={stylist.license_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block text-blue-600 underline"
+              >
+                View Uploaded License
+              </a>
+            )}
+
+            <label className="flex items-center gap-2">
+              <input
+                type="checkbox"
+                checked={stylist.verified || false}
+                onChange={(e) =>
+                  setStylist({
+                    ...stylist,
+                    verified: e.target.checked,
+                  })
+                }
+              />
+              Verified Stylist
+            </label>
           </section>
 
           <section className="bg-white border rounded-xl p-6 space-y-4">

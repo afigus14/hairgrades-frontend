@@ -5,9 +5,8 @@ import AdRailLeft from "../components/AdRailLeft";
 import AdRailRight from "../components/AdRailRight";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
-
-import { loadAdvertisers } from "../lib/loadAdvertisers";
-import { selectAdvertisers } from "../lib/advertiserSelector";
+import useAdvertisers from "../hooks/useAdvertisers";
+import { buildPageInventory } from "../lib/buildPageInventory";
 
 console.log("PublicLayout render", window.location.pathname);
 
@@ -315,6 +314,7 @@ function LeftRail({
 
 function RightRail({
   page,
+  selectedAds = [],
 }) {
   const slots = ["A", "B", "C", "D"];
 
@@ -327,6 +327,7 @@ function RightRail({
             enabled
             stylistId={`rail_right_${slot}`}
             variant={slot}
+            advertiser={selectedAds[index]}
           />
         </div>
       ))}
@@ -341,7 +342,10 @@ export default function PublicLayout() {
   const isAdminPage = loc.pathname.includes("/admin");
   const [featuredAdvertiser, setFeaturedAdvertiser] = useState(null);
 
-  const [advertisers, setAdvertisers] = useState([]);
+  const {
+    advertisers,
+    loading: advertisersLoading,
+  } = useAdvertisers();
   const [selectedAds, setSelectedAds] = useState([]);
 
   useEffect(() => {
@@ -370,27 +374,12 @@ export default function PublicLayout() {
   }, []);
 
   useEffect(() => {
-    async function loadAdInventory() {
-      const ads = await loadAdvertisers();
+    if (advertisersLoading) return;
 
-      console.log("LOADED ADS:", ads);
-      console.log("SELECTED ADS:", selectedAds);
+    const selected = buildPageInventory(advertisers);
 
-      setAdvertisers(ads);
-
-      const selected =
-        selectAdvertisers(
-          ads,
-          8
-        );
-
-      console.log("SELECTED FROM FUNCTION:", selected);
-
-      setSelectedAds(selected);
-    }
-
-    loadAdInventory();
-  }, []);
+    setSelectedAds(selected);
+  }, [advertisers, advertisersLoading]);
 
   return (
     <div className="min-h-screen bg-[#9FD0D6]">
@@ -474,10 +463,12 @@ export default function PublicLayout() {
         >
           {!isAdminPage && (
             <div className="hidden lg:block min-w-0">
-              <LeftRail
-                page={page}
-                selectedAds={selectedAds}
-              />
+              {selectedAds.length >= 8 && (
+                <LeftRail
+                  page={page}
+                  selectedAds={selectedAds.slice(0, 4)}
+                />
+              )}
             </div>
 )}
 
@@ -487,9 +478,12 @@ export default function PublicLayout() {
 
           {!isAdminPage && (
             <div className="hidden lg:block min-w-0">
-              <RightRail
-                page={page}
-              />
+              {selectedAds.length >= 8 && (
+                <RightRail
+                  page={page}
+                  selectedAds={selectedAds.slice(4, 8)}
+                />
+              )}
             </div>
           )}
         </div>

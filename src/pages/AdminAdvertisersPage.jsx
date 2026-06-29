@@ -127,20 +127,24 @@ async function uploadToCloudinary(file) {
         },
 
         body: JSON.stringify({
-          id: editingAdvertiser.id,
-          headline:
-            editingAdvertiser.headline,
-          cta:
-            editingAdvertiser.cta,
-          body:
-            editingAdvertiser.body,
-          website:
-            editingAdvertiser.website,
-          image_url:
-            editingAdvertiser.image_url,
-          is_founding_partner:
-            editingAdvertiser.is_founding_partner,
-        }),
+        id: editingAdvertiser.id,
+        headline: editingAdvertiser.headline,
+        cta: editingAdvertiser.cta,
+        body: editingAdvertiser.body,
+        website: editingAdvertiser.website,
+        image_url: editingAdvertiser.image_url,
+        is_founding_partner:
+          editingAdvertiser.is_founding_partner,
+
+        is_paused:
+          editingAdvertiser.is_paused,
+
+        complimentary_until:
+          editingAdvertiser.complimentary_until,
+
+        complimentary_reason:
+          editingAdvertiser.complimentary_reason,
+      }),
       }
     );
 
@@ -629,6 +633,72 @@ async function uploadToCloudinary(file) {
 
               Founding Advertiser
             </label>
+          </div>
+
+          <div className="mt-6 border-t pt-6">
+
+            <h3 className="font-bold text-lg mb-4">
+              Advertising Controls
+            </h3>
+
+            <label className="flex items-center gap-2 mb-4">
+
+              <input
+                type="checkbox"
+                checked={editingAdvertiser.is_paused || false}
+                onChange={(e) =>
+                  setEditingAdvertiser({
+                    ...editingAdvertiser,
+                    is_paused: e.target.checked,
+                  })
+                }
+              />
+
+              Pause Advertising
+            </label>
+
+            <div className="mb-4">
+
+              <label className="block font-semibold mb-1">
+                Complimentary Until
+              </label>
+
+              <input
+                type="date"
+                value={
+                  editingAdvertiser.complimentary_until?.slice(0,10) || ""
+                }
+                onChange={(e) =>
+                  setEditingAdvertiser({
+                    ...editingAdvertiser,
+                    complimentary_until: e.target.value,
+                  })
+                }
+                className="w-full border rounded-lg p-2"
+              />
+
+            </div>
+
+            <div>
+
+              <label className="block font-semibold mb-1">
+                Complimentary Reason
+              </label>
+
+              <textarea
+                rows={3}
+                value={editingAdvertiser.complimentary_reason || ""}
+                onChange={(e) =>
+                  setEditingAdvertiser({
+                    ...editingAdvertiser,
+                    complimentary_reason: e.target.value,
+                  })
+                }
+                className="w-full border rounded-lg p-2"
+              />
+
+            </div>
+
           </div>
 
           <button

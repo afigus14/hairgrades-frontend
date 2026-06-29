@@ -17,42 +17,73 @@ export default function AdRailLeft({
   // Replace later with real advertiser inventory from backend
   const ad = useMemo(() => {
 
-    if (advertiser) {
-      
+    const slot = advertiser;
+
+    if (slot?.type === "advertiser") {
+
+      const advertiserData = slot.item;
+
       return {
-        advertiserId: advertiser.id,
+        advertiserId: advertiserData.id,
         campaignId: "database_ad",
-        creativeId: advertiser.id,
+        creativeId: advertiserData.id,
 
         brand:
-          advertiser.brand_name ||
-          advertiser.company_name,
+          advertiserData.brand_name ||
+          advertiserData.company_name,
 
         headline:
-          advertiser.headline ||
-          advertiser.company_name,
+          advertiserData.headline ||
+          advertiserData.company_name,
 
         body:
-          advertiser.body ||
+          advertiserData.body ||
           "Sponsored advertiser",
 
         cta:
-          advertiser.cta ||
+          advertiserData.cta ||
           "Learn More",
 
         sponsorUrl:
-          advertiser.website,
+          advertiserData.website,
 
         imageUrl:
-          advertiser.image_url,
+          advertiserData.image_url,
 
         disclaimer:
           "Sponsored placement",
 
         badge:
-          advertiser.is_founding_partner
+          advertiserData.is_founding_partner
             ? "Founding Advertiser"
             : "Sponsor",
+      };
+    }
+
+    if (slot?.type === "promo") {
+
+      const promo = slot.item;
+
+      return {
+        advertiserId: promo.id,
+        campaignId: "promo",
+        creativeId: promo.id,
+
+        brand: promo.brand,
+
+        headline: promo.headline,
+
+        body: promo.body,
+
+        cta: promo.cta,
+
+        sponsorUrl: promo.sponsorUrl,
+
+        imageUrl: promo.imageUrl,
+
+        disclaimer: "Sponsored placement",
+
+        badge: promo.label,
       };
     }
     
@@ -166,7 +197,6 @@ export default function AdRailLeft({
       ref={refEl}
       aria-label="Sponsored content"
       className={[
-        "w-full min-h-[365px]",
         "rounded-3xl border border-[#D9E2EC] bg-white shadow-sm overflow-hidden",
       ].join(" ")}
     >
@@ -194,11 +224,6 @@ export default function AdRailLeft({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-black/0" />
 
-          {ad.badge ? (
-            <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[11px] font-semibold text-[#102A43] shadow">
-              {ad.badge}
-            </div>
-          ) : null}
         </div>
       ) : null}
 
