@@ -5,8 +5,7 @@ import AdRailLeft from "../components/AdRailLeft";
 import AdRailRight from "../components/AdRailRight";
 import { supabase } from "../lib/supabase";
 import Footer from "../components/Footer";
-import useAdvertisers from "../hooks/useAdvertisers";
-import { buildPageInventory } from "../lib/buildPageInventory";
+import usePageInventory from "../hooks/usePageInventory";
 
 console.log("PublicLayout render", window.location.pathname);
 
@@ -343,10 +342,9 @@ export default function PublicLayout() {
   const [featuredAdvertiser, setFeaturedAdvertiser] = useState(null);
 
   const {
-    advertisers,
+    inventory: selectedAds,
     loading: advertisersLoading,
-  } = useAdvertisers();
-  const [selectedAds, setSelectedAds] = useState([]);
+  } = usePageInventory();
 
   useEffect(() => {
     const hash = window.location.hash;
@@ -372,14 +370,6 @@ export default function PublicLayout() {
 
     loadFeaturedAdvertiser();
   }, []);
-
-  useEffect(() => {
-    if (advertisersLoading) return;
-
-    const selected = buildPageInventory(advertisers);
-
-    setSelectedAds(selected);
-  }, [advertisers, advertisersLoading]);
 
   return (
     <div className="min-h-screen bg-[#9FD0D6]">

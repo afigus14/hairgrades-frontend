@@ -5,6 +5,7 @@ import InlineSponsoredCard from "../components/InlineSponsoredCard";
 import InFeedAdCard from "../components/InFeedAdCard";
 import { supabase } from "../lib/supabase";
 import StylistMap from "../components/StylistMap";
+import usePageInventory from "../hooks/usePageInventory";
 
 // ---------- utils ----------
 function safeArray(v) {
@@ -165,6 +166,11 @@ export default function SearchPage() {
 
   const [mobileSearchOpen, setMobileSearchOpen] =
     useState(false);
+
+  const {
+    inventory: pageInventory,
+    loading: inventoryLoading,
+  } = usePageInventory();  
 
   useEffect(() => {
   async function loadStylists() {
@@ -458,6 +464,13 @@ export default function SearchPage() {
                 : Math.floor(i / 3) % 3 === 1
                 ? "B"
                 : "C"
+            }
+            advertiser={
+              pageInventory.length
+                ? pageInventory[
+                    Math.floor(i / 3) % pageInventory.length
+                  ]
+                : null
             }
           />
         );

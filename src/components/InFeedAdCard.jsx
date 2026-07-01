@@ -7,13 +7,46 @@ import { getInFeedAd } from "../lib/adManager";
 export default function InFeedAdCard({
   page = "search",
   enabled = true,
-  slot = "A", // A/B/C variations
+  slot = "A",
   compact = true,
+  advertiser = null,
 }) {
   const loc = useLocation();
   const navigate = useNavigate();
 
   const ad = useMemo(() => {
+
+    // Use the shared page inventory when available.
+    if (advertiser) {
+      if (advertiser.type === "advertiser") {
+        const a = advertiser.item;
+
+        return {
+          advertiserId: a.id,
+
+          brand:
+            a.brand_name ||
+            a.company_name,
+
+          campaignId: "database_ad",
+          creativeId: a.id,
+          label: a.is_founding_partner
+            ? "Founding Advertiser"
+            : "Sponsored",
+          headline: a.headline || a.company_name,
+          body: a.body || "Sponsored advertiser",
+          cta: a.cta || "Learn More",
+          sponsorUrl: a.website,
+          imageUrl: a.image_url,
+        };
+      }
+
+      if (advertiser.type === "promo") {
+        return advertiser.item;
+      }
+    }
+
+    // Temporary fallback while we complete the migration.
     const index =
       slot === "A"
         ? 0
@@ -22,7 +55,8 @@ export default function InFeedAdCard({
         : 2;
 
     return getInFeedAd(index);
-  }, [slot]);
+
+  }, [slot, advertiser]);
 
   const payload = {
     placement: "in_feed",
@@ -97,7 +131,11 @@ export default function InFeedAdCard({
           </div>
         ) : null}
 
-        <div className="mt-3 font-semibold text-[#102A43] leading-snug text-base">
+        <div className="mt-3 text-lg font-bold text-[#102A43]">
+          {ad.brand}
+        </div>
+
+        <div className="mt-1 font-semibold text-[#52606D] leading-snug text-base">
           {ad.headline}
         </div>
         <p className="mt-2 text-sm text-[#52606D] leading-relaxed line-clamp-2">
