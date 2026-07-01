@@ -16,7 +16,7 @@ export default function InFeedAdCard({
 
   const ad = useMemo(() => {
 
-    console.log("Mobile advertiser:", advertiser);  
+    console.log("INFEED ADVERTISER", advertiser);
 
     // Use the shared page inventory when available.
     if (advertiser) {
