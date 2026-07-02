@@ -97,11 +97,6 @@ export default function useAdvertisers() {
         JSON.stringify(storedOffsets)
       );
 
-      console.log(
-        "ROTATED ORDER:",
-        ordered.map((a) => a.company_name)
-      );
-
       setAdvertisers(ordered);
       setLoading(false);
     }
