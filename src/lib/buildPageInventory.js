@@ -3,6 +3,8 @@
 import promoInventory from "./promoInventory";
 import scoreAdvertisers from "./scoreAdvertisers";
 
+console.log("BUILD PAGE INVENTORY VERSION 3");
+
 export const INVENTORY_SIZE = 8;
 
 /**
@@ -37,7 +39,7 @@ export function buildPageInventory(advertisers = []) {
   );
 
   // Randomize advertiser order
-  const availableAdvertisers = shuffle(uniqueAdvertisers);
+  const availableAdvertisers = uniqueAdvertisers;
 
   const availablePromos = shuffle([...promoInventory]);
 
@@ -80,6 +82,15 @@ export function buildPageInventory(advertisers = []) {
     }
 
   }
+
+  console.log(
+    "PAGE INVENTORY:",
+    inventory.map((x) =>
+      x.type === "advertiser"
+        ? x.item.company_name
+        : x.item.title
+    )
+  );
 
   return inventory;
 }
