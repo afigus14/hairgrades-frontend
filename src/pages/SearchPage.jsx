@@ -1,11 +1,12 @@
 // src/pages/SearchPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
+import { useOutletContext } from "react-router-dom";
+
 import StylistCard from "../components/StylistCard";
 import InlineSponsoredCard from "../components/InlineSponsoredCard";
 import InFeedAdCard from "../components/InFeedAdCard";
 import { supabase } from "../lib/supabase";
 import StylistMap from "../components/StylistMap";
-import usePageInventory from "../hooks/usePageInventory";
 
 // ---------- utils ----------
 function safeArray(v) {
@@ -167,11 +168,22 @@ export default function SearchPage() {
   const [mobileSearchOpen, setMobileSearchOpen] =
     useState(false);
 
-  const {
-    inventory: pageInventory,
-    loading: inventoryLoading,
-  } = usePageInventory();  
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1024);  
 
+  const { selectedAds: pageInventory } = useOutletContext(); 
+
+  useEffect(() => {
+    function handleResize() {
+      setIsDesktop(window.innerWidth >= 1024);
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+  
   useEffect(() => {
   async function loadStylists() {
     try {
@@ -451,7 +463,7 @@ export default function SearchPage() {
         />
       );
 
-      if ((i + 1) % 3 === 0) {
+      if (!isDesktop && (i + 1) % 3 === 0) {
         items.push(
           <InFeedAdCard
             key={`mobile-ad-${i}`}
@@ -478,7 +490,7 @@ export default function SearchPage() {
     });
 
     return items;
-  }, [stylists]);
+  }, [stylists, pageInventory, isDesktop]);
 
   return (
     <div className="w-full min-w-0 pb-10">

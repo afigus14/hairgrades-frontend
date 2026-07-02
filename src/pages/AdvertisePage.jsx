@@ -132,86 +132,30 @@ Thanks!
     <div className="w-full min-w-0 pb-10">
 
       {/* Hero */}
-      <section className="rounded-3xl border border-[#1F3A4D] bg-[#101A2A] px-6 py-8 shadow-lg">
-        <div className="max-w-3xl">
-          <h1 className="text-2xl md:text-3xl font-serif text-[#F7FAFF]">
-            Advertise with Stylegrades
-          </h1>
+      {/* Premier Hero */}
 
-          <p className="mt-3 text-sm md:text-base text-[#C7D5E2] leading-relaxed">
-            Reach clients who are actively searching for stylists and services.
-            Promote your salon, products, education, or local offers—right where
-            people are deciding who to contact.
-          </p>
+      <section className="overflow-hidden rounded-3xl border border-[#D9E2EC] bg-white shadow-xl">
 
-          <div className="mt-10 flex justify-center">
-            <button
-              onClick={() => startAdvertiserCheckout("local")}
-              className="flex w-full max-w-[520px] items-center justify-center rounded-2xl bg-[#F6AE2D] px-8 py-5 text-xl font-semibold text-[#102A43] shadow-sm transition hover:brightness-95"
-            >
-              Start Advertising
-            </button>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Advertiser Information */}
-
-      <section className="mt-8 rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
-
-        <h2 className="text-xl font-semibold text-[#102A43]">
-          Advertiser Information
-        </h2>
-
-        <div className="mt-4 space-y-4">
-
-          <input
-            type="text"
-            placeholder="Company Name"
-            value={companyName}
-            onChange={(e) =>
-              setCompanyName(e.target.value)
-            }
-            className="w-full border rounded-xl px-4 py-3"
-          />
-
-          <input
-            type="email"
-            placeholder="Contact Email"
-            value={contactEmail}
-            onChange={(e) =>
-              setContactEmail(e.target.value)
-            }
-            className="w-full border rounded-xl px-4 py-3"
-          />
-
-          <input
-            type="text"
-            placeholder="Business Website (https://...)"
-            value={website}
-            onChange={(e) =>
-              setWebsite(e.target.value)
-            }
-            className="w-full border rounded-xl px-4 py-3"
-          />
-
-        </div>
+        <img
+          src="/assets/sponsors/premier-hero.jpg"
+          alt="Premier Sponsor"
+          className="w-full object-cover"
+        />
 
       </section>
 
       {/* Placements */}
       <section id="placements" className="mt-10">
-        <h2 className="text-xl md:text-2xl font-serif text-[#102A43]">
+        <h2 className="text-2xl md:text-3xl font-serif font-bold text-[#102A43]">
           Advertising Packages
         </h2>
 
-        <p className="mt-2 text-[#52606D]">
+        <p className="mt-2 text-base font-medium text-[#243B53]">
           Promote your business directly to clients actively searching for beauty
           professionals and local services.
         </p>
 
-        <div className="mt-6 grid gap-10 md:grid-cols-2">
+        <div className="mt-6 grid gap-8 lg:grid-cols-3">
           <div className="rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
 
             <h3 className="text-xl font-semibold text-[#102A43]">
@@ -265,6 +209,37 @@ Thanks!
               className="mt-6 w-full rounded-2xl bg-[#102A43] px-4 py-3 text-white font-semibold"
             >
               Become a Featured Advertiser
+            </button>
+
+          </div>
+
+          <div className="relative rounded-3xl border-2 border-[#E9B949] bg-[#FFFDF8] p-6 shadow-xl lg:-mt-3">
+
+            <div className="inline-flex rounded-full bg-[#FFF3CD] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#8A6D1D]">
+              Most Visible
+            </div>
+
+            <h3 className="mt-4 text-xl font-semibold text-[#102A43]">
+              ⭐ Premier Sponsor
+            </h3>
+
+            <p className="mt-2 text-2xl font-bold text-[#102A43]">
+              $199<span className="text-base font-medium">/month</span>
+            </p>
+
+            <ul className="mt-4 space-y-2 text-sm text-[#243B53]">
+              <li>Exclusive hero banner placement</li>
+              <li>Maximum visibility across Stylegrades</li>
+              <li>Priority brand exposure</li>
+              <li>Premium rotating placement</li>
+              <li>Performance analytics dashboard (coming soon)</li>
+            </ul>
+
+            <button
+              onClick={() => startAdvertiserCheckout("premier")}
+              className="mt-6 w-full rounded-2xl bg-[#102A43] px-4 py-3 text-white font-semibold"
+            >
+              Reserve Premier Placement
             </button>
 
           </div>
@@ -358,6 +333,51 @@ Thanks!
 
         </div>
       </section>
+
+    {/* Advertiser Information */}
+
+      <section className="mt-8 rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
+
+        <h2 className="text-xl font-semibold text-[#102A43]">
+          Advertiser Information
+        </h2>
+
+        <div className="mt-4 space-y-4">
+
+          <input
+            type="text"
+            placeholder="Company Name"
+            value={companyName}
+            onChange={(e) =>
+              setCompanyName(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+          <input
+            type="email"
+            placeholder="Contact Email"
+            value={contactEmail}
+            onChange={(e) =>
+              setContactEmail(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+          <input
+            type="text"
+            placeholder="Business Website (https://...)"
+            value={website}
+            onChange={(e) =>
+              setWebsite(e.target.value)
+            }
+            className="w-full border rounded-xl px-4 py-3"
+          />
+
+        </div>
+
+      </section>
+
     </div>
   );
 }

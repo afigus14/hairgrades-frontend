@@ -360,6 +360,7 @@ export default function PublicLayout() {
         .from("advertisers")
         .select("*")
         .eq("status", "approved")
+        .eq("placement_type", "premier")
         .order("priority_level", { ascending: false })
         .limit(1);
 
@@ -391,8 +392,17 @@ export default function PublicLayout() {
                 <span className="text-lg">★</span>
 
                 <div className="text-center text-xs font-semibold uppercase tracking-[0.16em] leading-tight">
-                  Featured<br />
-                  Advertiser
+                  {featuredAdvertiser ? (
+                    <>
+                      Premier<br />
+                      Partner
+                    </>
+                  ) : (
+                    <>
+                      Become a<br />
+                      Premier Partner
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -400,28 +410,42 @@ export default function PublicLayout() {
               <img
                 src={
                   featuredAdvertiser?.creative_url ||
-                  "/assets/sponsors/advertise-placeholder.jpg"
+                  "/assets/sponsors/premier-banner.jpg"
                 }
                 alt={
                   featuredAdvertiser?.company_name ||
-                  "Advertise on Stylegrades"
+                  "Become a Premier Sponsor"
                 }
-                className="h-16 w-32 lg:h-24 lg:w-48 rounded-2xl object-cover shrink-0"
+                className="h-20 w-36 lg:h-28 lg:w-56 rounded-2xl object-cover shadow-md shrink-0"
               />
 
               {/* Text */}
-              <div className="text-center lg:text-left">
+              <div className="max-w-xl text-center lg:text-left">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7B8794]">
-                  Reserve this Placement
+                  {featuredAdvertiser
+                    ? "Exclusive Platform Sponsor"
+                    : "Exclusive Sponsorship Available"}
                 </div>
 
-                <h2 className="mt-1 text-lg md:text-3xl font-semibold text-[#102A43]">
-                  Feature Your Business
+                <h2 className="mt-1 text-lg lg:text-[1.65rem] font-semibold text-[#102A43]">
+                  {featuredAdvertiser
+                    ? featuredAdvertiser.company_name
+                    : "Become a Premier Sponsor"}
                 </h2>
 
-                <p className="hidden lg:block mt-1 max-w-2xl text-sm md:text-base text-[#52606D] leading-normal">
-                  Put your salon, beauty brand, school, product, or local business in front of
-                  clients actively searching for stylists on Stylegrades.
+                <p className="hidden lg:block mt-1 max-w-2xl text-sm md:text-[15px] text-[#52606D] leading-normal">
+                  {featuredAdvertiser
+                    ? (
+                      featuredAdvertiser.body ||
+                      "Discover one of Stylegrades' Premier Partners."
+                    )
+                    : (
+                      <>
+                        Reach clients actively searching for stylists, salons, beauty brands,
+                        and beauty services. Become one of Stylegrades' most visible brands
+                        with our exclusive Premier Partner placement.
+                      </>
+                    )}
                 </p>
               </div>
             </div>
@@ -430,9 +454,9 @@ export default function PublicLayout() {
             <div className="w-full lg:w-auto flex justify-center lg:block lg:border-l border-[#E9B949] lg:pl-8">
               <a
                 href="/#/advertise#placements"
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2 md:px-8 md:py-4 text-base font-semibold text-white hover:opacity-95"
+                className="inline-flex items-center justify-center whitespace-nowrap rounded-2xl bg-[#102A43] px-5 py-2 md:px-6 md:py-3 text-sm md:text-base font-semibold text-white hover:opacity-95"
               >
-                Advertise with Stylegrades
+                Reserve Premier Placement
               </a>
             </div>
 
@@ -463,7 +487,11 @@ export default function PublicLayout() {
 )}
 
           <main className="min-w-0">
-            <Outlet />
+            <Outlet
+              context={{
+                selectedAds,
+              }}
+            />
           </main>
 
           {!isAdminPage && (
