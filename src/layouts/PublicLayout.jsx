@@ -389,7 +389,7 @@ export default function PublicLayout() {
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-6 px-4 py-2 lg:px-6 lg:py-5">
 
             {/* LEFT SIDE */}
-            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-5 w-full">
+            <div className="flex flex-col lg:flex-row items-center lg:items-start gap-3 lg:gap-4 w-full">
 
               {/* Badge */}
               <div className="flex shrink-0 items-center gap-2 rounded-xl border border-[#F0D58A] bg-[#FFF7E1] px-3 py-1.5 text-[#B7791F]">
@@ -414,17 +414,17 @@ export default function PublicLayout() {
               <img
                 src={
                   featuredAdvertiser?.creative_url ||
-                  "/assets/sponsors/premier-banner.jpg"
+                  "/assets/sponsors/premier-salon.jpg"
                 }
                 alt={
                   featuredAdvertiser?.company_name ||
                   "Become a Premier Sponsor"
                 }
-                className="h-20 w-36 lg:h-28 lg:w-56 rounded-2xl object-cover shadow-md shrink-0"
+                className="h-20 w-40 lg:h-32 lg:w-72 rounded-2xl object-cover shadow-md shrink-0"
               />
 
               {/* Text */}
-              <div className="max-w-xl text-center lg:text-left">
+              <div className="flex-1 text-center lg:text-left">
                 <div className="text-[11px] font-semibold uppercase tracking-[0.22em] text-[#7B8794]">
                   {featuredAdvertiser
                     ? "Exclusive Platform Sponsor"
