@@ -338,6 +338,8 @@ export default function PublicLayout() {
   const loc = useLocation();
   const page = pageFromPath(loc.pathname);
 
+  const isAdvertisePage = page === "advertise";
+
   const isAdminPage = loc.pathname.includes("/admin");
   const [featuredAdvertiser, setFeaturedAdvertiser] = useState(null);
 
@@ -378,8 +380,10 @@ export default function PublicLayout() {
 
       <div className="mx-auto w-full max-w-[1280px] px-4 lg:px-6">
 
-      {/* Featured Sponsor Banner */}
-      <div className="mb-5">
+      {!isAdvertisePage && (
+      <>
+        {/* Featured Sponsor Banner */}
+        <div className="mb-5">
         <div className="overflow-hidden rounded-2xl lg:rounded-3xl border border-[#E9B949] bg-[#FDFCF9] shadow-sm max-w-full">
 
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-2 lg:gap-6 px-4 py-2 lg:px-6 lg:py-5">
@@ -464,18 +468,20 @@ export default function PublicLayout() {
         </div>
       </div>
 
-      
-        <div
-          className={[
+      </>
+      )}
+
+      <div
+        className={[
             "grid gap-5",
-            isAdminPage
+            isAdminPage || isAdvertisePage
               ? "grid-cols-1"
               : "grid-cols-1 lg:grid-cols-[minmax(0,260px)_minmax(0,1fr)_minmax(0,260px)] xl:grid-cols-[minmax(0,300px)_minmax(0,1fr)_minmax(0,300px)]",
             "items-start",
             "pt-0 pb-5",
           ].join(" ")}
         >
-          {!isAdminPage && (
+          {!isAdminPage && !isAdvertisePage && (
             <div className="hidden lg:block min-w-0">
               {selectedAds.length >= 8 && (
                 <LeftRail
@@ -494,7 +500,7 @@ export default function PublicLayout() {
             />
           </main>
 
-          {!isAdminPage && (
+          {!isAdminPage && !isAdvertisePage && (
             <div className="hidden lg:block min-w-0">
               {selectedAds.length >= 8 && (
                 <RightRail

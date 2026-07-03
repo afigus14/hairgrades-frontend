@@ -1,6 +1,7 @@
 // src/pages/AdvertisePage.jsx
 import React, { useMemo, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import PremierBanner from "../components/PremierBanner";
 
 const EMAIL = "advertise@stylegrades.com"; // change later to hello@stylegrades.com
 
@@ -70,7 +71,7 @@ export default function AdvertisePage() {
     try {
       if (!companyName || !contactEmail) {
         alert(
-          "Please enter your company name and email."
+          "Please enter your company name and email at the bottom of this page."
         );
         return;
       }
@@ -131,17 +132,58 @@ Thanks!
   return (
     <div className="w-full min-w-0 pb-10">
 
-      {/* Hero */}
       {/* Premier Hero */}
 
-      <section className="overflow-hidden rounded-3xl border border-[#D9E2EC] bg-white shadow-xl">
+      <section className="overflow-hidden rounded-3xl border border-[#D8B36A] bg-white shadow-xl">
+        <div className="grid lg:grid-cols-[1.35fr_0.65fr] items-stretch">
 
-        <img
-          src="/assets/sponsors/premier-hero.jpg"
-          alt="Premier Sponsor"
-          className="w-full object-cover"
-        />
+          {/* Left Side */}
+          <div className="flex flex-col justify-center 10 py-10 lg:px-12">
 
+            <div className="inline-flex w-fit items-center gap-2 rounded-full border border-[#D8B36A] bg-[#FFF9EC] px-4 py-1.5">
+              <span className="text-[#C9971A] text-lg">★</span>
+
+              <div className="text-xs font-semibold uppercase tracking-[0.22em] text-[#C9971A]">
+                Become a Premier Partner
+              </div>
+            </div>
+
+            <div className="mt-6 text-xs font-semibold uppercase tracking-[0.35em] text-[#C9971A]">
+              Exclusive Sponsorship Available
+            </div>
+
+            <h1 className="mt-3 text-3xl xl:text-5xl font-bold leading-tight text-[#102A43]">
+              Become a Premier Sponsor
+            </h1>
+
+            <p className="mt-5 max-w-xl text-base leading-7 text-[#52606D]">
+              Reach clients actively searching for stylists, salons,
+              beauty brands, and beauty services. Become one of
+              Stylegrades' most visible brands with our exclusive
+              Premier Partner placement.
+            </p>
+
+            <a
+              href="#advertiser-information"
+              className="mt-8 inline-flex w-fit items-center justify-center rounded-2xl bg-[#102A43] px-10 py-4 text-lg font-semibold text-white transition hover:bg-[#0C2038]"
+            >
+              Reserve Premier Placement
+            </a>
+
+          </div>
+
+          {/* Right Side */}
+          <div className="relative min-h-[340px]">
+            <img
+              src="/assets/sponsors/premier-salon.jpg"
+              alt="Premier salon"
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+
+            <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-white/20" />
+          </div>
+
+        </div>
       </section>
 
       {/* Placements */}
@@ -336,7 +378,10 @@ Thanks!
 
     {/* Advertiser Information */}
 
-      <section className="mt-8 rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm">
+      <section
+        id="advertiser-information"
+        className="mt-8 rounded-3xl border border-[#D9E2EC] bg-white p-6 shadow-sm"
+      >
 
         <h2 className="text-xl font-semibold text-[#102A43]">
           Advertiser Information
