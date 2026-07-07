@@ -28,6 +28,7 @@ export default function AdminReviewPage() {
   const [reviews, setReviews] = useState([]);
 
   const [responses, setResponses] = useState({});
+  const [adminMessages, setAdminMessages] = useState({});
 
   const headers = useMemo(() => {
     return {
@@ -180,21 +181,33 @@ export default function AdminReviewPage() {
   }
 
   async function requestInfo(id, message) {
+
+    console.log("REQUEST INFO CLICKED", id, message);
+
+    if (!message || !message.trim()) {
+      setStatus({
+        type: "error",
+        message:
+          "Please explain what information the applicant needs before sending the request.",
+      });
+      return;
+    }
+
     try {
+
       const stylist = applications.find(
         (s) => s.id === id
       );
 
+      // Let the backend handle the entire workflow
       const res = await fetch(
-        "https://stylegrades-api.vercel.app/api/send-request-info",
+        `${API_BASE}/api/applicationAction`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers,
           body: JSON.stringify({
-            email: stylist?.email,
-            name: stylist?.fullName,
+            action: "request_info",
+            id,
             message,
           }),
         }
@@ -204,21 +217,38 @@ export default function AdminReviewPage() {
 
       if (!res.ok) {
         throw new Error(
-          data.error || "Failed to send email."
+          data.error || "Failed to send request."
         );
       }
+
+      // Remove from current screen
+      setApplications((prev) =>
+        prev.filter((s) => s.id !== id)
+      );
 
       setStatus({
         type: "success",
         message:
-          "Request for additional information sent.",
+          "Additional information request sent successfully. The application has been moved to Needs Information.",
       });
 
+      setTimeout(() => {
+        setStatus({
+          type: "idle",
+          message: "",
+        });
+      }, 5000);
+
     } catch (e) {
+
+      console.error(e);
+
       setStatus({
         type: "error",
-        message: e.message,
+        message:
+          e.message || "Unable to send request.",
       });
+
     }
   }
 
@@ -489,11 +519,15 @@ export default function AdminReviewPage() {
                 {/* Message box */}
                   <div className="mt-3">
                     <textarea
-                      placeholder="Message to stylist (optional)"
+                      placeholder="Message to stylist"
                       className="w-full border rounded-lg px-3 py-2 text-sm"
-                      onChange={(e) => {
-                        app._message = e.target.value;
-                      }}
+                      value={adminMessages[id] || ""}
+                      onChange={(e) =>
+                        setAdminMessages((prev) => ({
+                          ...prev,
+                          [id]: e.target.value,
+                        }))
+                      }
                     />
                   </div>
 
@@ -521,7 +555,7 @@ export default function AdminReviewPage() {
 
                     <button
                       type="button"
-                      onClick={() => requestInfo(id, app._message)}
+                      onClick={() => requestInfo(id, adminMessages[id])}
                       disabled={loading || !adminKey}
                       className="px-4 py-2 rounded-lg bg-yellow-500 hover:bg-yellow-600 text-white font-semibold"
                     >

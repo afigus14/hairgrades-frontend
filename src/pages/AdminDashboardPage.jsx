@@ -1,6 +1,7 @@
 // src/pages/AdminDashboardPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
+import { supabase } from "../lib/supabase";
 import seedStylists from "../data/stylists-with-coords.json";
 import {
   ResponsiveContainer,
@@ -17,8 +18,6 @@ import {
   CartesianGrid,
   Legend,
 } from "recharts";
-
-const API_BASE = import.meta.env.VITE_API_BASE_URL || "";
 
 function safeArray(v) {
   return Array.isArray(v) ? v : [];
@@ -60,6 +59,19 @@ export default function AdminDashboardPage() {
   const [analytics, setAnalytics] = useState(null);
   const [managedStylists, setManagedStylists] = useState([]);
 
+  const [pendingStylists, setPendingStylists] = useState([]);
+
+  const [platformStats, setPlatformStats] = useState({
+    stylists: 0,
+    pendingStylists: 0,
+    reviews: 0,
+    pendingReviews: 0,
+    advertisers: 0,
+    cities: 0,
+  });
+
+  const [advertisers, setAdvertisers] = useState([]);
+
   useEffect(() => {
     localStorage.setItem("stylegrades_admin_key", adminKey);
   }, [adminKey]);
@@ -88,11 +100,29 @@ export default function AdminDashboardPage() {
   }, [managedStylists]);
 
   async function fetchManagedStylists() {
-    const res = await fetch(`${API_BASE}/api/public/stylists`);
-    if (!res.ok) return [];
-    const data = await res.json().catch(() => ({}));
-    if (!data?.ok) return [];
-    return safeArray(data.stylists);
+    const { data, error } = await supabase
+      .from("stylists")
+      .select("*");
+
+    if (error) {
+      console.error("Error loading stylists:", error);
+      return [];
+    }
+
+    return data || [];
+  }
+
+  async function fetchAdvertisers() {
+    const { data, error } = await supabase
+      .from("advertisers")
+      .select("*");
+
+    if (error) {
+      console.error("Error loading advertisers:", error);
+      return [];
+    }
+
+    return data || [];
   }
 
   async function fetchAnalytics() {
@@ -117,33 +147,113 @@ export default function AdminDashboardPage() {
     return data;
   }
 
+  async function loadPlatformStats() {
+    const [
+      stylistResult,
+      pendingStylistResult,
+      reviewResult,
+      pendingReviewResult,
+      advertiserResult,
+      citiesResult,
+    ] = await Promise.all([
+
+      supabase
+        .from("stylists")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved"),
+
+      supabase
+        .from("stylists")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending"),
+
+      supabase
+        .from("reviews")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved"),
+
+      supabase
+        .from("reviews")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "pending"),
+
+      supabase
+        .from("advertisers")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "approved")
+        .eq("is_active", true),
+
+      supabase
+        .from("stylists")
+        .select("city")
+        .eq("status", "approved"),
+
+    ]);
+
+    console.log("Stylist Result:", stylistResult);
+    console.log("Pending Stylist Result:", pendingStylistResult);
+    console.log("Review Result:", reviewResult);
+    console.log("Advertiser Result:", advertiserResult);
+    console.log("Cities Result:", citiesResult);  
+
+    const stylistCount = stylistResult.count || 0;
+    const pendingStylistCount = pendingStylistResult.count || 0;
+    const reviewCount = reviewResult.count || 0;
+    const pendingReviewCount = pendingReviewResult.count || 0;
+    const advertiserCount = advertiserResult.count || 0;
+    const cities = citiesResult.data || [];
+
+    const uniqueCities = new Set(
+      (cities || [])
+        .map((c) => c.city)
+        .filter(Boolean)
+    );
+
+    setPlatformStats({
+      stylists: stylistCount || 0,
+      pendingStylists: pendingStylistCount || 0,
+      reviews: reviewCount || 0,
+      pendingReviews: pendingReviewCount || 0,
+      advertisers: advertiserCount || 0,
+      cities: uniqueCities.size,
+    });
+  }
+
   async function refresh() {
     setLoading(true);
     setStatus({ type: "idle", message: "" });
 
     try {
-      const [managed, an] = await Promise.all([
+      const [managed, ads] = await Promise.all([
         fetchManagedStylists(),
-        fetchAnalytics(),
+        fetchAdvertisers(),
       ]);
 
       setManagedStylists(managed);
-      setAnalytics(an);
+
+      setPendingStylists(
+        managed.filter((s) => s.status === "pending")
+      );
+
+      setAdvertisers(ads);
+
+      await loadPlatformStats();
 
       setStatus({
         type: "success",
         message: "Dashboard loaded.",
       });
     } catch (e) {
+      console.error(e);
+
       setStatus({
         type: "error",
         message: e?.message || "Server error",
       });
-      setAnalytics(null);
     } finally {
       setLoading(false);
     }
-  }
+  }   // <-- ADD THIS
 
   useEffect(() => {
     if (adminKey) refresh();
@@ -235,13 +345,23 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col items-center w-full">
 
       {/* HEADER */}
-      <div className="text-center mb-10">
-        <h1 className="text-3xl font-bold">
+
+      <div className="text-center mb-12">
+
+        <div className="text-sm font-semibold tracking-[0.35em] uppercase text-[#C9971A]">
+          Stylegrades
+        </div>
+
+        <h1 className="mt-2 text-5xl font-bold text-[#102A43]">
           Admin Dashboard
         </h1>
 
-        <p className="text-gray-600 mt-2">
-          Revenue-ready analytics: views → profile clicks → contact clicks.
+        <p className="mt-3 text-xl font-medium text-[#334E68]">
+          Welcome back, Dr. Figus.
+        </p>
+
+        <p className="mt-1 text-[#52606D] text-lg">
+          Here's what's happening on your platform today.
         </p>
 
         <div className="mt-6 flex flex-col items-center gap-3">
@@ -264,32 +384,268 @@ export default function AdminDashboardPage() {
           </button>
         </div>
 
-        <div className="mt-8 flex flex-wrap justify-center gap-4">
+        {/* QUICK ACTIONS */}
 
-          <Link
-            to="/admin/stylists"
-            className="px-4 py-2 bg-gray-100 rounded-lg border"
-          >
-            Stylists
-          </Link>
+        <div className="mt-10 w-full max-w-5xl mx-auto">
 
-          <Link
-            to="/admin/review"
-            className="px-4 py-2 bg-gray-100 rounded-lg border"
-          >
-            Reviews
-          </Link>
+          <h2 className="text-2xl font-bold text-[#102A43] text-center mb-6">
+            Quick Actions
+          </h2>
 
-          <Link
-            to="/admin/advertisers"
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg border"
-          >
-            Advertisers
-          </Link>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+            <Link
+              to="/admin/stylists"
+              className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 hover:shadow-md transition"
+            >
+              <div className="text-4xl mb-3">💇</div>
+
+              <h3 className="text-xl font-semibold text-[#102A43]">
+                Manage Stylists
+              </h3>
+
+              <p className="mt-2 text-[#52606D]">
+                Approve, edit, verify and manage stylist profiles.
+              </p>
+            </Link>
+
+            <Link
+              to="/admin/review"
+              className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 hover:shadow-md transition"
+            >
+              <div className="text-4xl mb-3">⭐</div>
+
+              <h3 className="text-xl font-semibold text-[#102A43]">
+                Review Queue
+              </h3>
+
+              <p className="mt-2 text-[#52606D]">
+                Approve, reject and moderate customer reviews.
+              </p>
+            </Link>
+
+            <Link
+              to="/admin/advertisers"
+              className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 hover:shadow-md transition"
+            >
+              <div className="text-4xl mb-3">📣</div>
+
+              <h3 className="text-xl font-semibold text-[#102A43]">
+                Advertisers
+              </h3>
+
+              <p className="mt-2 text-[#52606D]">
+                Manage advertising campaigns and sponsorships.
+              </p>
+            </Link>
+
+          </div>
 
         </div>
       </div>
 
+      {/* PLATFORM SNAPSHOT */}
+
+      <div className="mt-14 mb-12 w-full max-w-6xl mx-auto">
+
+        <h2 className="text-2xl font-bold text-[#102A43] text-center mb-6">
+          Platform Snapshot
+        </h2>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#7B8794]">
+              Stylists
+            </div>
+            <div className="mt-3 text-4xl font-bold text-[#102A43]">
+              {platformStats.stylists}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#7B8794]">
+              Reviews
+            </div>
+            <div className="mt-3 text-4xl font-bold text-[#102A43]">
+              {platformStats.reviews}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#7B8794]">
+              Advertisers
+            </div>
+            <div className="mt-3 text-4xl font-bold text-[#102A43]">
+              {platformStats.advertisers}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl border border-[#D9E2EC] shadow-sm p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#7B8794]">
+              Cities Served
+            </div>
+            <div className="mt-3 text-4xl font-bold text-[#102A43]">
+              {platformStats.cities}
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* NEEDS ATTENTION */}
+
+      <div className="mb-14 w-full max-w-6xl mx-auto">
+
+        <h2 className="text-2xl font-bold text-[#102A43] text-center mb-6">
+          Needs Attention
+        </h2>
+
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div className="rounded-2xl bg-[#FEF3F2] border border-[#FECACA] p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#991B1B]">
+              Pending Reviews
+            </div>
+
+            <div className="mt-3 text-5xl font-bold text-[#991B1B]">
+              {platformStats.pendingReviews}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-[#FFF7E6] border border-[#F7D070] p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#92400E]">
+              Pending Stylists
+            </div>
+
+            <div className="mt-3 text-5xl font-bold text-[#92400E]">
+              {platformStats.pendingStylists}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-[#EFF8FF] border border-[#BFDBFE] p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#1D4ED8]">
+              Active Advertisers
+            </div>
+
+            <div className="mt-3 text-5xl font-bold text-[#1D4ED8]">
+              {platformStats.advertisers}
+            </div>
+          </div>
+
+          <div className="rounded-2xl bg-[#ECFDF3] border border-[#A7F3D0] p-6 text-center">
+            <div className="text-sm uppercase tracking-wide text-[#047857]">
+              Monthly Revenue
+            </div>
+
+            <div className="mt-3 text-5xl font-bold text-[#047857]">
+              $
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Pending Stylist List */}
+
+      <div className="mt-10 w-full max-w-5xl mx-auto">
+
+        <div className="flex items-center justify-between mb-4">
+
+          <h2 className="text-2xl font-bold text-[#102A43]">
+            Pending Stylist Approvals
+          </h2>
+
+          <Link
+            to="/admin/stylists"
+            className="rounded-lg bg-[#102A43] text-white px-4 py-2 hover:bg-[#1F3A5F]"
+          >
+            Review All
+          </Link>
+
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+
+          {pendingStylists.length === 0 ? (
+
+            <div className="p-8 text-center text-gray-500">
+              No stylists are waiting for approval.
+            </div>
+
+          ) : (
+
+            <table className="w-full">
+
+              <thead className="bg-gray-50">
+
+                <tr>
+
+                  <th className="text-left px-6 py-3">
+                    Stylist
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    City
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Tier
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Status
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {pendingStylists.slice(0,5).map((stylist) => (
+
+                  <tr
+                    key={stylist.id}
+                    className="border-t"
+                  >
+
+                    <td className="px-6 py-4 font-medium">
+                      {stylist.full_name}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {stylist.city}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {stylist.tier}
+                    </td>
+
+                    <td className="px-6 py-4">
+
+                      <span className="rounded-full bg-yellow-100 text-yellow-800 px-3 py-1 text-sm">
+                        Pending
+                      </span>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          )}
+
+        </div>
+
+      </div>
+      
       {/* KPI CARDS */}
       <div className="mb-12 space-y-8">
 

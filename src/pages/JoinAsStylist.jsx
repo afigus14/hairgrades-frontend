@@ -746,7 +746,10 @@ return (
         {/* Basic info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="block">
-            <span className="text-sm font-medium">Full name *</span>
+            <span className="text-sm font-medium">Legal Name (as shown on license) *</span>
+            <p className="mt-1 text-xs text-amber-700">
+              Must exactly match the name shown on your professional cosmetology or barber license.
+            </p>
             <input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -901,6 +904,10 @@ return (
           <span className="text-sm font-medium">
             Upload License or Professional Certificate *
           </span>
+          
+          <p className="mt-1 text-xs text-amber-700">
+            Your application cannot be approved unless your legal name matches the name on your uploaded license.
+          </p>
 
           <label className="mt-1 inline-flex items-center gap-2 cursor-pointer">
             <span className="px-3 py-2 border rounded-lg bg-white hover:bg-gray-50 text-sm">
