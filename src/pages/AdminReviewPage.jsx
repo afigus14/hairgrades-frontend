@@ -485,8 +485,55 @@ export default function AdminReviewPage() {
                     )}
 
                     <div className="text-sm text-gray-700 mt-1">
-                      {app.email || ""} • {app.phone || "No phone"} • {app.city || ""} • Tier:{" "}
-                      {app.tier_requested || app.tierRequested || "free"}
+                      <div><strong>Email:</strong> {app.email || "—"}</div>
+
+                      <div><strong>Phone:</strong> {app.phone || "—"}</div>
+
+                      <div>
+                        <strong>Location:</strong>{" "}
+                        {app.city || "—"}, {app.state || "—"} {app.zip || ""}
+                      </div>
+
+                      <div>
+                        <strong>Salon:</strong>{" "}
+                        {app.salon_name || "—"}
+                      </div>
+
+                      <div>
+                        <strong>Experience:</strong>{" "}
+                        {app.yearsExperience || "—"} years
+                      </div>
+
+                      <div>
+                        <strong>Instagram:</strong>{" "}
+                        {app.instagram || "—"}
+                      </div>
+
+                      <div>
+                        <strong>Website:</strong>{" "}
+                        {app.website ? (
+                          <a
+                            href={app.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 underline break-all"
+                          >
+                            Visit Website
+                          </a>
+                        ) : (
+                          "—"
+                        )}
+                      </div>
+
+                      <div>
+                        <strong>License Number:</strong>{" "}
+                        {app.license || "—"}
+                      </div>
+
+                      <div>
+                        <strong>Requested Plan:</strong>{" "}
+                        {app.tier_requested || app.tierRequested || "Free"}
+                      </div>
                     </div>
 
                     <div className="text-sm text-gray-700 mt-1">
@@ -497,8 +544,21 @@ export default function AdminReviewPage() {
                       {id || "Missing id"} • {app.createdAt || ""}
                     </div>
 
+                    <div className="mt-3">
+                      <div className="font-semibold mb-1">
+                        Bio
+                      </div>
+
+                      <div className="bg-gray-50 border rounded-lg p-3 whitespace-pre-wrap text-sm">
+                        {app.bio || "—"}
+                      </div>
+                    </div>
+
                     <div className="text-sm text-gray-700 mt-2">
-                      <strong>Bio:</strong> {app.bio || "—"}
+                      <strong>Submitted:</strong>{" "}
+                      {app.created_at
+                        ? new Date(app.created_at).toLocaleString()
+                        : "—"}
                     </div>
 
                     {app.licenseUrl && (

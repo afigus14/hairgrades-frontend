@@ -21,6 +21,7 @@ import AdvertisePage from "./pages/AdvertisePage";
 import StylistLoginPage from "./pages/StylistLoginPage";
 import DashboardPage from "./pages/DashboardPage"
 import EditProfilePage from "./pages/EditProfilePage";
+import EditApplicationPage from "./pages/EditApplicationPage";
 import AdminReviewPage from "./pages/AdminReviewPage";
 import AdminStylistsPage from "./pages/AdminStylistsPage";
 import AdminEditStylistPage from "./pages/AdminEditStylistPage";
@@ -72,6 +73,12 @@ function App() {
           <Route path="signup" element={<StylistSignupPage />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="edit-profile" element={<EditProfilePage />} />
+
+          <Route
+            path="edit-application/:id"
+            element={<EditApplicationPage />}
+          />
+          
           <Route path="admin/review" element={<AdminReviewPage />} />
           <Route path="admin-review" element={<AdminReviewPage />} />
           <Route path="dashboard/billing" element={<BillingPage />} />
