@@ -456,7 +456,7 @@ export default function AdminReviewPage() {
       {applications.length === 0 ? (
         <div className="text-gray-700">No applications yet.</div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="space-y-8">
           {applications.map((app) => {
             console.log("APP DATA:", app);
             const id = idSafe(app.id);
@@ -626,12 +626,14 @@ export default function AdminReviewPage() {
                 {/* Photos */}
                 <div className="mt-5 grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <div className="text-sm font-semibold mb-2">Headshot</div>
+                    <div className="text-lg font-bold border-b pb-2 mb-4">
+                      Portfolio Headshot
+                    </div>
                     {app.photoUrl ? (
                       <img
                         src={app.photoUrl}
                         alt="Headshot"
-                        className="w-full h-48 object-cover rounded-lg border"
+                        className="w-full rounded-xl border shadow"
                       />
                     ) : (
                       <div className="text-sm text-gray-500">No headshot.</div>
@@ -639,15 +641,17 @@ export default function AdminReviewPage() {
                   </div>
 
                   <div>
-                    <div className="text-sm font-semibold mb-2">Work Photos</div>
+                    <div className="text-lg font-bold border-b pb-2 mb-4">
+                      Portfolio Gallery
+                    </div>
                     {safeArray(app.gallery).length ? (
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                         {safeArray(app.gallery).slice(0, 9).map((url) => (
                           <img
                             key={url}
                             src={url}
                             alt="Work"
-                            className="h-20 w-full object-cover rounded border"
+                            className="h-40 w-full object-cover rounded-xl border shadow cursor-pointer hover:scale-105 transition"
                           />
                         ))}
                       </div>
