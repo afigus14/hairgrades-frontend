@@ -640,6 +640,19 @@ export default function AdminReviewPage() {
                     )}
                   </div>
 
+                  {/* Professional Certifications */}
+                  {app.certifications && (
+                    <div className="mb-8">
+                      <div className="text-lg font-bold border-b pb-2 mb-4">
+                        Professional Certifications
+                      </div>
+
+                      <div className="whitespace-pre-line text-gray-700 bg-gray-50 border rounded-xl p-4">
+                        {app.certifications}
+                      </div>
+                    </div>
+                  )}
+
                   <div>
                     <div className="text-lg font-bold border-b pb-2 mb-4">
                       Portfolio Gallery

@@ -136,12 +136,12 @@ export default function StylistCard({
         <div className="flex flex-col sm:flex-row gap-4 p-4 sm:p-7 pt-8 sm:pt-9">
 
           {/* IMAGE */}
-          <div className="w-full sm:w-40 h-auto sm:h-40 aspect-square flex-shrink-0 overflow-hidden rounded-2xl bg-[#F0F4F8] shadow-sm">
+          <div className="w-full sm:w-44 h-64 flex-shrink-0 overflow-hidden rounded-2xl bg-[#F0F4F8] shadow-sm flex items-center justify-center">
             {photoUrl ? (
               <img
                 src={photoUrl}
                 alt={name}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-contain object-top transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
             ) : (

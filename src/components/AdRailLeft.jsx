@@ -203,14 +203,13 @@ export default function AdRailLeft({
       {/* Top bar */}
       <div
         className={[
-          "flex items-center justify-between border-b border-[#EDF2F7] bg-[#F8FAFC]",
+          "flex items-center border-b border-[#EDF2F7] bg-[#F8FAFC]",
           compact ? "px-4 py-3" : "px-5 py-4",
         ].join(" ")}
       >
         <div className="text-[11px] uppercase tracking-wide text-[#52606D]">
           Sponsored
         </div>
-        <div className="text-[11px] text-[#7B8794]">{page}</div>
       </div>
 
       {/* Creative */}

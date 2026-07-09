@@ -37,6 +37,44 @@ function formatInt(n) {
   return new Intl.NumberFormat().format(num(n));
 }
 
+function getWaitingDays(dateString) {
+  if (!dateString) return 0;
+
+  const requested = new Date(dateString);
+  const today = new Date();
+
+  return Math.floor(
+    (today - requested) / (1000 * 60 * 60 * 24)
+  );
+}
+
+function getWaitingLabel(dateString) {
+  const days = getWaitingDays(dateString);
+
+  if (days === 0) return "Today";
+  if (days === 1) return "Yesterday";
+
+  return `${days} days`;
+}
+
+function getWaitingColor(dateString) {
+  const days = getWaitingDays(dateString);
+
+  if (days >= 8) return "text-red-600";
+  if (days >= 4) return "text-amber-600";
+
+  return "text-emerald-600";
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+
+  if (hour < 12) return "Good morning";
+  if (hour < 18) return "Good afternoon";
+
+  return "Good evening";
+}
+
 function alphaName(fullName) {
   const full = String(fullName || "").trim().replace(/\s+/g, " ");
   if (!full) return "";
@@ -60,10 +98,12 @@ export default function AdminDashboardPage() {
   const [managedStylists, setManagedStylists] = useState([]);
 
   const [pendingStylists, setPendingStylists] = useState([]);
+  const [needsInfoStylists, setNeedsInfoStylists] = useState([]);
 
   const [platformStats, setPlatformStats] = useState({
     stylists: 0,
     pendingStylists: 0,
+    needsInformationStylists: 0,
     reviews: 0,
     pendingReviews: 0,
     advertisers: 0,
@@ -151,6 +191,7 @@ export default function AdminDashboardPage() {
     const [
       stylistResult,
       pendingStylistResult,
+      needsInfoResult,
       reviewResult,
       pendingReviewResult,
       advertiserResult,
@@ -166,6 +207,11 @@ export default function AdminDashboardPage() {
         .from("stylists")
         .select("*", { count: "exact", head: true })
         .eq("status", "pending"),
+
+      supabase
+        .from("stylists")
+        .select("*", { count: "exact", head: true })
+        .eq("status", "needs_information"),  
 
       supabase
         .from("reviews")
@@ -198,6 +244,8 @@ export default function AdminDashboardPage() {
 
     const stylistCount = stylistResult.count || 0;
     const pendingStylistCount = pendingStylistResult.count || 0;
+    const needsInformationCount =
+      needsInfoResult.count || 0;
     const reviewCount = reviewResult.count || 0;
     const pendingReviewCount = pendingReviewResult.count || 0;
     const advertiserCount = advertiserResult.count || 0;
@@ -212,6 +260,7 @@ export default function AdminDashboardPage() {
     setPlatformStats({
       stylists: stylistCount || 0,
       pendingStylists: pendingStylistCount || 0,
+      needsInformationStylists: needsInformationCount || 0,
       reviews: reviewCount || 0,
       pendingReviews: pendingReviewCount || 0,
       advertisers: advertiserCount || 0,
@@ -224,9 +273,10 @@ export default function AdminDashboardPage() {
     setStatus({ type: "idle", message: "" });
 
     try {
-      const [managed, ads] = await Promise.all([
+      const [managed, ads, analyticsData] = await Promise.all([
         fetchManagedStylists(),
         fetchAdvertisers(),
+        fetchAnalytics(),
       ]);
 
       setManagedStylists(managed);
@@ -235,7 +285,15 @@ export default function AdminDashboardPage() {
         managed.filter((s) => s.status === "pending")
       );
 
+      setNeedsInfoStylists(
+        managed.filter(
+          (s) => s.status === "needs_information"
+        )
+      );
+
       setAdvertisers(ads);
+
+      setAnalytics(analyticsData);
 
       await loadPlatformStats();
 
@@ -256,8 +314,10 @@ export default function AdminDashboardPage() {
   }   // <-- ADD THIS
 
   useEffect(() => {
-    if (adminKey) refresh();
-  }, []);
+    if (adminKey) {
+      refresh();
+    }
+  }, [adminKey]);
 
   const kpis = useMemo(() => {
     const totals = analytics?.totals || {};
@@ -340,6 +400,42 @@ export default function AdminDashboardPage() {
       })
     );
 
+  const dailySummary = (() => {
+    const pending = platformStats.pendingStylists;
+    const actionRequired = platformStats.needsInformationStylists;
+    const reviews = platformStats.pendingReviews;
+
+    if (
+      pending === 0 &&
+      actionRequired === 0 &&
+      reviews === 0
+    ) {
+      return "🎉 Great job! There are no applications or reviews requiring your attention today.";
+    }
+
+    const parts = [];
+
+    if (pending > 0) {
+      parts.push(
+        `${pending} application${pending === 1 ? "" : "s"} awaiting review`
+      );
+    }
+
+    if (actionRequired > 0) {
+      parts.push(
+        `${actionRequired} applicant${actionRequired === 1 ? "" : "s"} need${actionRequired === 1 ? "s" : ""} to respond`
+      );
+    }
+
+    if (reviews > 0) {
+      parts.push(
+        `${reviews} review${reviews === 1 ? "" : "s"} pending approval`
+      );
+    }
+
+    return `You have ${parts.join(", ")}.`;
+  })();  
+
   return (
     <div className="max-w-7xl mx-auto px-8 py-12">
       <div className="flex flex-col items-center w-full">
@@ -356,14 +452,16 @@ export default function AdminDashboardPage() {
           Admin Dashboard
         </h1>
 
-        <p className="mt-3 text-xl font-medium text-[#334E68]">
-          Welcome back, Dr. Figus.
+        <p className="mt-3 text-2xl font-semibold text-[#334E68]">
+          {getGreeting()}, Dr. Figus.
         </p>
 
-        <p className="mt-1 text-[#52606D] text-lg">
-          Here's what's happening on your platform today.
+        <p className="mt-2 text-[#52606D] text-lg max-w-3xl mx-auto">
+          {dailySummary}
         </p>
 
+        {!adminKey && (
+        
         <div className="mt-6 flex flex-col items-center gap-3">
           <label className="text-sm font-medium">
             Admin API Key
@@ -383,6 +481,7 @@ export default function AdminDashboardPage() {
             {loading ? "Loading..." : "Load dashboard"}
           </button>
         </div>
+        )}
 
         {/* QUICK ACTIONS */}
 
@@ -514,24 +613,47 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl bg-[#FFF7E6] border border-[#F7D070] p-6 text-center">
+          <Link
+            to="/admin/review"
+            className="rounded-2xl bg-[#FFF7E6] border border-[#F7D070] p-6 text-center hover:shadow-lg transition block"
+          >
             <div className="text-sm uppercase tracking-wide text-[#92400E]">
-              Pending Stylists
+              Pending Applications
             </div>
 
             <div className="mt-3 text-5xl font-bold text-[#92400E]">
               {platformStats.pendingStylists}
             </div>
-          </div>
 
-          <div className="rounded-2xl bg-[#EFF8FF] border border-[#BFDBFE] p-6 text-center">
-            <div className="text-sm uppercase tracking-wide text-[#1D4ED8]">
-              Active Advertisers
+            <div className="mt-4 text-sm font-semibold text-[#92400E]">
+              Review →
+            </div>
+          </Link>
+
+          <div
+            onClick={() =>
+              document
+                .getElementById("action-required")
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                  block: "start",
+                })
+            }
+            className="rounded-2xl bg-[#FFF4E5] border border-[#FDBA74] p-6 text-center hover:shadow-lg transition block cursor-pointer"
+          >
+
+            <div className="text-sm uppercase tracking-wide text-[#C2410C]">
+              Action Required
             </div>
 
-            <div className="mt-3 text-5xl font-bold text-[#1D4ED8]">
-              {platformStats.advertisers}
+            <div className="mt-3 text-5xl font-bold text-[#C2410C]">
+              {platformStats.needsInformationStylists}
             </div>
+
+            <div className="mt-4 text-sm font-semibold text-[#C2410C]">
+              Applicant Response Needed
+            </div>
+
           </div>
 
           <div className="rounded-2xl bg-[#ECFDF3] border border-[#A7F3D0] p-6 text-center">
@@ -555,14 +677,14 @@ export default function AdminDashboardPage() {
         <div className="flex items-center justify-between mb-4">
 
           <h2 className="text-2xl font-bold text-[#102A43]">
-            Pending Stylist Approvals
+            Application Pipeline
           </h2>
 
           <Link
             to="/admin/stylists"
             className="rounded-lg bg-[#102A43] text-white px-4 py-2 hover:bg-[#1F3A5F]"
           >
-            Review All
+            Manage Applications
           </Link>
 
         </div>
@@ -645,9 +767,162 @@ export default function AdminDashboardPage() {
         </div>
 
       </div>
+
+      <div
+        id="action-required"
+        className="mt-10"
+      >
+
+        <div className="flex items-center justify-between mb-4">
+
+          <h3 className="text-xl font-bold text-[#102A43]">
+            Action Required by Applicant
+          </h3>
+
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+
+          {needsInfoStylists.length === 0 ? (
+
+            <div className="p-8 text-center text-gray-500">
+              No applications are waiting for additional information.
+            </div>
+
+          ) : (
+
+            <table className="w-full">
+
+              <thead className="bg-gray-50">
+
+                <tr>
+
+                  <th className="text-left px-6 py-3">
+                    Stylist
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    City
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Tier
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Status
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Waiting
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Last Contact
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Action
+                  </th>
+
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {needsInfoStylists.map((stylist) => (
+
+                  <tr
+                    key={stylist.id}
+                    className="border-t"
+                  >
+
+                    <td className="px-6 py-4 font-medium">
+                      {stylist.full_name}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {stylist.city}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      {stylist.tier}
+                    </td>
+
+                    <td className="px-6 py-4">
+
+                      <span className="rounded-full bg-orange-100 text-orange-700 px-4 py-1.5 text-sm font-medium">
+                        Action Required
+                      </span>
+
+                    </td>
+
+                    <td className="px-6 py-4">
+
+                      <span
+                        className={`inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+                          getWaitingDays(stylist.information_requested_at) >= 8
+                            ? "bg-red-100 text-red-700"
+                            : getWaitingDays(stylist.information_requested_at) >= 4
+                            ? "bg-amber-100 text-amber-700"
+                            : "bg-emerald-100 text-emerald-700"
+                        }`}
+                      >
+                        {getWaitingLabel(stylist.information_requested_at)}
+                      </span>
+
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-gray-600">
+
+                      {stylist.information_requested_at
+                        ? new Date(
+                            stylist.information_requested_at
+                          ).toLocaleDateString()
+                        : "-"}
+
+                    </td>
+
+                    <td className="px-6 py-4">
+
+                      <Link
+                        to={`/admin/stylists/${stylist.id}`}
+                        className="inline-flex items-center rounded-lg bg-[#1E3A5F] px-3 py-2 text-sm font-medium text-white hover:bg-[#16304d] transition"
+                      >
+                        View
+                      </Link>
+
+                    </td>
+
+                  </tr>
+
+                ))}
+
+              </tbody>
+
+            </table>
+
+          )}
+
+        </div>
+
+      </div>
       
       {/* KPI CARDS */}
       <div className="mb-12 space-y-8">
+        
+        <div className="mt-16 mb-6">
+
+          <h2 className="text-2xl font-bold text-[#102A43]">
+            Platform Analytics
+          </h2>
+
+          <p className="text-gray-600 mt-1">
+            Overall platform engagement and business performance.
+          </p>
+
+        </div>
 
         {/* PRIMARY ROW */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-4xl mx-auto">

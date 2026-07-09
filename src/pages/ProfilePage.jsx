@@ -323,13 +323,57 @@ export default function ProfilePage() {
         </a>
       )}
 
-      {/* VERIFIED BADGE */}
-      {stylist.verified && (
-        <div className="mb-2 inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold tracking-wide">
-          ✔ Verified by Stylegrades
-        </div>
-      )}
+      {/* PROFESSIONAL CREDENTIALS */}
+      {(stylist.verified || stylist.certifications) && (
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-[#102A43] mb-3">
+            Professional Credentials
+          </h3>
 
+          <div className="bg-[#F8FAFC] border border-[#D9E2EC] rounded-xl p-5 space-y-3">
+
+            {stylist.verified && (
+              <div className="flex items-center gap-3">
+                <img
+                  src="/assets/branding/stylegrades-icon.png"
+                  alt="Verified by Stylegrades"
+                  className="w-8 h-8"
+                />
+
+                <div>
+                  <div className="font-semibold text-emerald-700">
+                    Verified by Stylegrades
+                  </div>
+
+                  <div className="text-sm text-[#52606D]">
+                    License and professional information verified.
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {stylist.certifications &&
+              stylist.certifications
+                .split("\n")
+                .filter((c) => c.trim())
+                .map((cert, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-3 pl-11"
+                  >
+                    <span className="text-amber-500 text-lg">
+                      🏅
+                    </span>
+
+                    <span className="text-[#243B53]">
+                      {cert}
+                    </span>
+                  </div>
+                ))}
+
+          </div>
+        </div>
+      )}  
 
       {/* BIO */}
       {stylist.bio && (

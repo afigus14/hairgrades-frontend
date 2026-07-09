@@ -243,6 +243,7 @@ export default function JoinAsStylist() {
   const [salonName, setSalonName] = useState("");
   const [yearsExperience, setYearsExperience] = useState("");
   const [license, setLicense] = useState("");
+  const [certifications, setCertifications] = useState("");
 
 
   // ---------------- uploads ----------------
@@ -403,6 +404,7 @@ export default function JoinAsStylist() {
     setZip("");
     setLicense("");
     setLicenseUrl("");
+    setCertifications("");
     setSpecialtiesText("");
     setInstagram("");
     setWebsite("");
@@ -532,6 +534,8 @@ export default function JoinAsStylist() {
         yearsExperience: yearsExperience.trim(),
         license: license.trim(),
         licenseUrl: licenseUrl || "",
+
+        certifications: certifications.trim(),
 
         specialties: specialties,
 
@@ -943,6 +947,29 @@ return (
             Separate specialties with commas.
           </div>
         </label>
+
+        <div className="mt-6">
+          <label className="block text-sm font-semibold text-[#243B53] mb-2">
+            Professional Credentials & Certifications
+          </label>
+
+          <textarea
+            value={certifications}
+            onChange={(e) => setCertifications(e.target.value)}
+            rows={5}
+            placeholder={`Examples:
+
+        Redken Certified Colorist
+        Bellami Master Extension Artist
+        Brazilian Blowout Certified
+        Olaplex Professional`}
+            className="w-full rounded-xl border border-[#CBD2D9] px-4 py-3 focus:outline-none focus:ring-2 focus:ring-[#9FD0D6]"
+          />
+
+          <p className="mt-2 text-sm text-[#7B8794]">
+            Enter one certification per line.
+          </p>
+        </div>
 
         {/* Social + tier */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
