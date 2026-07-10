@@ -20,7 +20,9 @@ import ContactPage from "./pages/ContactPage";
 import AdvertisePage from "./pages/AdvertisePage";
 import StylistLoginPage from "./pages/StylistLoginPage";
 import DashboardPage from "./pages/DashboardPage"
+import StartReviewPage from "./pages/StartReviewPage";
 import EditProfilePage from "./pages/EditProfilePage";
+import PublicReviewLandingPage from "./pages/PublicReviewLandingPage";
 import EditApplicationPage from "./pages/EditApplicationPage";
 import AdminReviewPage from "./pages/AdminReviewPage";
 import AdminStylistsPage from "./pages/AdminStylistsPage";
@@ -63,7 +65,18 @@ function App() {
           />
           
           <Route path="search" element={<SearchPage />} />
+          <Route
+            path="/review/:profileSlug"
+            element={<PublicReviewLandingPage />}
+          />
+
+          <Route
+            path="/review/start/:profileSlug"
+            element={<StartReviewPage />}
+          />
+          
           <Route path="profile/:id" element={<ProfilePage />} />
+
           <Route path="pricing" element={<PricingPage />} />
           <Route path="join" element={<JoinAsStylist />} />
           <Route path="about" element={<AboutPage />} />

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Link } from "react-router-dom";
+import QRCode from "react-qr-code";
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -151,12 +152,26 @@ export default function DashboardPage() {
 
   const tier = stylist?.tier || "free";
 
+  const reviewLink = stylist?.profile_slug
+  ? `https://www.stylegrades.com/#/review/${stylist.profile_slug}`
+  : "";
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-12">
 
-      <h1 className="text-3xl font-serif text-[#102A43] mb-6">
-        Dashboard
+      <h1 className="text-4xl font-serif font-bold text-[#102A43]">
+        Professional Dashboard
       </h1>
+
+      <p className="mt-2 text-lg text-[#102A43]">
+        Build your reputation. Grow your business.
+      </p>
+
+      <p className="mt-3 max-w-3xl text-[#102A43]">
+        Welcome back! Stylegrades gives you the tools to showcase your
+        professional expertise, earn verified reviews, and connect with new
+        clients.
+      </p>
 
       <div className="bg-white border border-[#D9E2EC] rounded-2xl p-6 shadow-sm">
         <p className="font-semibold text-[#102A43]">
@@ -224,6 +239,114 @@ export default function DashboardPage() {
 
         </div>
 
+        {/* Reputation Toolkit */}
+
+        <div className="mt-10 rounded-3xl border border-[#D9E2EC] bg-gradient-to-br from-white to-[#F8FBFC] p-8 shadow-sm">
+
+          <div className="flex items-center justify-between">
+
+            <div>
+
+              <h2 className="text-3xl font-serif font-semibold text-[#102A43]">
+                🌟 Reputation Toolkit
+              </h2>
+
+              <p className="mt-2 max-w-2xl text-[#52606D]">
+                Everything you need to build your professional reputation and
+                grow your business.
+              </p>
+
+            </div>
+
+            <div className="hidden lg:block text-6xl">
+              ⭐
+            </div>
+
+          </div>
+
+          <div className="mt-8 grid gap-5 md:grid-cols-3">
+
+            <div className="rounded-2xl border bg-white p-6">
+
+              <div className="text-3xl">🔗</div>
+
+              <h3 className="mt-3 text-xl font-semibold text-[#102A43]">
+                Permanent Review Link
+              </h3>
+
+              <input
+                readOnly
+                value={reviewLink}
+                className="mt-3 w-full rounded-lg border px-3 py-2 text-sm bg-slate-50"
+              />
+
+              <button
+                onClick={() => navigator.clipboard.writeText(reviewLink)}
+                className="mt-3 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm hover:opacity-90"
+              >
+                Copy Link
+              </button>
+
+            </div>
+
+            <div className="rounded-2xl border bg-white p-6 text-center">
+
+              <div className="text-3xl mb-2">
+                📱
+              </div>
+
+              <h3 className="text-lg font-semibold text-[#102A43]">
+                Personalized QR Code
+              </h3>
+
+              <div className="mt-5 flex justify-center">
+
+                <div className="bg-white p-3 rounded-lg border">
+
+                  <QRCode
+                    value={reviewLink}
+                    size={120}
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <div className="rounded-2xl border bg-white p-6">
+
+              <div className="text-3xl">🖨</div>
+
+              <h3 className="mt-3 text-xl font-semibold text-[#102A43]">
+                Stylegrades Review Display
+              </h3>
+
+              <p className="mt-2 text-[#7B8794]">
+                Download a beautiful printable display for your station.
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="mt-8 rounded-2xl bg-[#EEF7F8] p-5">
+
+            <h3 className="font-semibold text-[#102A43]">
+              Included with every Stylegrades profile
+            </h3>
+
+            <p className="mt-2 text-[#52606D]">
+              Every beauty professional receives a permanent review link,
+              personalized QR code, and printable review display. Additional
+              marketing tools and analytics are available with Pro and Premium
+              memberships.
+            </p>
+
+          </div>
+
+        </div>
+        
         <div className="mt-8 border border-[#D9E2EC] rounded-2xl p-6">
           <h2 className="text-xl font-semibold text-[#102A43] mb-4">
             Invite Client to Leave a Review

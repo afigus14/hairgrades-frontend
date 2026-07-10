@@ -19,6 +19,10 @@ import {
   Legend,
 } from "recharts";
 
+const API_BASE =
+  import.meta.env.VITE_API_BASE ||
+  "https://stylegrades-api.vercel.app";
+
 function safeArray(v) {
   return Array.isArray(v) ? v : [];
 }
@@ -273,11 +277,8 @@ export default function AdminDashboardPage() {
     setStatus({ type: "idle", message: "" });
 
     try {
-      const [managed, ads, analyticsData] = await Promise.all([
-        fetchManagedStylists(),
-        fetchAdvertisers(),
-        fetchAnalytics(),
-      ]);
+      const managed = await fetchManagedStylists();
+      const ads = await fetchAdvertisers();
 
       setManagedStylists(managed);
 
@@ -293,9 +294,16 @@ export default function AdminDashboardPage() {
 
       setAdvertisers(ads);
 
-      setAnalytics(analyticsData);
-
+      // Always load platform stats
       await loadPlatformStats();
+
+      // Analytics is optional
+      try {
+        const analyticsData = await fetchAnalytics();
+        setAnalytics(analyticsData);
+      } catch (err) {
+        console.error("Analytics unavailable:", err);
+      }
 
       setStatus({
         type: "success",
