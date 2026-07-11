@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Link } from "react-router-dom";
 import QRCode from "react-qr-code";
+import ReviewStation from "../components/ReviewStation";
+import { useNavigate } from "react-router-dom";
 
 export default function DashboardPage() {
   const [user, setUser] = useState(null);
@@ -10,6 +12,8 @@ export default function DashboardPage() {
 
   const [clientName, setClientName] = useState("");
   const [clientEmail, setClientEmail] = useState("");
+
+  const navigate = useNavigate();
 
   async function activateSubscription() {
 
@@ -54,10 +58,7 @@ export default function DashboardPage() {
       return;
     }
 
-    const token =
-      crypto.randomUUID() +
-      "-" +
-      Date.now();
+    const token = crypto.randomUUID();
 
     const { error } = await supabase
       .from("review_invitations")
@@ -110,25 +111,39 @@ export default function DashboardPage() {
 
       setUser(user);
 
-      if (user) {
-        const { data: stylistData } = await supabase
-          .from("stylists")
-          .select("*")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        setStylist(stylistData);
+      if (!user) {
+        setStylist(null);
+        setReviews([]);
+        return;
       }
 
+      const { data: stylistData, error } = await supabase
+        .from("stylists")
+        .select("*")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setStylist(stylistData);
+
       if (stylistData) {
-        const { data: reviewData } = await supabase
-          .from("reviews")
-          .select("*")
-          .eq("stylist_id", stylistData.id)
-          .eq("status", "approved")
-          .order("created_at", {
-            ascending: false,
-          });
+        const { data: reviewData, error: reviewError } =
+          await supabase
+            .from("reviews")
+            .select("*")
+            .eq("stylist_id", stylistData.id)
+            .eq("status", "approved")
+            .order("created_at", {
+              ascending: false,
+            });
+
+        if (reviewError) {
+          console.error(reviewError);
+        }
 
         setReviews(reviewData || []);
       }
@@ -153,7 +168,7 @@ export default function DashboardPage() {
   const tier = stylist?.tier || "free";
 
   const reviewLink = stylist?.profile_slug
-  ? `https://www.stylegrades.com/#/review/${stylist.profile_slug}`
+  ? `${window.location.origin}/#/review/${stylist.profile_slug}`
   : "";
 
   return (
@@ -167,14 +182,13 @@ export default function DashboardPage() {
         Build your reputation. Grow your business.
       </p>
 
-      <p className="mt-3 max-w-3xl text-[#102A43]">
-        Welcome back! Stylegrades gives you the tools to showcase your
-        professional expertise, earn verified reviews, and connect with new
-        clients.
+      <p className="mt-5 max-w-3xl text-[#102A43] leading-7">
+        Everything you need to build your reputation, earn more verified reviews,
+        and grow your business.
       </p>
 
-      <div className="bg-white border border-[#D9E2EC] rounded-2xl p-6 shadow-sm">
-        <p className="font-semibold text-[#102A43]">
+      <div className="mt-8 bg-white border border-[#D9E2EC] rounded-3xl p-8 shadow-sm">
+        <p className="text-lg font-semibold text-[#102A43]">
           Welcome, {stylist?.full_name || user?.email}!
         </p>
 
@@ -221,19 +235,19 @@ export default function DashboardPage() {
 
         <div className="mt-6 grid md:grid-cols-2 gap-4">
 
-          <Link to="/edit-profile" className="border rounded-xl p-4">
+          <Link to="/edit-profile" className="border rounded-xl p-5">
             Edit Profile
           </Link>
 
-          <Link to="/reviews" className="border rounded-xl p-4">
+          <Link to="/reviews" className="border rounded-xl p-5">
             Reviews
           </Link>
 
-          <Link to="/advertise" className="border rounded-xl p-4">
+          <Link to="/advertise" className="border rounded-xl p-5">
             Advertising
           </Link>
 
-          <Link to="/dashboard/billing" className="border rounded-xl p-4">
+          <Link to="/dashboard/billing" className="border rounded-xl p-5">
             Billing
           </Link>
 
@@ -241,7 +255,7 @@ export default function DashboardPage() {
 
         {/* Reputation Toolkit */}
 
-        <div className="mt-10 rounded-3xl border border-[#D9E2EC] bg-gradient-to-br from-white to-[#F8FBFC] p-8 shadow-sm">
+        <div className="mt-12 rounded-4xl border border-[#D9E2EC] bg-gradient-to-br from-white to-[#F8FBFC] p-8 shadow-sm">
 
           <div className="flex items-center justify-between">
 
@@ -251,80 +265,99 @@ export default function DashboardPage() {
                 🌟 Reputation Toolkit
               </h2>
 
-              <p className="mt-2 max-w-2xl text-[#52606D]">
-                Everything you need to build your professional reputation and
-                grow your business.
+              <p className="text-[#52606D] mt-2">
+                Simple tools that help you earn more verified reviews and grow your reputation.
               </p>
 
             </div>
 
-            <div className="hidden lg:block text-6xl">
-              ⭐
-            </div>
-
           </div>
 
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-10 grid gap-6 md:grid-cols-3 items-stretch">
 
-            <div className="rounded-2xl border bg-white p-6">
+            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col h-full shadow-sm">
 
               <div className="text-3xl">🔗</div>
 
-              <h3 className="mt-3 text-xl font-semibold text-[#102A43]">
-                Permanent Review Link
+              <h3 className="mt-4 text-xl font-semibold text-[#102A43]">
+                Review Link
               </h3>
+
+              <p className="mt-2 text-[15px] leading-6 text-[#52606D]">
+                Share this link with clients so they can leave you a verified review.
+              </p>
 
               <input
                 readOnly
                 value={reviewLink}
-                className="mt-3 w-full rounded-lg border px-3 py-2 text-sm bg-slate-50"
+                className="mt-4 w-full rounded-lg border px-3 py-2 text-sm bg-slate-50"
               />
 
               <button
-                onClick={() => navigator.clipboard.writeText(reviewLink)}
-                className="mt-3 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm hover:opacity-90"
+                onClick={() => {
+                  navigator.clipboard.writeText(reviewLink);
+                  alert("Review link copied!");
+                }}
+                className="mt-4 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm font-semibold hover:opacity-90"
               >
                 Copy Link
               </button>
 
             </div>
 
-            <div className="rounded-2xl border bg-white p-6 text-center">
+            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col items-center h-full shadow-sm">
 
-              <div className="text-3xl mb-2">
+              <div className="text-3xl">
                 📱
               </div>
 
-              <h3 className="text-lg font-semibold text-[#102A43]">
-                Personalized QR Code
+              <h3 className="mt-3 text-xl font-semibold text-[#102A43]">
+                Review QR Code
               </h3>
 
-              <div className="mt-5 flex justify-center">
+              <p className="mt-2 text-[15px] leading-6 text-center text-[#52606D]">
+                Clients can scan your personal QR code to leave you a verified review instantly.
+              </p>
 
-                <div className="bg-white p-3 rounded-lg border">
+              <div className="mt-6">
+
+                <div className="rounded-xl border bg-white p-3 shadow-sm">
 
                   <QRCode
                     value={reviewLink}
-                    size={120}
+                    size={90}
                   />
 
                 </div>
+
+                <p className="mt-4 text-center text-xs leading-5 text-[#7B8794]">
+                  Scan to leave a verified review.
+                </p>
 
               </div>
 
             </div>
 
-            <div className="rounded-2xl border bg-white p-6">
+            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col h-full shadow-sm">
 
               <div className="text-3xl">🖨</div>
 
-              <h3 className="mt-3 text-xl font-semibold text-[#102A43]">
-                Stylegrades Review Display
+              <h3 className="mt-4 text-xl font-semibold text-[#102A43]">
+                Review Station
               </h3>
 
-              <p className="mt-2 text-[#7B8794]">
-                Download a beautiful printable display for your station.
+              <p className="mt-2 text-[15px] leading-6 text-[#52606D]">
+                Download a beautiful countertop display with your personalized QR code.
               </p>
+
+              <button
+                onClick={() =>
+                  navigate(`/review-station/print/${stylist.profile_slug}`)
+                }
+                className="mt-5 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm font-semibold hover:opacity-90"
+              >
+                Preview & Print
+              </button>
 
             </div>
 
@@ -337,10 +370,7 @@ export default function DashboardPage() {
             </h3>
 
             <p className="mt-2 text-[#52606D]">
-              Every beauty professional receives a permanent review link,
-              personalized QR code, and printable review display. Additional
-              marketing tools and analytics are available with Pro and Premium
-              memberships.
+              Every Stylegrades membership includes a Review Link, Review QR Code, and Review Station. Upgrade to Pro or Premium to unlock analytics, marketing tools, and powerful tools to help grow your business.
             </p>
 
           </div>

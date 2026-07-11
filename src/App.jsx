@@ -39,6 +39,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import StylistSignupPage from "./pages/StylistSignupPage";
 import AdminAdvertisersPage from "./pages/AdminAdvertisersPage";
 import AdvertiserDashboardPage from "./pages/AdvertiserDashboardPage";
+import ReviewStationPage from "./pages/ReviewStationPage";
+import ReviewStationPrintPage from "./pages/ReviewStationPrintPage";
 
 
 function App() {
@@ -114,6 +116,16 @@ function App() {
           <Route
             path="advertiser-dashboard"
             element={<AdvertiserDashboardPage />}
+          />
+
+          <Route
+            path="/review-station"
+            element={<ReviewStationPage />}
+          />
+
+          <Route
+            path="/review-station/print/:profileSlug"
+            element={<ReviewStationPrintPage />}
           />
 
         </Route>

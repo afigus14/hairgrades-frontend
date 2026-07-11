@@ -8,3 +8,58 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+/* =======================================
+   Stylegrades Review Station™ Print
+======================================= */
+
+@media print {
+
+  @page {
+    size: Letter;
+    margin: 0.4in;
+  }
+
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: white !important;
+  }
+
+  /* Hide EVERYTHING */
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Show ONLY the Review Station */
+
+  #review-station,
+  #review-station * {
+    visibility: visible !important;
+  }
+
+  #review-station {
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+
+    max-width: 7.5in;
+
+    margin: 0 auto !important;
+
+    box-shadow: none !important;
+
+    border: 2px solid #D8B15A !important;
+
+    page-break-inside: avoid;
+
+  }
+
+}
