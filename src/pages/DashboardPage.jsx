@@ -367,7 +367,45 @@ export default function DashboardPage() {
 
           </div>
 
-          <div className="mt-8 rounded-2xl bg-[#EEF7F8] p-5">
+          <div className="mt-8 border-2 border-[#B8C4D1] rounded-2xl bg-white p-6 shadow-sm">
+            <h2 className="text-xl font-semibold text-[#102A43] mb-4">
+              Invite Client to Leave a Review
+            </h2>
+
+            <div className="space-y-4">
+
+              <input
+                type="text"
+                placeholder="Client Name"
+                value={clientName}
+                onChange={(e) =>
+                  setClientName(e.target.value)
+                }
+                className="w-full border rounded-lg px-3 py-2"
+              />
+
+              <input
+                type="email"
+                placeholder="Client Email"
+                value={clientEmail}
+                onChange={(e) =>
+                  setClientEmail(e.target.value)
+                }
+                className="w-full border rounded-lg px-3 py-2"
+              />
+
+              <button
+                type="button"
+                onClick={sendInvitation}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
+              >
+                Send Invitation
+              </button>
+
+            </div>
+          </div>
+
+          <div className="mt-8 rounded-2xl border-2 border-[#B8C4D1] bg-[#EEF7F8] p-5 shadow-sm">
 
             <div className="grid gap-8 md:grid-cols-2">
 
@@ -421,43 +459,6 @@ export default function DashboardPage() {
 
         </div>
         
-        <div className="mt-8 border border-[#D9E2EC] rounded-2xl p-6">
-          <h2 className="text-xl font-semibold text-[#102A43] mb-4">
-            Invite Client to Leave a Review
-          </h2>
-
-          <div className="space-y-4">
-
-            <input
-              type="text"
-              placeholder="Client Name"
-              value={clientName}
-              onChange={(e) =>
-                setClientName(e.target.value)
-              }
-              className="w-full border rounded-lg px-3 py-2"
-            />
-
-            <input
-              type="email"
-              placeholder="Client Email"
-              value={clientEmail}
-              onChange={(e) =>
-                setClientEmail(e.target.value)
-              }
-              className="w-full border rounded-lg px-3 py-2"
-            />
-
-            <button
-              type="button"
-              onClick={sendInvitation}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold"
-            >
-              Send Invitation
-            </button>
-
-          </div>
-        </div>
       </div>
 
     </div>
