@@ -618,104 +618,101 @@ export default function JoinAsStylist() {
 
 // 👇 THEN your normal return
 return (
-  <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-3xl font-bold mb-2">Join as Stylist</h1>
-      <div className="flex items-center justify-between bg-amber-50 border border-amber-200 rounded-lg px-4 py-2 mb-3 text-sm text-amber-800">
+  <div className="max-w-7xl mx-auto px-6 py-12">
 
-        <div>
-          Current plan:{" "}
-          <span className="font-semibold uppercase">
-            {tierRequested}
-          </span>
+    {/* Hero */}
+    <div className="text-center mb-10">
+
+      <div className="inline-flex items-center rounded-full border border-[#D9E2EC] bg-white px-4 py-1 text-sm text-[#52606D]">
+        Join the Stylegrades Professional Community
+      </div>
+
+      <h1 className="mt-5 text-4xl font-serif text-[#102A43]">
+        Build a professional profile
+        <br />
+        clients can trust.
+      </h1>
+
+      <p className="mt-5 max-w-3xl mx-auto text-lg text-[#102A43] leading-8">
+        Every application is personally reviewed by the Stylegrades team to
+        maintain the quality, professionalism, and integrity of our directory.
+      </p>
+
+    </div>
+
+    {/* Current Plan */}
+    <div className="rounded-xl border border-[#F7D070] bg-[#FFF9E8] px-5 py-3 mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
+
+      <div>
+
+        <div className="text-xs uppercase tracking-wider text-[#B7791F]">
+          Current Plan
         </div>
 
-        <div className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-3">
+        <div className="text-xl font-semibold text-[#102A43] capitalize">
+          {tierRequested}
+        </div>
 
-          {/* Current Plan */}
-          <div className="text-sm text-amber-800">
-            Current plan:{" "}
-            <span className="font-semibold uppercase">
-              {tierRequested}
-            </span>
-          </div>
+      </div>
 
-          {/* Upgrade Options */}
-          {tierRequested !== "premium" && (
-            <div className="mt-2 flex items-center gap-2 text-xs">
+      {tierRequested !== "premium" && (
+        <div className="flex gap-3">
 
-              <span className="text-gray-600">Upgrade your plan:</span>
+          {tierRequested === "free" && (
+            <>
+              <button
+                type="button"
+                onClick={() => setTierRequested("pro")}
+                className="px-4 py-1.5 text-sm rounded-full border border-[#1F6FEB] text-[#1F6FEB] hover:bg-blue-50 transition"
+              >
+                Upgrade to Pro
+              </button>
 
-              {tierRequested === "free" && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => setTierRequested("pro")}
-                    className="px-3 py-1 border rounded-full text-[#1F6FEB] border-[#1F6FEB] hover:bg-blue-50 transition"
-                  >
-                    Pro
-                  </button>
+              <button
+                type="button"
+                onClick={() => setTierRequested("premium")}
+                className="px-4 py-1.5 text-sm rounded-full bg-[#102A43] text-white hover:opacity-90 transition"
+              >
+                Upgrade to Premium
+              </button>
+            </>
+          )}
 
-                  <button
-                    type="button"
-                    onClick={() => setTierRequested("premium")}
-                    className="px-3 py-1 border rounded-full text-white bg-[#1F6FEB] border-[#1F6FEB] hover:opacity-90 transition"
-                  >
-                    Premium
-                  </button>
-                </>
-              )}
-
-              {tierRequested === "pro" && (
-                <button
-                  type="button"
-                  onClick={() => setTierRequested("premium")}
-                  className="px-3 py-1 border rounded-full text-white bg-[#1F6FEB] border-[#1F6FEB] hover:opacity-90 transition"
-                >
-                  Upgrade to Premium
-                </button>
-              )}
-
-            </div>
+          {tierRequested === "pro" && (
+            <button
+              type="button"
+              onClick={() => setTierRequested("premium")}
+              className="px-5 py-2 rounded-full bg-[#102A43] text-white hover:opacity-90 transition"
+            >
+              Upgrade to Premium
+            </button>
           )}
 
         </div>
+      )}
+
+    </div>
+
+    {/* Progress */}
+
+    <div className="mb-10">
+
+      <div className="flex justify-between text-sm font-medium text-[#52606D]">
+
+        <span>Basic Information</span>
+
+        <span>Professional Details</span>
+
+        <span>Portfolio</span>
 
       </div>
-      <p className="text-gray-600 mb-6">
-        Submit your info and photos. We’ll review and publish approved profiles.
-      </p>
 
-          {/* Progress indicator */}
-      <div className="mb-8">
+      <div className="mt-3 h-2 rounded-full bg-[#E6EEF3]">
 
-        <div className="flex items-center justify-between text-xs font-semibold text-gray-500">
+        <div className="h-full w-1/3 rounded-full bg-[#102A43]" />
 
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#102A43] text-white text-xs">
-              1
-            </span>
-            Basic Info
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-300 text-gray-700 text-xs">
-              2
-            </span>
-            Professional
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-300 text-gray-700 text-xs">
-              3
-            </span>
-            Portfolio
-          </div>
-
-        </div>
-
-      <div className="mt-2 h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-        <div className="h-full w-1/3 bg-[#102A43]"></div>
       </div>
+
     </div>
 
       <form
@@ -747,8 +744,18 @@ return (
           </div>
         ) : null}
 
+        <div className="border-b border-[#E5E7EB] pb-4 mb-6">
+          <h2 className="text-2xl font-serif text-[#102A43]">
+            Basic Information
+          </h2>
+
+          <p className="mt-2 text-[#52606D]">
+            Tell clients who you are and where they can find you.
+          </p>
+        </div>
+
         {/* Basic info */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-6">
           <label className="block">
             <span className="text-sm font-medium">Legal Name (as shown on license) *</span>
             <p className="mt-1 text-xs text-amber-700">
@@ -771,7 +778,7 @@ return (
               placeholder="you@email.com"
             />
           </label>
-
+          
           <label className="block">
             <span className="text-sm font-medium">Phone</span>
             <input
@@ -782,7 +789,8 @@ return (
             />
           </label>
 
-          <label className="block">
+          <label className="block md:col-span-1">
+  
   <span className="text-sm font-medium">City *</span>
   <input
     value={city}
@@ -866,11 +874,21 @@ return (
 </label>
         </div>
 
+        <div className="border-b border-[#E5E7EB] pb-4 mt-10 mb-6">
+          <h2 className="text-2xl font-serif text-[#102A43]">
+            Build Your Professional Profile
+          </h2>
+
+          <p className="mt-2 text-[#52606D]">
+            Highlight your experience, specialties, and professional credentials.
+          </p>
+        </div>
+
         {/* Professional Details */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
           <label className="block">
-            <span className="text-sm font-medium">Salon Name</span>
+            <span className="text-sm font-medium">Salon or Suite Name</span>
             <input
               value={salonName}
               onChange={(e) => setSalonName(e.target.value)}
@@ -906,7 +924,7 @@ return (
 
         <label className="block">
           <span className="text-sm font-medium">
-            Upload License or Professional Certificate *
+            Upload a clear photo or PDF of your current professional license. *
           </span>
           
           <p className="mt-1 text-xs text-amber-700">
@@ -994,16 +1012,20 @@ return (
           </label>
 
           <label className="block md:col-span-2">
-            <span className="text-sm font-medium">
-              Professional Bio (Maximum 500 words)
-            </span>
+            <label className="block text-sm font-medium">
+              Professional Bio
+            </label>
+
+            <p className="mt-1 text-xs text-[#52606D]">
+              Maximum 500 words.
+            </p>
 
             <textarea
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               rows={4}
               className="mt-1 w-full border rounded-lg px-3 py-2"
-              placeholder="Tell clients about your experience, specialties, and style."
+              placeholder="Tell clients what makes you unique, what you specialize in, and what they can expect when they sit in your chair.."
             />
 
             <div className="text-xs text-gray-500 mt-1">
@@ -1016,6 +1038,16 @@ return (
           </label>
          </div>
 
+        <div className="border-b border-[#E5E7EB] pb-4 mt-10 mb-6">
+          <h2 className="text-2xl font-serif text-[#102A43]">
+            Portfolio
+          </h2>
+
+          <p className="mt-2 text-[#52606D]">
+            Show clients the quality and style of your work.
+          </p>
+        </div>
+
         {/* Uploads */}
         <div className="border rounded-xl p-4">
           <h2 className="font-semibold mb-3">Photos</h2>
@@ -1024,9 +1056,9 @@ return (
           <div className="mb-5">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-medium">Headshot (1 photo)</div>
+                <div className="text-sm font-medium">Professional Headshot (1 photo)</div>
                 <div className="text-xs text-gray-500">
-                  Preferred: clear, well-lit, face visible.
+                  Use a clear, professional photo where your face is easily visible.
                 </div>
               </div>
 
@@ -1091,13 +1123,13 @@ return (
               <div>
                 <div className="text-sm font-medium text-[#1F6FEB]">
                   {tierRequested === "premium"
-                    ? "Work photos (Premium: up to 20)"
+                    ? "Portfolio Gallery (Premium: up to 20)"
                     : tierRequested === "pro"
-                    ? "Work photos (Pro: up to 12)"
-                    : "Work photos (Free: up to 3)"}
+                    ? "Portfolio Gallery (Pro: up to 12)"
+                    : "Portfolio Gallery (Free: up to 3)"}
                 </div>
                 <div className="text-xs text-gray-500">
-                  Show your best cuts, color, or styling.
+                  Upload examples of your favorite work.
                 </div>
               </div>
 
