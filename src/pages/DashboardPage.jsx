@@ -262,29 +262,31 @@ export default function DashboardPage() {
             <div>
 
               <h2 className="text-3xl font-serif font-semibold text-[#102A43]">
-                🌟 Reputation Toolkit
+                Reputation Toolkit™
               </h2>
 
               <p className="text-[#52606D] mt-2">
-                Simple tools that help you earn more verified reviews and grow your reputation.
+                Everything you need to collect verified reviews, build client trust, and strengthen your professional reputation.
               </p>
 
             </div>
 
           </div>
 
-          <div className="mt-10 grid gap-6 md:grid-cols-3 items-stretch">
+          <div className="mt-10 space-y-6">
 
-            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col h-full shadow-sm">
+            <div className="rounded-3xl border-2 border-[#B8C4D1] bg-white p-8 flex flex-col h-full shadow-sm">
 
-              <div className="text-3xl">🔗</div>
+              <div className="flex justify-center text-5xl">
+                🔗
+              </div>
 
-              <h3 className="mt-4 text-xl font-semibold text-[#102A43]">
-                Review Link
+              <h3 className="mt-6 text-center text-xl font-semibold text-[#102A43]">
+                Share Review Link
               </h3>
 
-              <p className="mt-2 text-[15px] leading-6 text-[#52606D]">
-                Share this link with clients so they can leave you a verified review.
+              <p className="mt-4 text-center text-[15px] leading-6 text-[#52606D]">
+                Copy and share your personalized review link through text, email, social media, or your website.
               </p>
 
               <input
@@ -305,9 +307,9 @@ export default function DashboardPage() {
 
             </div>
 
-            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col items-center h-full shadow-sm">
+            <div className="rounded-3xl border-2 border-[#B8C4D1] bg-white p-8 flex flex-col items-center h-full shadow-sm">
 
-              <div className="text-3xl">
+              <div className="text-5xl">
                 📱
               </div>
 
@@ -315,13 +317,13 @@ export default function DashboardPage() {
                 Review QR Code
               </h3>
 
-              <p className="mt-2 text-[15px] leading-6 text-center text-[#52606D]">
-                Clients can scan your personal QR code to leave you a verified review instantly.
+              <p className="mt-4 text-[15px] leading-6 text-center text-[#52606D]">
+                Perfect for business cards, appointment cards, mirrors, or your reception desk.
               </p>
 
-              <div className="mt-6">
+              <div className="mt-6 flex flex-col items-center">
 
-                <div className="rounded-xl border bg-white p-3 shadow-sm">
+                <div className="rounded-xl border border-[#B8C4D1] bg-white p-3 shadow-sm">
 
                   <QRCode
                     value={reviewLink}
@@ -338,16 +340,18 @@ export default function DashboardPage() {
 
             </div>
 
-            <div className="rounded-2xl border border-[#D9E2EC] bg-white p-6 flex flex-col h-full shadow-sm">
+            <div className="rounded-3xl border-2 border-[#B8C4D1] bg-white p-8 flex flex-col h-full shadow-sm">
 
-              <div className="text-3xl">🖨</div>
+              <div className="flex justify-center text-5xl">
+                🖨
+              </div>
 
-              <h3 className="mt-4 text-xl font-semibold text-[#102A43]">
-                Review Station
+              <h3 className="mt-6 text-center text-xl font-semibold text-[#102A43]">
+                Review Station™
               </h3>
 
-              <p className="mt-2 text-[15px] leading-6 text-[#52606D]">
-                Download a beautiful countertop display with your personalized QR code.
+              <p className="mt-4 text-center text-[15px] leading-6 text-[#52606D]">
+                Print a professional countertop display that encourages happy clients to leave verified reviews before they leave your salon.
               </p>
 
               <button
@@ -365,13 +369,53 @@ export default function DashboardPage() {
 
           <div className="mt-8 rounded-2xl bg-[#EEF7F8] p-5">
 
-            <h3 className="font-semibold text-[#102A43]">
-              Included with every Stylegrades profile
-            </h3>
+            <div className="grid gap-8 md:grid-cols-2">
 
-            <p className="mt-2 text-[#52606D]">
-              Every Stylegrades membership includes a Review Link, Review QR Code, and Review Station. Upgrade to Pro or Premium to unlock analytics, marketing tools, and powerful tools to help grow your business.
-            </p>
+              <div>
+
+                <h3 className="text-xl font-semibold text-[#102A43] mb-4">
+                  Included Today
+                </h3>
+
+                <ul className="space-y-3 text-[#52606D]">
+
+                  <li>✓ Personalized Review Link</li>
+
+                  <li>✓ Instant Review QR Code</li>
+
+                  <li>✓ Printable Review Station™</li>
+
+                  <li>✓ Verified Review Collection</li>
+
+                  <li>✓ Review Moderation</li>
+
+                </ul>
+
+              </div>
+
+              <div>
+
+                <h3 className="text-xl font-semibold text-[#102A43] mb-4">
+                  Coming Soon
+                </h3>
+
+                <ul className="space-y-3 text-[#52606D]">
+
+                  <li>📈 Reputation Insights</li>
+
+                  <li>⭐ Review Trends</li>
+
+                  <li>📊 Monthly Reputation Reports</li>
+
+                  <li>🤖 AI Review Summaries</li>
+
+                  <li>🏆 Reputation Score</li>
+
+                </ul>
+
+              </div>
+
+            </div>
 
           </div>
 
