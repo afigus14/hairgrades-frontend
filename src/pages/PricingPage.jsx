@@ -26,8 +26,8 @@ function PricingComparisonTable({ rows }) {
         </div>
 
         {/* Responsive comparison table */}
-        <div className="mt-6 overflow-x-auto pb-2">
-          <div className="grid min-w-[560px] grid-cols-4 gap-0 rounded-2xl border border-stone-200">
+        <div className="mt-6">
+          <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-0 rounded-2xl border border-stone-200">
             <div className="p-3 text-sm font-semibold text-stone-900 bg-stone-50 rounded-tl-2xl">
               Features
             </div>
@@ -45,7 +45,7 @@ function PricingComparisonTable({ rows }) {
               <React.Fragment key={r.label}>
                 <div
                   className={classNames(
-                    "3 text-sm text-stone-800 border-t border-stone-200",
+                    "p-3 text-sm text-stone-800 border-t border-stone-200",
                     idx % 2 === 0 ? "bg-white" : "bg-stone-50/60"
                   )}
                 >
@@ -53,7 +53,7 @@ function PricingComparisonTable({ rows }) {
                 </div>
                 <div
                   className={classNames(
-                    "p-4 text-sm text-center border-t border-stone-200",
+                    "px-3 py-2 text-sm text-center border-t border-stone-200",
                     idx % 2 === 0 ? "bg-white" : "bg-stone-50/60"
                   )}
                 >
@@ -67,7 +67,7 @@ function PricingComparisonTable({ rows }) {
                 </div>
                 <div
                   className={classNames(
-                    "p-4 text-sm text-center border-t border-stone-200",
+                    "px-3 py-2 text-sm text-center border-t border-stone-200",
                     idx % 2 === 0 ? "bg-white" : "bg-stone-50/60"
                   )}
                 >
@@ -81,7 +81,7 @@ function PricingComparisonTable({ rows }) {
                 </div>
                 <div
                   className={classNames(
-                    "p-4 text-sm text-center border-t border-stone-200",
+                    "px-3 py-2 text-sm text-center border-t border-stone-200",
                     idx % 2 === 0 ? "bg-white" : "bg-stone-50/60"
                   )}
                 >
@@ -203,12 +203,11 @@ export default function PricingPage() {
     () => [
       { label: "Profile listing in search", free: true, pro: true, premium: true },
       { label: "Services + specialties", free: true, pro: true, premium: true },
-      { label: "Contact button (no booking)", free: true, pro: true, premium: true },
       { label: "Basic profile insights", free: true, pro: true, premium: true },
-      { label: "Verified Profile badge", free: false, pro: true, premium: true },
+      { label: "Verified Profile badge", free: true, pro: true, premium: true },
+      { label: "Training + awards sections", free: true, pro: true, premium: true },
       { label: "Gallery (expanded)", free: false, pro: true, premium: true },
       { label: "Verified review snippets", free: false, pro: true, premium: true },
-      { label: "Training + awards sections", free: false, pro: true, premium: true },
       { label: "Featured placement boost", free: false, pro: false, premium: true },
       { label: "Top Stylist highlight styling", free: false, pro: false, premium: true },
       { label: "Pinned review highlights", free: false, pro: false, premium: true },
@@ -221,58 +220,52 @@ export default function PricingPage() {
       <div className="h-2" />
 
       {/* Hero */}
-      <section className="px-4 pt-2 pb-8">
+      <section className="px-4 pt-2 pb-10">
         <div className="mx-auto max-w-6xl">
+
           <div className="rounded-3xl bg-slate-900 text-white shadow-xl">
-            <div className="p-8 sm:p-12">
-              <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-                <div className="max-w-2xl">
-                  <p className="inline-flex items-center rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-sm font-medium text-slate-300">
-                    Stylegrades for Stylists
-                  </p>
 
-                  <h1 className="mt-4 text-4xl sm:text-5xl font-serif text-[#F7FAFF] leading-tight">
-                    Pricing that <span className="text-[#F4A731]">grows</span> with your business
-                  </h1>
+            <div className="px-8 py-10 md:px-10 md:py-4">
 
-                  <p className="mt-4 text-sm md:text-base text-[#C7D5E2] max-w-xl">
-                    Join Stylegrades and get discovered by clients who value quality, professionalism, and a great experience.
-                  </p>
+              <div className="max-w-4xl mx-auto text-center">
 
-                  <p className="mt-4 text-sm md:text-base text-[#C7D5E2] max-w-xl">
-                    No commissions. No booking fees. Clients contact you directly.
-                  </p>
+                <h1 className="mt-4 text-2xl md:text-3xl font-serif leading-tight text-white">
+                  Built to help beauty professionals
+                  <span className="text-[#F4A731]"> grow their businesses.</span>
+                </h1>
+
+                <p className="mt-4 text-lg text-slate-300 leading-relaxed max-w-3xl mx-auto">
+                  Stylegrades is built on integrity, transparency, and respect for the professionals and clients we serve.
+                </p>
+
+              </div>
+
+              <div className="mt-4 rounded-xl bg-white border border-[#D9E2EC] p-8">
+
+                <h3 className="text-2xl font-serif text-[#102A43] mb-6">
+                  The Stylegrades Promise
+                </h3>
+
+                <div className="space-y-4 text-[#2F3C4F]">
+
+                  <p><span className="font-semibold">✔ We never sell your personal information.</span></p>
+
+                  <p><span className="font-semibold">✔ We never sell your clients' information.</span></p>
+
+                  <p><span className="font-semibold">✔ No spam. No hidden agendas.</span></p>
+
+                  <p><span className="font-semibold">✔ Ratings can not be purchased.</span></p>
+
+                  <p><span className="font-semibold">✔ We respect your privacy.</span></p>
 
                 </div>
 
-                {/* Trust block */}
-                <div className="w-full lg:w-[420px]">
-                  <div className="rounded-2xl border border-stone-200 bg-gradient-to-b from-white to-stone-50 p-6">
-                    <h3 className="text-sm font-semibold text-stone-900">Built for trust</h3>
-                    <ul className="mt-3 space-y-3 text-sm text-stone-700">
-                      <li className="flex gap-3">
-                        <span className="mt-0.5 h-2.5 w-2.5 rounded-full bg-amber-600" />
-                        Verified profiles + approved review snippets
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="mt-0.5 h-2.5 w-2.5 rounded-full bg-amber-600" />
-                        Admin-reviewed submissions for quality and consistency
-                      </li>
-                      <li className="flex gap-3">
-                        <span className="mt-0.5 h-2.5 w-2.5 rounded-full bg-amber-600" />
-                        Contact-first—no booking widget required
-                      </li>
-                    </ul>
-                    <div className="mt-5 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3">
-                      <p className="text-xs font-medium text-amber-900">
-                        Tip: Complete profiles with strong photos convert best.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>{" "}
+              </div>
+
             </div>
+
           </div>
+
         </div>
       </section>
 
@@ -357,24 +350,18 @@ export default function PricingPage() {
                     </ul>
                   </div>
                 </div>
-
-                <div className={classNames("rounded-b-3xl px-7 py-5 text-xs text-stone-600", plan.featured ? "bg-amber-50/60" : "bg-stone-50")}>
-                  {plan.key === "free"
-                    ? "Start free. Upgrade when you’re ready to stand out."
-                    : "Paid plans include admin-reviewed verification and profile support."}
-                </div>
               </div>
             ))}
           </div>
 
           {/* Comparison table */}
           <PricingComparisonTable rows={comparisonRows} />
-
+          
           {/* Bottom CTA */}
           <div className="mt-10 rounded-3xl bg-slate-800 text-white shadow-sm border border-slate-700">
             <div className="p-7 sm:p-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
               <div className="max-w-2xl">
-                <h3 className="text-2xl font-serif text-[#F7FAFF]">Ready to get discovered?</h3>
+                <h3 className="text-2xl font-serif text-[#F7FAFF]">Are you ready to build your reputation?</h3>
                 <p className="mt-2 text-sm text-white/80">
                   Join Stylegrades and start building trust before a client ever sits in your chair.
                 </p>
@@ -384,7 +371,7 @@ export default function PricingPage() {
                   onClick={() => navigate(`/join?plan=free`)}
                   className="rounded-2xl bg-slate-700 px-6 py-3 text-sm font-semibold text-white border border-slate-500 hover:bg-slate-600 transition"
                 >
-                  Join as a Stylist
+                  Create My Profile
                 </button>
                 <Link
                   to="/search"
@@ -396,15 +383,9 @@ export default function PricingPage() {
             </div>
           </div>
 
-          <div className="text-center mt-10 mb-2">
+          <div className="text-center mt-2 mb-2">
 
-            <h3 className="text-2xl md:text-3xl font-serif text-[#102A43]">
-              Stylegrades
-            </h3>
-
-            <p className="mt-2 text-base md:text-lg font-semibold italic text-[#102A43] tracking-wide">
-              Find a stylist that will make you feel great about your hair.
-            </p>
+            
 
           </div>
         </div>

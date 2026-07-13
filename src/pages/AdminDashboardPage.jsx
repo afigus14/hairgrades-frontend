@@ -961,7 +961,7 @@ export default function AdminDashboardPage() {
               Monthly Revenue
             </div>
             <div className="text-xl font-bold mt-1">
-              ${formatInt(analytics?.mrr || 0)}
+              ${formatInt(analytics?.monthlyRevenue || 0)}
             </div>
           </div>
 
@@ -970,7 +970,7 @@ export default function AdminDashboardPage() {
               3 Month Forecast
             </div>
             <div className="text-xl font-bold mt-1">
-              ${formatInt(analytics?.forecast3mo || 0)}
+              ${formatInt(analytics?.forecastRevenue || 0)}
             </div>
           </div>
 
