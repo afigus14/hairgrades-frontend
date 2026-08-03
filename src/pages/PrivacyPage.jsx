@@ -17,7 +17,7 @@ export default function PrivacyPage() {
       <div className="bg-[#F7FAFC] border border-[#D9E2EC] rounded-2xl p-8 mb-12">
 
         <h2 className="text-3xl font-serif text-[#102A43] mb-4">
-          The Stylegrades Trust Promise™
+          The Stylegrades™ Trust Promise
         </h2>
 
         <p className="mb-6">

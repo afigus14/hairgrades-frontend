@@ -243,7 +243,7 @@ export default function PricingPage() {
               <div className="mt-4 rounded-xl bg-white border border-[#D9E2EC] p-8">
 
                 <h3 className="text-2xl font-serif text-[#102A43] mb-6">
-                  The Stylegrades Promise
+                  The Stylegrades™ Promise
                 </h3>
 
                 <div className="space-y-4 text-[#2F3C4F]">

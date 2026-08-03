@@ -16,7 +16,7 @@ export const INVENTORY_ADS = [
     id: "inventory_local_2",
     brand_name: "Feature Your Business",
     headline:
-      "Promote your business on Stylegrades",
+      "Promote your business on Stylegrades™",
     body:
       "Reach clients actively searching for stylists, salons, beauty products, education, and local services.",
     cta: "Advertise with Stylegrades",

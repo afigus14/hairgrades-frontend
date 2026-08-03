@@ -321,7 +321,7 @@ Thanks!
       <section className="mt-10 rounded-3xl border border-[#D9E2EC] bg-white shadow-sm">
         <div className="p-6 md:p-8">
           <h3 className="text-xl md:text-2xl font-semibold text-[#102A43]">
-            How advertising with Stylegrades works
+            How advertising with Stylegrades™ works
           </h3>
 
           <div className="mt-4 grid gap-5 md:grid-cols-3">

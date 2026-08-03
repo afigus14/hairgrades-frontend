@@ -11,7 +11,7 @@ export default function TermsPage() {
       <div className="space-y-6 leading-relaxed">
 
         <p>
-          Welcome to Stylegrades. By accessing or using the Stylegrades platform,
+          Welcome to Stylegrades™. By accessing or using the Stylegrades platform,
           you agree to comply with and be bound by these Terms of Service. These Terms
           are provided by Stylegrades LLC, the owner and operator of the platform.
         </p>

@@ -232,6 +232,7 @@ export default function JoinAsStylist() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
   const [city, setCity] = useState("");
   const [state, setState] = useState("");
   const [zip, setZip] = useState("");
@@ -399,6 +400,7 @@ export default function JoinAsStylist() {
     setFullName("");
     setEmail("");
     setPhone("");
+    setAddress("");
     setCity("");
     setState("");
     setZip("");
@@ -523,7 +525,7 @@ export default function JoinAsStylist() {
           .replace(/\s+/g, "-"),
         email: email.trim(),
         phone: phone.trim(),
-
+        address: address.trim(),
         city: finalCity,
         state: finalState,
         zip: finalZip || null,
@@ -790,6 +792,16 @@ return (
           </label>
 
           <label className="block md:col-span-1">
+
+          <label className="block">
+            <span className="text-sm font-medium">Street Address</span>
+            <input
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="mt-1 w-full border rounded-lg px-3 py-2"
+              placeholder="123 Main Street"
+            />
+          </label>  
   
   <span className="text-sm font-medium">City *</span>
   <input

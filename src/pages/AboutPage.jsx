@@ -7,7 +7,7 @@ export default function AboutPage() {
 
       {/* Heading */}
       <h1 className="text-3xl font-serif text-[#2F3C4F] mb-4">
-        About Stylegrades
+        About Stylegrades™
       </h1>
 
       {/* Sub-heading paragraph */}

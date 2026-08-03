@@ -453,7 +453,7 @@ export default function AdminDashboardPage() {
       <div className="text-center mb-12">
 
         <div className="text-sm font-semibold tracking-[0.35em] uppercase text-[#C9971A]">
-          Stylegrades
+          Stylegrades™
         </div>
 
         <h1 className="mt-2 text-5xl font-bold text-[#102A43]">

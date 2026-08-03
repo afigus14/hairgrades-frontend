@@ -55,7 +55,7 @@ function TopNav() {
               <NavLink to="/">
                 <img
                   src="/assets/branding/stylegrades-logo.png"
-                  alt="Stylegrades"
+                  alt="Stylegrades™"
                   className="h-10 md:h-12 w-auto"
                 />
               </NavLink>

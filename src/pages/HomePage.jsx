@@ -23,7 +23,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-4 text-sm md:text-base text-[#C7D5E2] max-w-xl">
-              Stylegrades helps you discover stylists by their real work, verified reviews,
+              Stylegrades™ helps you discover stylists by their real work, verified reviews,
               and specialties — so you can feel confident before you sit in the chair.
             </p>
 
@@ -101,7 +101,7 @@ export default function HomePage() {
       {/* WHY STYLEGRADES STRIP */}
       <section className="mb-12">
         <h2 className="text-xl md:text-2xl font-semibold text-[#102A43] mb-4">
-          Why use Stylegrades?
+          Why use Stylegrades™?
         </h2>
         <div className="grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl bg-[#101A2A] border border-[#30465B] px-4 py-4">
