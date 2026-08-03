@@ -48,6 +48,11 @@ export default function DashboardPage() {
   }
 
   async function sendInvitation() {
+    if (stylist?.subscription_status !== "active") {
+      alert("Please activate your subscription before using the Reputation Toolkit™.");
+      return;
+    }
+
     if (!clientName || !clientEmail) {
       alert("Please enter a client name and email.");
       return;
@@ -297,8 +302,15 @@ export default function DashboardPage() {
 
               <button
                 onClick={() => {
+
+                  if (stylist?.subscription_status !== "active") {
+                    alert("Please activate your subscription first.");
+                    return;
+                  }
+
                   navigator.clipboard.writeText(reviewLink);
                   alert("Review link copied!");
+
                 }}
                 className="mt-4 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm font-semibold hover:opacity-90"
               >
@@ -355,9 +367,16 @@ export default function DashboardPage() {
               </p>
 
               <button
-                onClick={() =>
-                  navigate(`/review-station/print/${stylist.profile_slug}`)
+                onClick={() => {
+
+                if (stylist?.subscription_status !== "active") {
+                  alert("Please activate your subscription first.");
+                  return;
                 }
+
+                navigate(`/review-station/print/${stylist.profile_slug}`);
+
+              }}
                 className="mt-5 rounded-xl bg-[#102A43] px-4 py-2 text-white text-sm font-semibold hover:opacity-90"
               >
                 Preview & Print
