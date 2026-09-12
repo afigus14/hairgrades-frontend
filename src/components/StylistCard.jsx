@@ -141,7 +141,7 @@ export default function StylistCard({
               <img
                 src={photoUrl}
                 alt={name}
-                className="w-full h-full object-contain object-top transition-transform duration-500 group-hover:scale-105"
+                className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
               />
             ) : (
