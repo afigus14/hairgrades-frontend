@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
 export default function ProfilePage() {
@@ -76,20 +76,6 @@ export default function ProfilePage() {
     };
 
   }, [selectedImage, selectedImageIndex]);
-
-  const [reviewForm, setReviewForm] = useState({
-    reviewer_name: "",
-    reviewer_email: "",
-    service_date: "",
-    rating: 5,
-    review_text: "",
-  });
-
-  const [reviewSubmitted, setReviewSubmitted] =
-    useState(false);
-
-  const [verificationAccepted, setVerificationAccepted] =
-    useState(false);  
 
   useEffect(() => {
     async function fetchStylist() {
@@ -192,37 +178,6 @@ export default function ProfilePage() {
 
   if (!stylist) {
     return <div className="p-10">Stylist not found.</div>;
-  }
-
-  async function handleReviewSubmit(e) {
-    e.preventDefault();
-
-    const { error } = await supabase
-      .from("reviews")
-      .insert([
-        {
-          stylist_id: stylist.id,
-          reviewer_name: reviewForm.reviewer_name,
-          reviewer_email: reviewForm.reviewer_email,
-          service_date: reviewForm.service_date,
-          rating: reviewForm.rating,
-          review_text: reviewForm.review_text,
-          status: "pending",
-        },
-      ]);
-
-    if (error) {
-      console.error("REVIEW ERROR:", error);
-
-      alert(
-        error?.message ||
-        "Failed to submit review."
-      );
-
-      return;
-    }
-
-    setReviewSubmitted(true);
   }
 
   return (
@@ -414,102 +369,140 @@ export default function ProfilePage() {
 
       {/* Reviews Section */}
       <div className="mt-10">
-        <h2 className="text-2xl font-serif text-[#102A43] mb-4">
-          Client Reviews
-        </h2>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+          <h2 className="text-2xl font-serif text-[#102A43]">
+            Client Reviews
+          </h2>
+
+          <Link
+            to={`/review/direct/${stylist.profile_slug}`}
+            className="inline-flex items-center justify-center rounded-xl bg-[#102A43] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95 transition"
+          >
+            Leave a Review
+          </Link>
+        </div>
 
         <div className="bg-white rounded-2xl border shadow-sm p-6">
-          
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-3xl font-bold text-[#102A43]">
-              {averageRating}
-            </span>
 
-            <div>
-              <p className="text-[#F4A731] text-lg">
-                {reviews.length > 0
-                  ? "★".repeat(
-                      Math.round(Number(averageRating))
-                    )
-                  : "No ratings yet"}
-              </p>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl font-bold text-[#102A43]">
+                {averageRating}
+              </span>
 
-              <p className="text-sm text-gray-500">
-                {reviews.length} reviews
-              </p>
+              <div>
+                <p className="text-[#F4A731] text-lg">
+                  {reviews.length > 0
+                    ? "★".repeat(
+                        Math.round(Number(averageRating))
+                      )
+                    : "No ratings yet"}
+                </p>
+
+                <p className="text-sm text-gray-500">
+                  {reviews.length}{" "}
+                  {reviews.length === 1 ? "review" : "reviews"}
+                </p>
+              </div>
             </div>
+
+            <Link
+              to="/review-guidelines"
+              className="text-sm font-semibold text-[#102A43] underline underline-offset-2 hover:opacity-75"
+            >
+              Why you can trust our reviews
+            </Link>
           </div>
 
           <div className="border-t pt-4 text-gray-600">
             {reviews.length > 0 ? (
-
               <div className="space-y-4">
 
-                {reviews.map((review) => (
+                {reviews.map((review) => {
+                  const reviewParts =
+                    typeof review.review_text === "string"
+                      ? review.review_text.split(/\n\s*\n/)
+                      : [];
 
-                  <div
-                    key={review.id}
-                    className="border rounded-xl p-4 sm:p-5 bg-gray-50"
-                  >
+                  const reviewHeadline =
+                    reviewParts.length > 1
+                      ? reviewParts[0].trim()
+                      : "";
 
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
+                  const reviewBody =
+                    reviewParts.length > 1
+                      ? reviewParts.slice(1).join("\n\n").trim()
+                      : review.review_text;
 
-                      <div>
-                        <div className="flex items-center gap-2 flex-wrap">
+                  return (
+                    <div
+                      key={review.id}
+                      className="border rounded-xl p-4 sm:p-5 bg-gray-50"
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2">
 
-                          <div className="font-semibold text-[#102A43]">
-                            {review.reviewer_name}
+                        <div>
+                          <div className="flex items-center gap-2 flex-wrap">
+
+                            <div className="font-semibold text-[#102A43]">
+                              {review.reviewer_name}
+                            </div>
+
+                            {review.verified_client && (
+                              <span className="inline-flex items-center bg-blue-50 text-blue-700 text-[11px] font-semibold px-2 py-0.5 rounded-full border border-blue-100">
+                                ✔ Verified Client
+                              </span>
+                            )}
+
                           </div>
 
-                          <span className="inline-flex items-center bg-blue-50 text-blue-700 text-[11px] font-semibold px-2 py-0.5 rounded-full border border-blue-100">
-                            ✔ Verified Client
-                          </span>
-
+                          {review.service_date && (
+                            <div className="text-xs text-gray-500">
+                              Service Date: {review.service_date}
+                            </div>
+                          )}
                         </div>
 
-                        <div className="text-xs text-gray-500">
-                          Service Date:
-                          {" "}
-                          {review.service_date}
+                        <div className="text-[#F4A731]">
+                          {"★".repeat(Number(review.rating) || 0)}
                         </div>
+
                       </div>
 
-                      <div className="text-[#F4A731]">
-                        {"★".repeat(review.rating || 0)}
-                      </div>
+                      {reviewHeadline && (
+                        <h4 className="font-semibold text-[#102A43] mt-3 mb-1">
+                          {reviewHeadline}
+                        </h4>
+                      )}
 
+                      <p className="text-gray-700 whitespace-pre-line">
+                        {reviewBody}
+                      </p>
+
+                      {review.stylist_response && (
+                        <div className="mt-4 ml-4 border-l-4 border-[#F4A731] pl-4">
+                          <div className="text-sm font-semibold text-[#102A43] mb-1">
+                            Response from {stylist.full_name}
+                          </div>
+
+                          <p className="text-gray-700">
+                            {review.stylist_response}
+                          </p>
+
+                          {review.stylist_response_date && (
+                            <div className="text-xs text-gray-500 mt-1">
+                              {new Date(
+                                review.stylist_response_date
+                              ).toLocaleDateString()}
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
-
-                    <p className="text-gray-700">
-                      {review.review_text}
-                    </p>
-
-                    {review.stylist_response && (
-                      <div className="mt-4 ml-4 border-l-4 border-[#F4A731] pl-4">
-                        <div className="text-sm font-semibold text-[#102A43] mb-1">
-                          Response from {stylist.full_name}
-                        </div>
-
-                        <p className="text-gray-700">
-                          {review.stylist_response}
-                        </p>
-
-                        {review.stylist_response_date && (
-                          <div className="text-xs text-gray-500 mt-1">
-                            {new Date(
-                              review.stylist_response_date
-                            ).toLocaleDateString()}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                  </div>
-
-                ))}
+                  );
+                })}
 
               </div>
-
             ) : (
               <div className="text-center py-10 px-4">
 
@@ -526,9 +519,20 @@ export default function ProfilePage() {
                   {stylist.full_name}.
                 </p>
 
-                <div className="text-sm text-[#F4A731] font-medium">
-                  Verified client reviews help others find
-                  the right stylist.
+                <Link
+                  to={`/review/direct/${stylist.profile_slug}`}
+                  className="inline-flex items-center justify-center rounded-xl bg-[#102A43] px-5 py-2.5 text-sm font-semibold text-white hover:opacity-95 transition"
+                >
+                  Leave the First Review
+                </Link>
+
+                <div className="mt-4">
+                  <Link
+                    to="/review-guidelines"
+                    className="text-sm font-medium text-[#102A43] underline underline-offset-2"
+                  >
+                    Learn how Stylegrades™ verifies reviews
+                  </Link>
                 </div>
 
               </div>
@@ -536,143 +540,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-
-      {false && (
-      <div className="bg-white rounded-2xl border shadow-sm p-6 mt-6">
-
-        <h3 className="text-xl font-semibold text-[#102A43] mb-4">
-          Leave a Review
-        </h3>
-
-        {!reviewSubmitted ? (
-
-          <form
-            onSubmit={handleReviewSubmit}
-            className="space-y-4"
-          >
-
-            <input
-              type="text"
-              placeholder="Your Name"
-              value={reviewForm.reviewer_name}
-              onChange={(e) =>
-                setReviewForm({
-                  ...reviewForm,
-                  reviewer_name: e.target.value,
-                })
-              }
-              className="w-full border rounded-lg px-3 py-2"
-              required
-            />
-
-            <input
-              type="email"
-              placeholder="Your Email"
-              value={reviewForm.reviewer_email}
-              onChange={(e) =>
-                setReviewForm({
-                  ...reviewForm,
-                  reviewer_email: e.target.value,
-                })
-              }
-              className="w-full border rounded-lg px-3 py-2"
-              required
-            />
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Date of Service
-              </label>
-
-              <input
-                type="date"
-                value={reviewForm.service_date || ""}
-                onChange={(e) =>
-                  setReviewForm({
-                    ...reviewForm,
-                    service_date: e.target.value,
-                  })
-                }
-                className="w-full border rounded-lg px-3 py-2"
-                required
-              />
-
-              <p className="text-xs text-gray-500 mt-1">
-                Approximate date is okay.
-              </p>
-            </div>
-
-            <select
-              value={reviewForm.rating}
-              onChange={(e) =>
-                setReviewForm({
-                  ...reviewForm,
-                  rating: Number(e.target.value),
-                })
-              }
-              className="w-full border rounded-lg px-3 py-2"
-            >
-              <option value={5}>5 Stars</option>
-              <option value={4}>4 Stars</option>
-              <option value={3}>3 Stars</option>
-              <option value={2}>2 Stars</option>
-              <option value={1}>1 Star</option>
-            </select>
-
-            <textarea
-              placeholder="Write your review..."
-              value={reviewForm.review_text}
-              onChange={(e) =>
-                setReviewForm({
-                  ...reviewForm,
-                  review_text: e.target.value,
-                })
-              }
-              rows={5}
-              className="w-full border rounded-lg px-3 py-2"
-              required
-            />
-
-            <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm text-gray-700">
-              Your email address will be used to verify the authenticity of your review and for communication from Stylegrades if needed. Your email address will never be displayed publicly on the website.
-            </div>
-
-            <label className="flex items-start gap-2 text-sm text-gray-700">
-              <input
-                type="checkbox"
-                checked={verificationAccepted}
-                onChange={(e) =>
-                  setVerificationAccepted(e.target.checked)
-                }
-                className="mt-1"
-              />
-
-              <span>
-                I understand that my email address will be used only for verification purposes
-                and will not be displayed publicly.
-              </span>
-            </label>
-
-            <button
-              type="submit"
-              disabled={!verificationAccepted}
-              className="bg-[#F4A731] hover:bg-[#e59a25] text-black font-semibold px-6 py-3 rounded-xl transition disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Submit Review
-            </button>
-
-          </form>
-
-        ) : (
-
-          <div className="text-green-700 font-medium">
-            Thank you! Your review has been submitted
-            for approval.
-          </div>
-
-        )}
-      </div>
-  )}
 
       {selectedImage && (
 

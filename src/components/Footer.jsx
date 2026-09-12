@@ -32,6 +32,10 @@ export default function Footer() {
               Privacy
             </Link>{" "}
             ·{" "}
+            <Link to="/review-guidelines" className="hover:text-[#F7FAFF]">
+              Review Guidelines
+            </Link>{" "}
+            ·{" "}
             <Link to="/refund-policy" className="hover:text-[#F7FAFF]">
               Refunds
             </Link>

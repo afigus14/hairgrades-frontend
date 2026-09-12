@@ -41,6 +41,9 @@ import AdminAdvertisersPage from "./pages/AdminAdvertisersPage";
 import AdvertiserDashboardPage from "./pages/AdvertiserDashboardPage";
 import ReviewStationPage from "./pages/ReviewStationPage";
 import ReviewStationPrintPage from "./pages/ReviewStationPrintPage";
+import ReviewGuidelinesPage from "./pages/ReviewGuidelinesPage";
+import DirectReviewPage from "./pages/DirectReviewPage";
+import VerifyDirectReviewPage from "./pages/VerifyDirectReviewPage";
 
 
 function App() {
@@ -126,6 +129,21 @@ function App() {
           <Route
             path="/review-station/print/:profileSlug"
             element={<ReviewStationPrintPage />}
+          />
+
+          <Route
+            path="/review-guidelines"
+            element={<ReviewGuidelinesPage />}
+          />
+
+          <Route
+            path="/review/direct/:id"
+            element={<DirectReviewPage />}
+          />
+
+          <Route
+            path="/review/verify/:token"
+            element={<VerifyDirectReviewPage />}
           />
 
         </Route>
