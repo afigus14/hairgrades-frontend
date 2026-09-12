@@ -180,6 +180,116 @@ export default function ProfilePage() {
     return <div className="p-10">Stylist not found.</div>;
   }
 
+  const isRegistryUnclaimed =
+    stylist.profile_source === "registry_unclaimed";
+
+  if (isRegistryUnclaimed) {
+    const licenseState =
+      stylist.license_state || stylist.state || "";
+
+    const licenseType =
+      stylist.license_type || "Cosmetologist";
+
+    const licenseStatus =
+      stylist.license_status || "";
+
+    const registrySource =
+      stylist.registry_source || "";
+
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-12">
+        <div className="max-w-2xl">
+          <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#102A43] mb-2">
+            Licensed Beauty Professional
+          </p>
+
+          <h1 className="text-3xl font-serif text-[#102A43] mb-2">
+            {stylist.full_name}
+          </h1>
+
+          <p className="text-lg font-medium text-[#243B53]">
+            Licensed {licenseType}
+          </p>
+
+          {(stylist.city || stylist.state) && (
+            <p className="mt-1 text-[#52606D]">
+              {[stylist.city, stylist.state]
+                .filter(Boolean)
+                .join(", ")}
+            </p>
+          )}
+
+          <div className="mt-8 rounded-2xl border border-[#D9E2EC] bg-white shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-[#102A43] mb-4">
+              {licenseState === "IL"
+                ? "Illinois License Information"
+                : "License Information"}
+            </h2>
+
+            <div className="space-y-3 text-sm">
+              {stylist.license_number && (
+                <div>
+                  <span className="font-semibold text-[#243B53]">
+                    License Number:
+                  </span>{" "}
+                  <span className="text-[#52606D]">
+                    ••••••{String(stylist.license_number).slice(-4)}
+                  </span>
+                </div>
+              )}
+
+              {licenseStatus && (
+                <div>
+                  <span className="font-semibold text-[#243B53]">
+                    License Status:
+                  </span>{" "}
+                  <span className="text-[#52606D]">
+                    {licenseStatus.charAt(0).toUpperCase() +
+                      licenseStatus.slice(1).toLowerCase()}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {registrySource && (
+              <p className="mt-5 pt-4 border-t border-[#D9E2EC] text-xs leading-5 text-[#7B8794] italic">
+                License information obtained from the{" "}
+                {registrySource === "Illinois IDFPR"
+                  ? "Illinois Department of Financial & Professional Regulation."
+                  : `${registrySource}.`}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-[#D9E2EC] bg-[#F8FAFC] p-6">
+            <h2 className="text-lg font-semibold text-[#102A43]">
+              This professional has not yet claimed their Stylegrades™
+              profile.
+            </h2>
+
+            <p className="mt-2 text-sm leading-6 text-[#52606D]">
+              Claim your profile to add your photo, salon information,
+              specialties, portfolio of work, and other professional details.
+            </p>
+
+            <div className="mt-5">
+              <p className="text-sm font-semibold text-[#243B53] mb-3">
+                Are you this professional?
+              </p>
+
+              <Link
+                to={`/claim-profile/${stylist.profile_slug}`}
+                className="inline-flex items-center justify-center rounded-xl bg-[#102A43] px-6 py-3 text-sm font-semibold text-white hover:opacity-95 transition"
+              >
+                Claim This Profile
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-serif text-[#102A43] mb-6">

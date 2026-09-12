@@ -44,6 +44,8 @@ import ReviewStationPrintPage from "./pages/ReviewStationPrintPage";
 import ReviewGuidelinesPage from "./pages/ReviewGuidelinesPage";
 import DirectReviewPage from "./pages/DirectReviewPage";
 import VerifyDirectReviewPage from "./pages/VerifyDirectReviewPage";
+import ClaimProfilePage from "./pages/ClaimProfilePage";
+import VerifyClaimEmailPage from "./pages/VerifyClaimEmailPage";
 
 
 function App() {
@@ -144,6 +146,16 @@ function App() {
           <Route
             path="/review/verify/:token"
             element={<VerifyDirectReviewPage />}
+          />
+
+          <Route
+            path="/claim-profile/:profile_slug"
+            element={<ClaimProfilePage />}
+          />
+
+          <Route
+            path="/claim-profile/verify/:token"
+            element={<VerifyClaimEmailPage />}
           />
 
         </Route>
