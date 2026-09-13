@@ -46,6 +46,8 @@ import DirectReviewPage from "./pages/DirectReviewPage";
 import VerifyDirectReviewPage from "./pages/VerifyDirectReviewPage";
 import ClaimProfilePage from "./pages/ClaimProfilePage";
 import VerifyClaimEmailPage from "./pages/VerifyClaimEmailPage";
+import AdminProfileClaimPage from "./pages/AdminProfileClaimPage";
+import ActivateClaimAccountPage from "./pages/ActivateClaimAccountPage";
 
 
 function App() {
@@ -69,6 +71,16 @@ function App() {
           <Route
             path="admin/stylists/:id"
             element={<AdminEditStylistPage />}
+          />
+
+          <Route
+            path="/admin/profile-claims/:id"
+            element={<AdminProfileClaimPage />}
+          />
+
+          <Route
+            path="/claim-profile/activate/:token"
+            element={<ActivateClaimAccountPage />}
           />
           
           <Route path="search" element={<SearchPage />} />

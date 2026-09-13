@@ -103,6 +103,7 @@ export default function AdminDashboardPage() {
 
   const [pendingStylists, setPendingStylists] = useState([]);
   const [needsInfoStylists, setNeedsInfoStylists] = useState([]);
+  const [pendingClaims, setPendingClaims] = useState([]);
 
   const [platformStats, setPlatformStats] = useState({
     stylists: 0,
@@ -289,6 +290,15 @@ export default function AdminDashboardPage() {
       setNeedsInfoStylists(
         managed.filter(
           (s) => s.status === "needs_information"
+        )
+      );
+
+      setPendingClaims(
+        managed.filter(
+          (s) =>
+            s.profile_source === "registry_unclaimed" &&
+            s.claim_email_verified === true &&
+            !s.claimed_at
         )
       );
 
@@ -676,6 +686,139 @@ export default function AdminDashboardPage() {
 
         </div>
 
+      </div>
+
+      {/* PROFILE CLAIMS AWAITING REVIEW */}
+
+      <div className="mb-14 w-full max-w-6xl mx-auto">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h2 className="text-2xl font-bold text-[#102A43]">
+              Profile Claims Awaiting Review
+            </h2>
+
+            <p className="mt-1 text-sm text-[#52606D]">
+              Registry professionals who matched their license information
+              and verified their email address.
+            </p>
+          </div>
+
+          {pendingClaims.length > 0 && (
+            <div className="rounded-full bg-[#FFF7E6] px-4 py-2 text-sm font-semibold text-[#92400E]">
+              {pendingClaims.length} Pending
+            </div>
+          )}
+        </div>
+
+        <div className="bg-white rounded-2xl shadow-sm border overflow-hidden">
+          {pendingClaims.length === 0 ? (
+            <div className="p-8 text-center text-gray-500">
+              No profile claims are awaiting review.
+            </div>
+          ) : (
+            <table className="w-full">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th className="text-left px-6 py-3">
+                    Professional
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Location
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    License
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Claim Email
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Verification
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Requested
+                  </th>
+
+                  <th className="text-left px-6 py-3">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {pendingClaims.map((stylist) => (
+                  <tr
+                    key={stylist.id}
+                    className="border-t"
+                  >
+                    <td className="px-6 py-4">
+                      <div className="font-semibold text-[#102A43]">
+                        {stylist.full_name}
+                      </div>
+
+                      <div className="mt-1 text-sm text-[#52606D]">
+                        Licensed {stylist.license_type || "Beauty Professional"}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-[#52606D]">
+                      {[stylist.city, stylist.state]
+                        .filter(Boolean)
+                        .join(", ")}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-medium text-[#243B53]">
+                        ••••{String(stylist.license_number || "").slice(-4)}
+                      </div>
+
+                      <div className="mt-1 text-xs text-[#52606D]">
+                        {stylist.license_state} · {stylist.license_status}
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-[#52606D]">
+                      {stylist.claim_email}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <div className="space-y-1">
+                        <div className="text-sm font-semibold text-emerald-700">
+                          ✓ License matched
+                        </div>
+
+                        <div className="text-sm font-semibold text-emerald-700">
+                          ✓ Email verified
+                        </div>
+                      </div>
+                    </td>
+
+                    <td className="px-6 py-4 text-sm text-[#52606D]">
+                      {stylist.claim_requested_at
+                        ? new Date(
+                            stylist.claim_requested_at
+                          ).toLocaleDateString()
+                        : "-"}
+                    </td>
+
+                    <td className="px-6 py-4">
+                      <Link
+                        to={`/admin/profile-claims/${stylist.id}`}
+                        className="inline-flex items-center rounded-lg bg-[#102A43] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1F3A5F] transition"
+                      >
+                        Review
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
 
       {/* Pending Stylist List */}
