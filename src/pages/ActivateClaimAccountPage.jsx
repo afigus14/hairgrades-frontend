@@ -159,7 +159,7 @@ export default function ActivateClaimAccountPage() {
     }
   }
 
-  if (existingAccount) {
+  if (existingAccount && !complete) {
     return (
       <main className="min-h-screen bg-[#EAF7F7] px-4 py-12">
         <div className="mx-auto max-w-xl rounded-2xl bg-white p-8 shadow-sm">
