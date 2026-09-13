@@ -150,9 +150,9 @@ export default function ClaimProfilePage() {
           </h2>
 
           <p className="mt-2 text-sm leading-6 text-[#52606D]">
-            To protect beauty professionals from unauthorized profile
-            claims, Stylegrades™ verifies professional license information
-            before a profile can be claimed.
+            To protect beauty professionals from unauthorized profile claims, Stylegrades™
+            requires the professional license information provided during a claim to match
+            the licensing information associated with this profile.
           </p>
         </div>
 
