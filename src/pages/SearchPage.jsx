@@ -185,36 +185,53 @@ export default function SearchPage() {
   }, []);
   
   useEffect(() => {
-  async function loadStylists() {
-    try {
-      const { data, error } = await supabase
-        .from("stylists")
-        .select("*")
+    async function loadStylists() {
+      try {
+        const PAGE_SIZE = 1000;
+        let from = 0;
+        let allRows = [];
 
-      console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+        while (true) {
+          const { data, error } = await supabase
+            .from("stylists")
+            .select("*")
+            .range(from, from + PAGE_SIZE - 1);
 
-      if (error) throw error;
+          if (error) throw error;
 
-      setAllStylists(
-        safeArray(data).map((s) => ({
-          ...s,
-          name: s.full_name || s.name,
-          slug: s.profile_slug || s.slug || s.id,   // ⭐ add this
-          photo_url: s.photo_url ?? "",
-          review_count: s.reviews_count,
-          specialty: Array.isArray(s.specialties)
-            ? s.specialties[0]
-            : s.specialties
-        }))
-      );
-    } catch (err) {
-      console.error("Error loading stylists:", err);
-      setError("Unable to load stylists.");
+          const rows = safeArray(data);
+          allRows = [...allRows, ...rows];
+
+          if (rows.length < PAGE_SIZE) {
+            break;
+          }
+
+          from += PAGE_SIZE;
+        }
+
+        console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
+        console.log("Total stylists loaded:", allRows.length);
+
+        setAllStylists(
+          allRows.map((s) => ({
+            ...s,
+            name: s.full_name || s.name,
+            slug: s.profile_slug || s.slug || s.id,
+            photo_url: s.photo_url ?? "",
+            review_count: s.reviews_count,
+            specialty: Array.isArray(s.specialties)
+              ? s.specialties[0]
+              : s.specialties,
+          }))
+        );
+      } catch (err) {
+        console.error("Error loading stylists:", err);
+        setError("Unable to load stylists.");
+      }
     }
-  }
 
-  loadStylists();
-}, []);
+    loadStylists();
+  }, []);
 
   async function geocodeLocation(input) {
     const trimmed = input.trim();
