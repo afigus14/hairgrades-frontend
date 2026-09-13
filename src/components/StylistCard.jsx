@@ -43,6 +43,68 @@ export default function StylistCard({
 }) {
   const navigate = useNavigate();
 
+    if (stylist?.profile_source === "registry_unclaimed") {
+      const registrySlug =
+        stylist?.profile_slug ||
+        stylist?.profileSlug ||
+        stylist?.slug ||
+        stylist?.id;
+
+      const registryName =
+        stylist?.name ||
+        stylist?.full_name ||
+        stylist?.fullName ||
+        "Licensed Beauty Professional";
+
+      const registryCity = stylist?.city || "";
+      const registryState = stylist?.state || "";
+
+      const licenseType =
+        stylist?.license_type ||
+        "Cosmetologist";
+
+      return (
+        <div className="group relative rounded-xl border-2 border-[#D9E2EC] bg-white shadow-sm p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+          <Link
+            to={`/profile/${encodeURIComponent(String(registrySlug))}`}
+            onClick={() => onProfileClick?.(stylist)}
+            className="block"
+          >
+            <div className="p-4 sm:p-7">
+              <div className="mb-3">
+                <span className="inline-flex items-center rounded-full bg-[#F0F4F8] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#52606D]">
+                  Unclaimed Profile
+                </span>
+              </div>
+
+              <h3 className="text-xl sm:text-2xl font-serif font-semibold text-[#102A43] leading-tight">
+                {registryName}
+              </h3>
+
+              <div className="mt-3 text-base sm:text-lg font-medium text-[#243B53]">
+                Licensed {licenseType}
+              </div>
+
+              <div className="mt-2 text-sm text-[#7B8794]">
+                {registryCity}
+                {registryState ? `, ${registryState}` : ""}
+              </div>
+
+              {stylist?.license_status === "ACTIVE" && (
+                <div className="mt-4 inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  Active Illinois License
+                </div>
+              )}
+
+              <div className="mt-6 rounded-xl border border-[#D9E2EC] bg-white px-4 py-3 text-center font-medium text-[#102A43] transition-all duration-300 group-hover:bg-[#F7FAFC]">
+                View Profile
+              </div>
+            </div>
+          </Link>
+        </div>
+      );
+    }
+
   const slug =
     stylist?.profile_slug ||
     stylist?.profileSlug ||
