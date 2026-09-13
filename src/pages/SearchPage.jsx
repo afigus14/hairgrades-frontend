@@ -154,6 +154,7 @@ export default function SearchPage() {
   const [term, setTerm] = useState("");
   const [location, setLocation] = useState("");
   const [radiusMiles, setRadiusMiles] = useState(25);
+  const [visibleCount, setVisibleCount] = useState(50);
   const [userLocation, setUserLocation] = useState(null);
 
   const [loading, setLoading] = useState(false);
@@ -272,6 +273,7 @@ export default function SearchPage() {
     e?.preventDefault?.();
     setError("");
     setLoading(true);
+    setVisibleCount(50);
 
     try {
       const loc = await geocodeLocation(location);
@@ -290,6 +292,7 @@ export default function SearchPage() {
   }
 
   function handleClear() {
+    setVisibleCount(50);
     setTerm("");
     setLocation("");
     setRadiusMiles(25);
@@ -469,7 +472,7 @@ export default function SearchPage() {
   const gridItems = useMemo(() => {
     const items = [];
 
-    stylists.forEach((stylist, i) => {
+    stylists.slice(0, visibleCount).forEach((stylist, i) => {
       items.push(
         <StylistCard
           key={`sty_${stylist.id}`}
@@ -507,7 +510,7 @@ export default function SearchPage() {
     });
 
     return items;
-  }, [stylists, pageInventory, isDesktop]);
+  }, [stylists, pageInventory, isDesktop, visibleCount]);
 
   return (
     <div className="w-full min-w-0 pb-10">
@@ -718,6 +721,7 @@ export default function SearchPage() {
                   setTerm("");
                   setLocation("");
                   setRadiusMiles(25);
+                  setVisibleCount(50);
                   setUserLocation(null);
                   setError("");
                 }}
@@ -753,7 +757,10 @@ export default function SearchPage() {
         )}
 
         <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
-          <StylistMap stylists={stylists} userLocation={userLocation} />
+          <StylistMap
+            stylists={stylists.slice(0, visibleCount)}
+            userLocation={userLocation}
+          />
         </div>  
 
         </section>
@@ -765,7 +772,7 @@ export default function SearchPage() {
         <div>
 
           <h2 className="text-2xl font-semibold text-[#102A43]">
-            {stylists.length} stylist
+            {stylists.length.toLocaleString()} stylist
             {stylists.length !== 1 ? "s" : ""} found
           </h2>
 
@@ -843,6 +850,18 @@ export default function SearchPage() {
 
           <div className="flex flex-col gap-6 w-full px-0">
             {gridItems}
+
+            {visibleCount < stylists.length && (
+              <div className="flex justify-center pt-4">
+                <button
+                  type="button"
+                  onClick={() => setVisibleCount((count) => count + 50)}
+                  className="rounded-xl bg-[#102A43] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#0B1F33] transition"
+                >
+                  Load More Stylists
+                </button>
+              </div>
+            )}
           </div>
 
         )}
