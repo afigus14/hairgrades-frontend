@@ -67,7 +67,7 @@ export default function AdminProfileClaimPage() {
       setActionMessage("");
 
       try {
-        const adminKey = localStorage.getItem("adminKey");
+        const adminKey = localStorage.getItem("stylegrades_admin_key");
 
         if (!adminKey) {
           throw new Error(
