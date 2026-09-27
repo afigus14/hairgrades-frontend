@@ -157,7 +157,7 @@ export default function SearchPage() {
   const [visibleCount, setVisibleCount] = useState(50);
   const [userLocation, setUserLocation] = useState(null);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   const [minRating, setMinRating] = useState("any");
@@ -228,6 +228,8 @@ export default function SearchPage() {
       } catch (err) {
         console.error("Error loading stylists:", err);
         setError("Unable to load stylists.");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -772,8 +774,9 @@ export default function SearchPage() {
         <div>
 
           <h2 className="text-2xl font-semibold text-[#102A43]">
-            {stylists.length.toLocaleString()} stylist
-            {stylists.length !== 1 ? "s" : ""} found
+            {loading
+              ? "Loading stylists…"
+              : `${stylists.length.toLocaleString()} stylist${stylists.length !== 1 ? "s" : ""} found`}
           </h2>
 
           <p className="text-sm text-gray-500 mt-1">
@@ -820,7 +823,16 @@ export default function SearchPage() {
           </div>
           */}
         
-        {stylists.length === 0 ? (
+        {loading ? (
+          <div className="text-center py-16 px-6 bg-white border rounded-2xl shadow-sm">
+            <div className="text-lg font-semibold text-[#102A43]">
+              Loading stylists…
+            </div>
+            <p className="text-gray-500 mt-2">
+              Finding beauty professionals for you.
+            </p>
+          </div>
+        ) : stylists.length === 0 ? (
 
           <div className="text-center py-16 px-6 bg-white border rounded-2xl shadow-sm">
 
