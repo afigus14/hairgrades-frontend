@@ -467,6 +467,18 @@ export default function SearchPage() {
     paymentFilter,
   ]);
 
+  const mapStylists = useMemo(() => {
+    return stylists.filter((s) => {
+      const lat = Number(s.lat);
+      const lng = Number(s.lng);
+
+      return (
+        Number.isFinite(lat) &&
+        Number.isFinite(lng)
+      );
+    });
+  }, [stylists]);
+  
   const premiumStylists = stylists.filter(
     (s) => s.tier === "premium"
   );
@@ -760,7 +772,7 @@ export default function SearchPage() {
 
         <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
           <StylistMap
-            stylists={stylists.slice(0, visibleCount)}
+            stylists={mapStylists.slice(0, visibleCount)}
             userLocation={userLocation}
           />
         </div>  
@@ -774,10 +786,10 @@ export default function SearchPage() {
         <div>
 
           <h2 className="text-2xl font-semibold text-[#102A43]">
-            {loading
-              ? "Loading stylists…"
-              : `${stylists.length.toLocaleString()} stylist${stylists.length !== 1 ? "s" : ""} found`}
-          </h2>
+          {loading
+            ? "Loading stylists…"
+            : `${stylists.length.toLocaleString()} stylist${stylists.length !== 1 ? "s" : ""} found`}
+        </h2>
 
           <p className="text-sm text-gray-500 mt-1">
 

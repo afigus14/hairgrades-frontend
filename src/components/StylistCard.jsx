@@ -56,12 +56,17 @@ export default function StylistCard({
         stylist?.fullName ||
         "Licensed Beauty Professional";
 
-      const registryCity = stylist?.city || "";
-      const registryState = stylist?.state || "";
+            const registryCity = stylist?.city || "";
+            const registryState = stylist?.state || "";
 
-      const licenseType =
-        stylist?.license_type ||
-        "Cosmetologist";
+            const licenseState =
+              stylist?.license_state ||
+              registryState ||
+              "";
+
+            const licenseType =
+              stylist?.license_type ||
+              "Cosmetologist";
 
       return (
         <div className="group relative rounded-xl border-2 border-[#D9E2EC] bg-white shadow-sm p-4 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
@@ -85,14 +90,17 @@ export default function StylistCard({
                 Licensed {licenseType}
               </div>
 
-              <div className="mt-2 text-sm text-[#7B8794]">
-                {registryCity}
-                {registryState ? `, ${registryState}` : ""}
-              </div>
+              {(registryCity || registryState) && (
+                <div className="mt-2 text-sm text-[#7B8794]">
+                  {[registryCity, registryState]
+                    .filter(Boolean)
+                    .join(", ")}
+                </div>
+              )}
 
               {stylist?.license_status === "ACTIVE" && (
                 <div className="mt-4 inline-flex items-center rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
-                  Active Illinois License
+                  Active {licenseState || "Professional"} License
                 </div>
               )}
 

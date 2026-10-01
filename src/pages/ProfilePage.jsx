@@ -223,6 +223,8 @@ export default function ProfilePage() {
             <h2 className="text-xl font-semibold text-[#102A43] mb-4">
               {licenseState === "IL"
                 ? "Illinois License Information"
+                : licenseState === "NY"
+                ? "New York License Information"
                 : "License Information"}
             </h2>
 
