@@ -7,6 +7,7 @@ import InlineSponsoredCard from "../components/InlineSponsoredCard";
 import InFeedAdCard from "../components/InFeedAdCard";
 import { supabase } from "../lib/supabase";
 import StylistMap from "../components/StylistMap";
+import { SPECIALTY_GROUPS } from "../data/specialties";
 
 // ---------- utils ----------
 function safeArray(v) {
@@ -54,39 +55,6 @@ function distanceMiles(a, b) {
   return 2 * R * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h));
 }
 
-function normalizePriceTier(v) {
-  const s = String(v || "").trim();
-  if (!s) return "";
-  if (/^\${1,4}$/.test(s)) return s;
-  if (["1", "2", "3", "4"].includes(s)) return "$".repeat(Number(s));
-  return s;
-}
-
-function priceTierFromCost(cost) {
-  const n = Number(cost);
-  if (!Number.isFinite(n)) return "";
-  if (n <= 30) return "$";
-  if (n <= 60) return "$$";
-  if (n <= 90) return "$$$";
-  return "$$$$";
-}
-
-function normalizePayments(stylist) {
-  const raw = safeArray(stylist?.payments ?? stylist?.paymentMethods).map((x) =>
-    String(x || "").trim().toLowerCase()
-  );
-
-  return raw
-    .map((p) => {
-      if (!p) return "";
-      if (p.includes("apple")) return "applepay";
-      if (p.includes("card") || p.includes("credit")) return "credit_cards";
-      if (p.includes("cash")) return "cash_only";
-      return p.replace(/\s+/g, "_");
-    })
-    .filter(Boolean);
-}
-
 function alphaName(stylist) {
   const full = String(stylist?.name || stylist?.fullName || "")
     .trim()
@@ -101,22 +69,107 @@ function alphaName(stylist) {
   return `${last}, ${firstMiddle}`.toLowerCase();
 }
 
-function FilterSelect({ label, value, onChange, options }) {
+function FilterSelect({ label, value, onChange, options, groups }) {
   return (
     <label className="inline-flex items-center gap-2">
       <span className="text-xs font-semibold text-[#243B53]">{label}</span>
+
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="rounded-full border border-[#D9E2EC] bg-white px-3 py-2 text-sm text-[#102A43] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7A9D96]"
       >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
+        {groups ? (
+          <>
+            <option value="all">All</option>
+
+            {groups.map((group) => (
+              <optgroup key={group.group} label={group.group}>
+                {group.specialties.map((specialty) => (
+                  <option key={specialty} value={specialty}>
+                    {specialty}
+                  </option>
+                ))}
+              </optgroup>
+            ))}
+          </>
+        ) : (
+          options.map((o) => (
+            <option key={o.value} value={o.value}>
+              {o.label}
+            </option>
+          ))
+        )}
       </select>
     </label>
+  );
+}
+
+function SpecialtySelect({ value, onChange, groups }) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div className="relative inline-flex items-center gap-2">
+      <span className="text-xs font-semibold text-[#243B53]">
+        Specialty
+      </span>
+
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="w-[155px] rounded-full border border-[#D9E2EC] bg-white px-4 py-2 text-left text-sm text-[#102A43] shadow-sm focus:outline-none focus:ring-2 focus:ring-[#7A9D96]"
+      >
+        <span className="flex items-center justify-between gap-3">
+          <span>{value === "all" ? "All" : value}</span>
+          <span className="text-xs">{open ? "▲" : "▼"}</span>
+        </span>
+      </button>
+
+      {open && (
+        <div className="absolute left-[70px] top-full z-[1000] mt-2 w-[290px] max-h-[420px] overflow-y-auto rounded-xl border border-[#D9E2EC] bg-white py-2 shadow-xl">
+          <button
+            type="button"
+            onClick={() => {
+              onChange("all");
+              setOpen(false);
+            }}
+            className={`w-full px-4 py-2 text-left text-sm ${
+              value === "all"
+                ? "bg-[#F0F4F8] font-semibold text-[#102A43]"
+                : "text-[#243B53] hover:bg-[#F7F9FB]"
+            }`}
+          >
+            All Specialties
+          </button>
+
+          {groups.map((group) => (
+            <div key={group.category}>
+              <div className="mt-2 border-t border-[#E6ECF1] px-4 pt-3 pb-1 text-[12px] font-bold uppercase tracking-wider text-black">
+                {group.category}
+              </div>
+
+              {group.specialties.map((specialty) => (
+                <button
+                  key={specialty}
+                  type="button"
+                  onClick={() => {
+                    onChange(specialty);
+                    setOpen(false);
+                  }}
+                  className={`w-full px-5 py-2 text-left text-sm ${
+                    value === specialty
+                      ? "bg-[#F0F4F8] font-semibold text-[#102A43]"
+                      : "text-[#243B53] hover:bg-[#F7F9FB]"
+                  }`}
+                >
+                  {specialty}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -163,8 +216,6 @@ export default function SearchPage() {
   const [minRating, setMinRating] = useState("any");
   const [specialtyFilter, setSpecialtyFilter] = useState("all");
   const [sortMode, setSortMode] = useState("featured");
-  const [priceFilter, setPriceFilter] = useState("any");
-  const [paymentFilter, setPaymentFilter] = useState("any");
 
   const [mobileSearchOpen, setMobileSearchOpen] =
     useState(false);
@@ -303,32 +354,7 @@ export default function SearchPage() {
     setMinRating("any");
     setSpecialtyFilter("all");
     setSortMode("featured");
-    setPriceFilter("any");
-    setPaymentFilter("any");
   }
-
-  const specialtyOptions = useMemo(() => {
-    const set = new Set();
-
-    allStylists.forEach((s) => {
-      if (s.specialty) {
-        set.add(String(s.specialty).trim().toLowerCase());
-      }
-
-      safeArray(s.specialties).forEach((x) => {
-        set.add(String(x).trim().toLowerCase());
-      });
-    });
-
-    return [
-      "all",
-      ...Array.from(set)
-        .sort()
-        .map(
-          (s) => s.charAt(0).toUpperCase() + s.slice(1)
-        ),
-    ];
-  }, [allStylists]);
 
   const stylists = useMemo(() => {
     let filtered = [...allStylists];
@@ -378,25 +404,6 @@ export default function SearchPage() {
       filtered = filtered.filter((s) => {
         if (typeof s.rating !== "number") return true;
         return s.rating >= min;
-      });
-    }
-
-    if (priceFilter !== "any") {
-      filtered = filtered.filter((s) => {
-        const tier =
-          normalizePriceTier(s.priceTier) ||
-          normalizePriceTier(s.price) ||
-          normalizePriceTier(s.costTier) ||
-          priceTierFromCost(s.cost);
-
-        return tier === priceFilter;
-      });
-    }
-
-    if (paymentFilter !== "any") {
-      filtered = filtered.filter((s) => {
-        const pmts = normalizePayments(s);
-        return pmts.includes(paymentFilter);
       });
     }
 
@@ -463,8 +470,6 @@ export default function SearchPage() {
     radiusMiles,
     userLocation,
     sortMode,
-    priceFilter,
-    paymentFilter,
   ]);
 
   const mapStylists = useMemo(() => {
@@ -548,37 +553,10 @@ export default function SearchPage() {
             { value: "3.5", label: "3.5+ stars" },
           ]}
         />
-        <FilterSelect
-          label="Price"
-          value={priceFilter}
-          onChange={setPriceFilter}
-          options={[
-            { value: "any", label: "Any" },
-            { value: "$", label: "$" },
-            { value: "$$", label: "$$" },
-            { value: "$$$", label: "$$$" },
-            { value: "$$$$", label: "$$$$" },
-          ]}
-        />
-        <FilterSelect
-          label="Payment"
-          value={paymentFilter}
-          onChange={setPaymentFilter}
-          options={[
-            { value: "any", label: "Any" },
-            { value: "credit_cards", label: "Credit cards" },
-            { value: "applepay", label: "Apple Pay" },
-            { value: "cash_only", label: "Cash only" },
-          ]}
-        />
-        <FilterSelect
-          label="Specialty"
+        <SpecialtySelect
           value={specialtyFilter}
           onChange={setSpecialtyFilter}
-          options={specialtyOptions.map((s) => ({
-            value: s,
-            label: s === "all" ? "All" : s,
-          }))}
+          groups={SPECIALTY_GROUPS}
         />
         <FilterSelect
           label="Sort"
@@ -597,8 +575,6 @@ export default function SearchPage() {
 
         {(
           minRating !== "any" ||
-          priceFilter !== "any" ||
-          paymentFilter !== "any" ||
           specialtyFilter !== "all" ||
           term ||
           location
@@ -619,24 +595,6 @@ export default function SearchPage() {
             className="bg-[#102A43] text-white text-sm px-3 py-1 rounded-full"
           >
             {minRating}+ Stars ✕
-          </button>
-        )}
-
-        {priceFilter !== "any" && (
-          <button
-            onClick={() => setPriceFilter("any")}
-            className="bg-[#486581] text-white text-sm px-3 py-1 rounded-full"
-          >
-            {priceFilter} ✕
-          </button>
-        )}
-
-        {paymentFilter !== "any" && (
-          <button
-            onClick={() => setPaymentFilter("any")}
-            className="bg-[#829AB1] text-white text-sm px-3 py-1 rounded-full"
-          >
-            {paymentFilter.replace("_", " ")} ✕
           </button>
         )}
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 import { Link } from "react-router-dom";
+import { SPECIALTY_GROUPS } from "../data/specialties";
 
 function getGalleryLimit(tier) {
   if (tier === "premium") return 20;
@@ -81,10 +82,12 @@ export default function EditProfilePage() {
   const [dragIndex, setDragIndex] = useState(null);
 
   const [licenseUrl, setLicenseUrl] = useState("");
+
+  const [specialtiesOpen, setSpecialtiesOpen] = useState(false);
   
   const [form, setForm] = useState({
     full_name: "",
-    specialties: "",
+    specialties: [],
     bio: "",
     salon_name: "",
     address: "",
@@ -134,6 +137,9 @@ export default function EditProfilePage() {
 
         setForm({
           full_name: stylistData.full_name || "",
+          specialties: Array.isArray(stylistData.specialties)
+            ? stylistData.specialties
+            : [],
           bio: stylistData.bio || "",
           salon_name: stylistData.salon_name || "",
           address: stylistData.address || "",
@@ -653,14 +659,115 @@ export default function EditProfilePage() {
             className="w-full border rounded-lg px-3 py-2"
           />
 
-          <textarea
-            placeholder="Specialties (ex: Balayage, Color, Extensions)"
-            value={form.specialties}
-            onChange={(e) =>
-              setForm({ ...form, specialties: e.target.value })
-            }
-            className="w-full border rounded-lg px-3 py-2"
-          />
+          <div className="block">
+            <span className="text-sm font-medium">Specialties</span>
+
+            <div className="mt-1 text-xs text-gray-500">
+              Select all that apply.
+            </div>
+
+            <div className="relative mt-2">
+              <button
+                type="button"
+                onClick={() => setSpecialtiesOpen((open) => !open)}
+                className="flex w-full items-center justify-between rounded-lg border bg-white px-3 py-2 text-left text-sm"
+              >
+                <span
+                  className={
+                    form.specialties.length ? "text-gray-900" : "text-gray-500"
+                  }
+                >
+                  {form.specialties.length
+                    ? `${form.specialties.length} ${
+                        form.specialties.length === 1
+                          ? "specialty"
+                          : "specialties"
+                      } selected`
+                    : "Choose specialties"}
+                </span>
+
+                <span
+                  className={`ml-3 transition-transform ${
+                    specialtiesOpen ? "rotate-180" : ""
+                  }`}
+                >
+                  ▾
+                </span>
+              </button>
+
+              {specialtiesOpen && (
+                <div className="absolute left-0 right-0 z-30 mt-1 max-h-96 overflow-y-auto rounded-lg border bg-white p-4 shadow-lg">
+                  <div className="space-y-5">
+                    {SPECIALTY_GROUPS.map((group) => (
+                      <div key={group.category}>
+                        <div className="text-sm font-semibold text-[#243B53]">
+                          {group.category}
+                        </div>
+
+                        <div className="mt-2 grid gap-x-6 gap-y-2 sm:grid-cols-2">
+                          {group.specialties.map((specialty) => {
+                            const checked =
+                              form.specialties.includes(specialty);
+
+                            return (
+                              <label
+                                key={specialty}
+                                className="flex cursor-pointer items-start gap-2 text-sm text-gray-700"
+                              >
+                                <input
+                                  type="checkbox"
+                                  checked={checked}
+                                  onChange={() => {
+                                    setForm((current) => ({
+                                      ...current,
+                                      specialties: checked
+                                        ? current.specialties.filter(
+                                            (item) => item !== specialty
+                                          )
+                                        : [
+                                            ...current.specialties,
+                                            specialty,
+                                          ],
+                                    }));
+                                  }}
+                                  className="mt-0.5 h-4 w-4 shrink-0"
+                                />
+
+                                <span>{specialty}</span>
+                              </label>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {form.specialties.length > 0 && (
+              <div className="mt-3 flex flex-wrap gap-2">
+                {form.specialties.map((specialty) => (
+                  <button
+                    key={specialty}
+                    type="button"
+                    onClick={() =>
+                      setForm((current) => ({
+                        ...current,
+                        specialties: current.specialties.filter(
+                          (item) => item !== specialty
+                        ),
+                      }))
+                    }
+                    className="rounded-full bg-[#EAF4F4] px-3 py-1 text-xs font-medium text-[#243B53]"
+                    title={`Remove ${specialty}`}
+                  >
+                    {specialty} ×
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
         
         {/* PORTFOLIO */}
