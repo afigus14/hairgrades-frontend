@@ -203,11 +203,11 @@ function stylistScore(stylist, userLocation) {
 // ---------- COMPONENT ----------
 export default function SearchPage() {
   const [allStylists, setAllStylists] = useState([]);
+  const [totalCount, setTotalCount] = useState(0);
 
   const [term, setTerm] = useState("");
   const [location, setLocation] = useState("");
   const [radiusMiles, setRadiusMiles] = useState(25);
-  const [visibleCount, setVisibleCount] = useState(50);
   const [userLocation, setUserLocation] = useState(null);
 
   const [loading, setLoading] = useState(true);
@@ -238,34 +238,33 @@ export default function SearchPage() {
   
   useEffect(() => {
     async function loadStylists() {
+      setLoading(true);
+      setError("");
+
       try {
-        const PAGE_SIZE = 1000;
-        let from = 0;
-        let allRows = [];
-
-        while (true) {
-          const { data, error } = await supabase
-            .from("stylists")
-            .select("*")
-            .range(from, from + PAGE_SIZE - 1);
-
-          if (error) throw error;
-
-          const rows = safeArray(data);
-          allRows = [...allRows, ...rows];
-
-          if (rows.length < PAGE_SIZE) {
-            break;
+        const { data, error } = await supabase.rpc(
+          "search_stylists_v5",
+          {
+            p_search: term.trim() || null,
+            p_specialty:
+              specialtyFilter === "all" ? null : specialtyFilter,
+            p_min_rating:
+              minRating === "any" ? null : Number(minRating),
+            p_lat: userLocation?.lat ?? null,
+            p_lng: userLocation?.lng ?? null,
+            p_radius_miles: userLocation ? radiusMiles : null,
+            p_sort: sortMode,
+            p_limit: 50,
+            p_offset: 0,
           }
+        );
 
-          from += PAGE_SIZE;
-        }
+        if (error) throw error;
 
-        console.log("Supabase URL:", import.meta.env.VITE_SUPABASE_URL);
-        console.log("Total stylists loaded:", allRows.length);
+        const rows = safeArray(data);
 
         setAllStylists(
-          allRows.map((s) => ({
+          rows.map((s) => ({
             ...s,
             name: s.full_name || s.name,
             slug: s.profile_slug || s.slug || s.id,
@@ -274,18 +273,74 @@ export default function SearchPage() {
             specialty: Array.isArray(s.specialties)
               ? s.specialties[0]
               : s.specialties,
+            distanceMiles: s.distance_miles ?? null,
           }))
+        );
+
+        setTotalCount(
+          rows.length > 0 ? Number(rows[0].total_count || 0) : 0
         );
       } catch (err) {
         console.error("Error loading stylists:", err);
         setError("Unable to load stylists.");
+        setAllStylists([]);
+        setTotalCount(0);
       } finally {
         setLoading(false);
       }
     }
 
     loadStylists();
-  }, []);
+    }, [
+      term,
+      specialtyFilter,
+      minRating,
+      userLocation,
+      radiusMiles,
+      sortMode,
+    ]);
+
+    async function loadMoreStylists() {
+  try {
+    const { data, error } = await supabase.rpc(
+      "search_stylists_v5",
+      {
+        p_search: term.trim() || null,
+        p_specialty:
+          specialtyFilter === "all" ? null : specialtyFilter,
+        p_min_rating:
+          minRating === "any" ? null : Number(minRating),
+        p_lat: userLocation?.lat ?? null,
+        p_lng: userLocation?.lng ?? null,
+        p_radius_miles: userLocation ? radiusMiles : null,
+        p_sort: sortMode,
+        p_limit: 50,
+        p_offset: allStylists.length,
+      }
+    );
+
+    if (error) throw error;
+
+    const rows = safeArray(data);
+
+    const newStylists = rows.map((s) => ({
+      ...s,
+      name: s.full_name || s.name,
+      slug: s.profile_slug || s.slug || s.id,
+      photo_url: s.photo_url ?? "",
+      review_count: s.reviews_count,
+      specialty: Array.isArray(s.specialties)
+        ? s.specialties[0]
+        : s.specialties,
+      distanceMiles: s.distance_miles ?? null,
+    }));
+
+    setAllStylists((current) => [...current, ...newStylists]);
+  } catch (err) {
+    console.error("Error loading more stylists:", err);
+    setError("Unable to load more stylists.");
+  }
+}
 
   async function geocodeLocation(input) {
     const trimmed = input.trim();
@@ -326,7 +381,6 @@ export default function SearchPage() {
     e?.preventDefault?.();
     setError("");
     setLoading(true);
-    setVisibleCount(50);
 
     try {
       const loc = await geocodeLocation(location);
@@ -345,7 +399,6 @@ export default function SearchPage() {
   }
 
   function handleClear() {
-    setVisibleCount(50);
     setTerm("");
     setLocation("");
     setRadiusMiles(25);
@@ -356,121 +409,7 @@ export default function SearchPage() {
     setSortMode("featured");
   }
 
-  const stylists = useMemo(() => {
-    let filtered = [...allStylists];
-
-    filtered = filtered.filter((s) => {
-
-      const approved =
-        normalizeStatus(s.status) === "approved";
-
-      const activeSubscription =
-        s.subscription_status === "active";
-
-      const freePlan =
-        (s.tier || "free") === "free";
-
-      return approved &&
-        (freePlan || activeSubscription);
-    });
-
-    const q = term.trim().toLowerCase();
-    if (q) {
-      filtered = filtered.filter((s) => {
-        const name = (s.fullName || s.name || "").toLowerCase();
-        const specialty = (s.specialty || "").toLowerCase();
-        const specialties = safeArray(s.specialties).join(" ").toLowerCase();
-        return (
-          name.includes(q) ||
-          specialty.includes(q) ||
-          specialties.includes(q)
-        );
-      });
-    }
-
-    if (specialtyFilter !== "all") {
-      const target = specialtyFilter.toLowerCase();
-      filtered = filtered.filter((s) => {
-        const primary = String(s.specialty || "").toLowerCase();
-        const list = safeArray(s.specialties).map((x) =>
-          String(x).toLowerCase()
-        );
-        return primary === target || list.includes(target);
-      });
-    }
-
-    if (minRating !== "any") {
-      const min = Number(minRating);
-      filtered = filtered.filter((s) => {
-        if (typeof s.rating !== "number") return true;
-        return s.rating >= min;
-      });
-    }
-
-    if (userLocation) {
-      filtered = filtered
-        .map((s) => {
-
-          const lat = Number(s.lat);
-          const lng = Number(s.lng);
-
-          if (
-            Number.isFinite(lat) &&
-            Number.isFinite(lng)
-          ) {
-            return {
-              ...s,
-              distanceMiles: distanceMiles(userLocation, {
-                lat,
-                lng,
-              }),
-            };
-          }
-
-          return s;
-        })
-
-        .filter((s) => {
-          if (userLocation && s.distanceMiles == null) return false;
-
-          if (userLocation) {
-            return s.distanceMiles <= radiusMiles;
-          }
-
-          return true;
-        });
-    }
-
-    filtered.sort((a, b) => {
-
-      if (sortMode === "rating") {
-        return (b.rating || 0) - (a.rating || 0);
-      }
-
-      if (sortMode === "distance") {
-        return (a.distanceMiles || 9999) - (b.distanceMiles || 9999);
-      }
-
-      if (sortMode === "alpha") {
-        return alphaName(a).localeCompare(alphaName(b));
-      }
-
-      const scoreA = stylistScore(a, userLocation);
-      const scoreB = stylistScore(b, userLocation);
-
-      return scoreB - scoreA;
-    });
-    
-    return filtered;
-  }, [
-    allStylists,
-    term,
-    specialtyFilter,
-    minRating,
-    radiusMiles,
-    userLocation,
-    sortMode,
-  ]);
+  const stylists = allStylists;
 
   const mapStylists = useMemo(() => {
     return stylists.filter((s) => {
@@ -491,7 +430,7 @@ export default function SearchPage() {
   const gridItems = useMemo(() => {
     const items = [];
 
-    stylists.slice(0, visibleCount).forEach((stylist, i) => {
+    stylists.forEach((stylist, i) => {
       items.push(
         <StylistCard
           key={`sty_${stylist.id}`}
@@ -529,7 +468,7 @@ export default function SearchPage() {
     });
 
     return items;
-  }, [stylists, pageInventory, isDesktop, visibleCount]);
+  }, [stylists, pageInventory, isDesktop]);
 
   return (
     <div className="w-full min-w-0 pb-10">
@@ -540,36 +479,6 @@ export default function SearchPage() {
           Discover stylists you’ll love. Compare work, reviews, and book with confidence.
         </h2>
       </header>
-
-      <div className="flex flex-wrap items-center gap-4 mb-6">
-        <FilterSelect
-          label="Rating"
-          value={minRating}
-          onChange={setMinRating}
-          options={[
-            { value: "any", label: "Any" },
-            { value: "4.5", label: "4.5+ stars" },
-            { value: "4", label: "4+ stars" },
-            { value: "3.5", label: "3.5+ stars" },
-          ]}
-        />
-        <SpecialtySelect
-          value={specialtyFilter}
-          onChange={setSpecialtyFilter}
-          groups={SPECIALTY_GROUPS}
-        />
-        <FilterSelect
-          label="Sort"
-          value={sortMode}
-          onChange={setSortMode}
-          options={[
-            { value: "featured", label: "Featured" },
-            { value: "rating", label: "Rating" },
-            { value: "distance", label: "Distance" },
-            { value: "alpha", label: "A → Z" },
-          ]}
-        />
-      </div>
 
       <div className="flex flex-wrap gap-2 mb-6">
 
@@ -640,7 +549,7 @@ export default function SearchPage() {
             Find a stylist near you
           </h1>
           <p className="mt-2 text-sm md:text-base text-[#C7D5E2] max-w-3xl">
-            Search by stylist name or specialty, and choose a location and radius to see stylists nearby.
+            Search by stylist name, filter by specialty, and choose a location and radius to see stylists nearby.
           </p>
         </div>
 
@@ -650,13 +559,13 @@ export default function SearchPage() {
         >
           <div>
             <label className="block text-xs font-semibold uppercase tracking-wide text-[#C7D5E2] mb-1">
-              Stylist or specialty
+              Stylist name
             </label>
             <input
               type="text"
               value={term}
               onChange={(e) => setTerm(e.target.value)}
-              placeholder="e.g. balayage, curly hair, or Ava Lee"
+              placeholder="e.g. Ava Lee"
               className="w-full rounded-lg border border-[#30465B] bg-[#050B14] px-4 py-2.5 text-sm text-[#F7FAFF]"
             />
           </div>
@@ -693,7 +602,6 @@ export default function SearchPage() {
                   setTerm("");
                   setLocation("");
                   setRadiusMiles(25);
-                  setVisibleCount(50);
                   setUserLocation(null);
                   setError("");
                 }}
@@ -730,12 +638,42 @@ export default function SearchPage() {
 
         <div className="border-[3px] border-[#2F3C4F] rounded-2xl overflow-hidden bg-white shadow-sm mb-8">
           <StylistMap
-            stylists={mapStylists.slice(0, visibleCount)}
+            stylists={mapStylists}
             userLocation={userLocation}
           />
         </div>  
 
         </section>
+
+      <div className="flex flex-wrap items-center gap-4 mb-6">
+        <FilterSelect
+          label="Rating"
+          value={minRating}
+          onChange={setMinRating}
+          options={[
+            { value: "any", label: "Any" },
+            { value: "4.5", label: "4.5+ stars" },
+            { value: "4", label: "4+ stars" },
+            { value: "3.5", label: "3.5+ stars" },
+          ]}
+        />
+        <SpecialtySelect
+          value={specialtyFilter}
+          onChange={setSpecialtyFilter}
+          groups={SPECIALTY_GROUPS}
+        />
+        <FilterSelect
+          label="Sort"
+          value={sortMode}
+          onChange={setSortMode}
+          options={[
+            { value: "featured", label: "Featured" },
+            { value: "rating", label: "Rating" },
+            { value: "distance", label: "Distance" },
+            { value: "alpha", label: "A → Z" },
+          ]}
+        />
+      </div>  
 
       <section className="mt-8">
 
@@ -746,7 +684,7 @@ export default function SearchPage() {
           <h2 className="text-2xl font-semibold text-[#102A43]">
           {loading
             ? "Loading stylists…"
-            : `${stylists.length.toLocaleString()} stylist${stylists.length !== 1 ? "s" : ""} found`}
+            : `${totalCount.toLocaleString()} stylist${totalCount !== 1 ? "s" : ""} found`}
         </h2>
 
           <p className="text-sm text-gray-500 mt-1">
@@ -833,11 +771,11 @@ export default function SearchPage() {
           <div className="flex flex-col gap-6 w-full px-0">
             {gridItems}
 
-            {visibleCount < stylists.length && (
+            {stylists.length < totalCount && (
               <div className="flex justify-center pt-4">
                 <button
                   type="button"
-                  onClick={() => setVisibleCount((count) => count + 50)}
+                  onClick={loadMoreStylists}
                   className="rounded-xl bg-[#102A43] px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-[#0B1F33] transition"
                 >
                   Load More Stylists
