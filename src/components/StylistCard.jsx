@@ -2,6 +2,26 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+function formatRegistryName(name) {
+  const value = String(name || "").trim();
+
+  if (!value) return "";
+
+  // Leave names that already contain normal capitalization untouched.
+  if (value !== value.toUpperCase()) {
+    return value;
+  }
+
+  // Convert all-uppercase registry names to readable title case.
+  // Single-letter initials remain uppercase.
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s'-])([a-z])/g, (_, separator, letter) => {
+      return separator + letter.toUpperCase();
+    })
+    .replace(/\b([a-z])\b/g, (letter) => letter.toUpperCase());
+}
+
 function formatMiles(m) {
   if (m == null || !Number.isFinite(m)) return null;
   return `${m.toFixed(1)} mi`;
@@ -50,11 +70,12 @@ export default function StylistCard({
         stylist?.slug ||
         stylist?.id;
 
-      const registryName =
+      const registryName = formatRegistryName(
         stylist?.name ||
         stylist?.full_name ||
         stylist?.fullName ||
-        "Licensed Beauty Professional";
+        "Licensed Beauty Professional"
+      );
 
             const registryCity = stylist?.city || "";
             const registryState = stylist?.state || "";
