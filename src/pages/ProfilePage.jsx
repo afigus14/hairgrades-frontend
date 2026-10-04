@@ -2,6 +2,29 @@ import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
+function formatRegistryName(name) {
+  let value = String(name || "").trim();
+
+  if (!value) return "";
+
+  // Remove stray punctuation at the beginning of imported registry names.
+  value = value.replace(/^[^A-Za-z0-9]+/, "").trim();
+
+  // Leave names that already contain normal capitalization untouched.
+  if (value !== value.toUpperCase()) {
+    return value;
+  }
+
+  // Convert all-uppercase registry names to readable title case.
+  // Single-letter initials remain uppercase.
+  return value
+    .toLowerCase()
+    .replace(/(^|[\s'-])([a-z])/g, (_, separator, letter) => {
+      return separator + letter.toUpperCase();
+    })
+    .replace(/\b([a-z])\b/g, (letter) => letter.toUpperCase());
+}
+
 export default function ProfilePage() {
   const { id } = useParams();
   const [stylist, setStylist] = useState(null);
@@ -204,7 +227,7 @@ export default function ProfilePage() {
           </p>
 
           <h1 className="text-3xl font-serif text-[#102A43] mb-2">
-            {stylist.full_name}
+            {formatRegistryName(stylist.full_name)}
           </h1>
 
           <p className="text-lg font-medium text-[#243B53]">

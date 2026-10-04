@@ -3,9 +3,12 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 function formatRegistryName(name) {
-  const value = String(name || "").trim();
+  let value = String(name || "").trim();
 
   if (!value) return "";
+
+  // Remove stray punctuation at the beginning of imported registry names.
+  value = value.replace(/^[^A-Za-z0-9]+/, "").trim();
 
   // Leave names that already contain normal capitalization untouched.
   if (value !== value.toUpperCase()) {
