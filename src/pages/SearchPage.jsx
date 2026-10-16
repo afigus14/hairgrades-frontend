@@ -1,6 +1,6 @@
 // src/pages/SearchPage.jsx
 import React, { useEffect, useMemo, useState } from "react";
-import { useOutletContext } from "react-router-dom";
+import { useOutletContext, useSearchParams } from "react-router-dom";
 
 import StylistCard from "../components/StylistCard";
 import InlineSponsoredCard from "../components/InlineSponsoredCard";
@@ -202,20 +202,48 @@ function stylistScore(stylist, userLocation) {
 
 // ---------- COMPONENT ----------
 export default function SearchPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
   const [allStylists, setAllStylists] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
 
-  const [term, setTerm] = useState("");
-  const [location, setLocation] = useState("");
-  const [radiusMiles, setRadiusMiles] = useState(25);
-  const [userLocation, setUserLocation] = useState(null);
+  const [term, setTerm] = useState(
+    searchParams.get("term") || ""
+  );
+  const [location, setLocation] = useState(
+    searchParams.get("location") || ""
+  );
+  const [radiusMiles, setRadiusMiles] = useState(
+    Number(searchParams.get("radius")) || 25
+  );
+  const [userLocation, setUserLocation] = useState(() => {
+    const latParam = searchParams.get("lat");
+    const lngParam = searchParams.get("lng");
+
+    if (latParam === null || lngParam === null) {
+      return null;
+    }
+
+    const lat = Number(latParam);
+    const lng = Number(lngParam);
+
+    return Number.isFinite(lat) && Number.isFinite(lng)
+      ? { lat, lng }
+      : null;
+  });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [minRating, setMinRating] = useState("any");
-  const [specialtyFilter, setSpecialtyFilter] = useState("all");
-  const [sortMode, setSortMode] = useState("featured");
+  const [minRating, setMinRating] = useState(
+    searchParams.get("rating") || "any"
+  );
+  const [specialtyFilter, setSpecialtyFilter] = useState(
+    searchParams.get("specialty") || "all"
+  );
+  const [sortMode, setSortMode] = useState(
+    searchParams.get("sort") || "featured"
+  );
 
   const [mobileSearchOpen, setMobileSearchOpen] =
     useState(false);
@@ -299,6 +327,53 @@ export default function SearchPage() {
       radiusMiles,
       sortMode,
     ]);
+
+  useEffect(() => {
+    if (!userLocation || !location.trim()) return;
+
+    const params = new URLSearchParams();
+
+    if (term.trim()) {
+      params.set("term", term.trim());
+    }
+
+    params.set("location", location.trim());
+    params.set("lat", String(userLocation.lat));
+    params.set("lng", String(userLocation.lng));
+    params.set("radius", String(radiusMiles));
+
+    if (minRating !== "any") {
+      params.set("rating", minRating);
+    }
+
+    if (specialtyFilter !== "all") {
+      params.set("specialty", specialtyFilter);
+    }
+
+    if (sortMode !== "featured") {
+      params.set("sort", sortMode);
+    }
+
+    const nextSearch = params.toString();
+    const currentSearch = searchParams.toString();
+
+    if (nextSearch !== currentSearch) {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        `${window.location.pathname}${window.location.search}#/search?${nextSearch}`
+      );
+    }
+  }, [
+    term,
+    location,
+    userLocation,
+    radiusMiles,
+    minRating,
+    specialtyFilter,
+    sortMode,
+    searchParams,
+  ]);  
 
     async function loadMoreStylists() {
   try {
@@ -389,6 +464,19 @@ export default function SearchPage() {
         setUserLocation(null);
       } else {
         setUserLocation(loc);
+
+        setSearchParams({
+          ...(term.trim() ? { term: term.trim() } : {}),
+          location: location.trim(),
+          lat: String(loc.lat),
+          lng: String(loc.lng),
+          radius: String(radiusMiles),
+          ...(minRating !== "any" ? { rating: minRating } : {}),
+          ...(specialtyFilter !== "all"
+            ? { specialty: specialtyFilter }
+            : {}),
+          ...(sortMode !== "featured" ? { sort: sortMode } : {}),
+        });
       }
     } catch {
       setError("Location error.");
@@ -407,6 +495,7 @@ export default function SearchPage() {
     setMinRating("any");
     setSpecialtyFilter("all");
     setSortMode("featured");
+    setSearchParams({});
   }
 
   const stylists = allStylists;
@@ -604,6 +693,10 @@ export default function SearchPage() {
                   setRadiusMiles(25);
                   setUserLocation(null);
                   setError("");
+                  setMinRating("any");
+                  setSpecialtyFilter("all");
+                  setSortMode("featured");
+                  setSearchParams({}, { replace: true });
                 }}
                 className="rounded-lg border border-[#30465B] px-4 py-2 text-sm font-medium text-[#C7D5E2]"
               >
@@ -662,6 +755,7 @@ export default function SearchPage() {
           onChange={setSpecialtyFilter}
           groups={SPECIALTY_GROUPS}
         />
+      
         <FilterSelect
           label="Sort"
           value={sortMode}
