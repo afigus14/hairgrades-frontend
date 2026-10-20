@@ -210,6 +210,11 @@ export default function SearchPage() {
   const [term, setTerm] = useState(
     searchParams.get("term") || ""
   );
+
+  const [nameInput, setNameInput] = useState(
+    searchParams.get("term") || ""
+  );
+  
   const [location, setLocation] = useState(
     searchParams.get("location") || ""
   );
@@ -456,6 +461,21 @@ export default function SearchPage() {
     e?.preventDefault?.();
     setError("");
     setLoading(true);
+    setTerm(nameInput.trim());
+
+    if (!location.trim()) {
+      setUserLocation(null);
+
+      setSearchParams(
+        nameInput.trim()
+          ? { term: nameInput.trim() }
+          : {},
+        { replace: true }
+      );
+
+      setLoading(false);
+      return;
+    }
 
     try {
       const loc = await geocodeLocation(location);
@@ -488,6 +508,7 @@ export default function SearchPage() {
 
   function handleClear() {
     setTerm("");
+    setNameInput("");
     setLocation("");
     setRadiusMiles(25);
     setUserLocation(null);
@@ -652,8 +673,8 @@ export default function SearchPage() {
             </label>
             <input
               type="text"
-              value={term}
-              onChange={(e) => setTerm(e.target.value)}
+              value={nameInput}
+              onChange={(e) => setNameInput(e.target.value)}
               placeholder="e.g. Ava Lee"
               className="w-full rounded-lg border border-[#30465B] bg-[#050B14] px-4 py-2.5 text-sm text-[#F7FAFF]"
             />
@@ -679,7 +700,7 @@ export default function SearchPage() {
             <div className="flex gap-3">
               <button
                 type="submit"
-                disabled={loading || !location.trim()}
+                disabled={loading || (!nameInput.trim() && !location.trim())}
                 className="flex-1 rounded-lg bg-[#F4A731] px-4 py-2 text-sm font-semibold text-black"
               >
                 {loading ? "Searching..." : "Search"}
@@ -689,6 +710,7 @@ export default function SearchPage() {
                 type="button"
                 onClick={() => {
                   setTerm("");
+                  setNameInput("");
                   setLocation("");
                   setRadiusMiles(25);
                   setUserLocation(null);
