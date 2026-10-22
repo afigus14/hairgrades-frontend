@@ -9,6 +9,8 @@ import { supabase } from "../lib/supabase";
 import StylistMap from "../components/StylistMap";
 import { SPECIALTY_GROUPS } from "../data/specialties";
 
+const API_BASE = "https://stylegrades-api.vercel.app";
+
 // ---------- utils ----------
 function safeArray(v) {
   return Array.isArray(v) ? v : [];
