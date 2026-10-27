@@ -157,6 +157,25 @@ export default function AdminDashboardPage() {
     return data || [];
   }
 
+  async function fetchPendingClaims() {
+    const { data, error } = await supabase
+      .from("stylists")
+      .select(
+        "id, full_name, city, state, license_number, license_type, license_state, license_status, claim_email, claim_requested_at, claim_email_verified, claimed_at, profile_source"
+      )
+      .eq("profile_source", "registry_unclaimed")
+      .eq("claim_email_verified", true)
+      .is("claimed_at", null)
+      .order("claim_requested_at", { ascending: true });
+
+    if (error) {
+      console.error("Error loading profile claims:", error);
+      return [];
+    }
+
+    return data || [];
+  }
+
   async function fetchAdvertisers() {
     const { data, error } = await supabase
       .from("advertisers")
@@ -281,6 +300,8 @@ export default function AdminDashboardPage() {
       const managed = await fetchManagedStylists();
       const ads = await fetchAdvertisers();
 
+      const claims = await fetchPendingClaims();
+
       setManagedStylists(managed);
 
       setPendingStylists(
@@ -293,14 +314,7 @@ export default function AdminDashboardPage() {
         )
       );
 
-      setPendingClaims(
-        managed.filter(
-          (s) =>
-            s.profile_source === "registry_unclaimed" &&
-            s.claim_email_verified === true &&
-            !s.claimed_at
-        )
-      );
+      setPendingClaims(claims);
 
       setAdvertisers(ads);
 
