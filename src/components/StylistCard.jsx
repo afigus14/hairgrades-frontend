@@ -329,6 +329,7 @@ export default function StylistCard({
         <div className="mt-4">
           <Link
             to={`/profile/${stylist.profile_slug || stylist.id}`}
+            onClick={() => onProfileClick?.(stylist)}
             className="block w-full rounded-xl border border-[#D9E2EC] bg-white px-4 py-3 text-center font-medium text-[#102A43] transition-all duration-300 hover:bg-[#F7FAFC] hover:shadow-md hover:-translate-y-0.5"
           >
             View Profile
