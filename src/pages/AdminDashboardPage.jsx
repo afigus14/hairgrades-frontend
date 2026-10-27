@@ -165,6 +165,7 @@ export default function AdminDashboardPage() {
       )
       .eq("profile_source", "registry_unclaimed")
       .eq("claim_email_verified", true)
+      .eq("claim_admin_approved", false)
       .is("claimed_at", null)
       .order("claim_requested_at", { ascending: true });
 
