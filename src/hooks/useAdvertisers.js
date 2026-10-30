@@ -10,6 +10,8 @@ function isAdvertiserEligible(advertiser) {
 
   if (!advertiser.is_active) return false;
 
+  if (advertiser.is_paused) return false;
+
   // Complimentary campaigns
   if (advertiser.complimentary_until) {
     const today = new Date();
