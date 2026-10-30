@@ -20,18 +20,23 @@ function normalizeStatus(s) {
   return String(s || "approved").toLowerCase();
 }
 
-function track(stylistId, event) {
+async function track(stylistId, event) {
   try {
-    const payload = JSON.stringify({ stylistId: String(stylistId), event });
+    const payload = JSON.stringify({
+      stylistId: String(stylistId),
+      event,
+    });
+
     const url = `${API_BASE}/api/analytics/track`;
 
-    fetch(url, {
+    await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: payload,
-      keepalive: true,
-    }).catch(() => {});
-  } catch {}
+    });
+  } catch (err) {
+    console.error("Analytics tracking failed:", err);
+  }
 }
 
 function distanceMiles(a, b) {
