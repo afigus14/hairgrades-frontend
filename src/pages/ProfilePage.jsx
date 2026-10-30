@@ -117,6 +117,17 @@ export default function ProfilePage() {
 
         // Load reviews using the actual stylist UUID
         fetchReviews(data.id);
+
+        fetch("https://stylegrades-api.vercel.app/api/analytics/track", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            stylistId: data.id,
+            event: "profile_view",
+          }),
+        }).catch((err) => {
+          console.error("Profile view tracking failed:", err);
+        });
       }
 
       setLoading(false);
