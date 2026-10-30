@@ -254,7 +254,11 @@ export default function AdminDashboardPage() {
         .eq("status", "approved")
         .eq("is_active", true),
 
-      supabase.rpc("get_cities_served_count"),
+      supabase
+        .from("stylegrades_stats")
+        .select("stat_value")
+        .eq("stat_key", "cities_served")
+        .single(),
 
     ]);
 
@@ -271,7 +275,7 @@ export default function AdminDashboardPage() {
     const reviewCount = reviewResult.count || 0;
     const pendingReviewCount = pendingReviewResult.count || 0;
     const advertiserCount = advertiserResult.count || 0;
-    const citiesServedCount = citiesResult.data || 0;
+    const citiesServedCount = Number(citiesResult.data?.stat_value) || 0;
 
     setPlatformStats({
       stylists: stylistCount || 0,
