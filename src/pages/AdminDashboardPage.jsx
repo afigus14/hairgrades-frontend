@@ -254,10 +254,7 @@ export default function AdminDashboardPage() {
         .eq("status", "approved")
         .eq("is_active", true),
 
-      supabase
-        .from("stylists")
-        .select("city")
-        .eq("status", "approved"),
+      supabase.rpc("get_cities_served_count"),
 
     ]);
 
@@ -274,13 +271,7 @@ export default function AdminDashboardPage() {
     const reviewCount = reviewResult.count || 0;
     const pendingReviewCount = pendingReviewResult.count || 0;
     const advertiserCount = advertiserResult.count || 0;
-    const cities = citiesResult.data || [];
-
-    const uniqueCities = new Set(
-      (cities || [])
-        .map((c) => c.city)
-        .filter(Boolean)
-    );
+    const citiesServedCount = citiesResult.data || 0;
 
     setPlatformStats({
       stylists: stylistCount || 0,
@@ -289,7 +280,7 @@ export default function AdminDashboardPage() {
       reviews: reviewCount || 0,
       pendingReviews: pendingReviewCount || 0,
       advertisers: advertiserCount || 0,
-      cities: uniqueCities.size,
+      cities: citiesServedCount,
     });
   }
 
