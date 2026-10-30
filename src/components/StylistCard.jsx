@@ -241,7 +241,6 @@ export default function StylistCard({
       {/* Whole card navigates to profile */}
       <Link
         to={`/profile/${encodeURIComponent(String(slug))}`}
-        onClick={() => onProfileClick?.(stylist)}
         className="block"
       >
         {/* Image area: show full image (no crop) */}
