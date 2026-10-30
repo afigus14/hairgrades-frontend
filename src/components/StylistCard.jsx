@@ -68,6 +68,7 @@ export default function StylistCard({
 
   async function handleProfileClick(e) {
     e.preventDefault();
+    e.stopPropagation();
 
     try {
       await onProfileClick?.(stylist);
