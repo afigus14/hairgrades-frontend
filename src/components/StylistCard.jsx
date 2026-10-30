@@ -66,6 +66,22 @@ export default function StylistCard({
 }) {
   const navigate = useNavigate();
 
+  async function handleProfileClick(e) {
+    e.preventDefault();
+
+    try {
+      await onProfileClick?.(stylist);
+    } finally {
+      const profileSlug =
+        stylist?.profile_slug ||
+        stylist?.profileSlug ||
+        stylist?.slug ||
+        stylist?.id;
+
+      navigate(`/profile/${encodeURIComponent(String(profileSlug))}`);
+    }
+  }
+
     if (stylist?.profile_source === "registry_unclaimed") {
       const registrySlug =
         stylist?.profile_slug ||
@@ -329,7 +345,7 @@ export default function StylistCard({
         <div className="mt-4">
           <Link
             to={`/profile/${stylist.profile_slug || stylist.id}`}
-            onClick={() => onProfileClick?.(stylist)}
+            onClick={handleProfileClick}
             className="block w-full rounded-xl border border-[#D9E2EC] bg-white px-4 py-3 text-center font-medium text-[#102A43] transition-all duration-300 hover:bg-[#F7FAFC] hover:shadow-md hover:-translate-y-0.5"
           >
             View Profile
