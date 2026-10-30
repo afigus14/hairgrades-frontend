@@ -25,12 +25,6 @@ function track(stylistId, event) {
     const payload = JSON.stringify({ stylistId: String(stylistId), event });
     const url = `${API_BASE}/api/analytics/track`;
 
-    if (navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: "application/json" });
-      navigator.sendBeacon(url, blob);
-      return;
-    }
-
     fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
