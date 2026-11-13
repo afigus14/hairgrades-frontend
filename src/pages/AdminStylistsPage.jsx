@@ -38,7 +38,8 @@ export default function AdminStylistsPage() {
     const { data, error } = await supabase
       .from("stylists")
       .select("*")
-      .order("full_name", { ascending: true });
+      .order("full_name", { ascending: true })
+      .limit(50);
 
     if (error) {
       console.error("Error loading stylists:", error);

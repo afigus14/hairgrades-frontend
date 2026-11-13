@@ -690,7 +690,7 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="mt-3 text-5xl font-bold text-[#047857]">
-              $
+              $0
             </div>
           </div>
 
