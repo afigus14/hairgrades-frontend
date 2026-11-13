@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 
+const PAGE_SIZE = 50;
+
 function normalizeStatus(s) {
   return String(s || "approved").toLowerCase();
 }
@@ -23,36 +25,42 @@ export default function AdminStylistsPage() {
   const [status, setStatus] = useState({ type: "idle", message: "" });
   const [confirmAction, setConfirmAction] = useState(null);
 
+  const [page, setPage] = useState(1);
+  const [totalStylists, setTotalStylists] = useState(0);
+
   // Persist admin key locally
   useEffect(() => {
     localStorage.setItem("stylegrades_admin_key", adminKey);
   }, [adminKey]);
 
   useEffect(() => {
-    loadStylists();
-  }, []);
+    loadStylists(page);
+  }, [page]);
 
-  async function loadStylists() {
+  async function loadStylists(pageToLoad = page) {
     setLoading(true);
 
-    const { data, error } = await supabase
+    const from = (pageToLoad - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+
+    const { data, error, count } = await supabase
       .from("stylists")
-      .select("*")
+      .select("*", { count: "exact" })
       .order("full_name", { ascending: true })
-      .limit(50);
+      .range(from, to);
 
     if (error) {
       console.error("Error loading stylists:", error);
       setStylists([]);
     } else {
-
       const normalized = (data || []).map((s) => ({
         ...s,
         name: s.full_name,
-        photoUrl: s.photo_url
+        photoUrl: s.photo_url,
       }));
 
       setStylists(normalized);
+      setTotalStylists(count || 0);
     }
 
     setLoading(false);
@@ -95,15 +103,13 @@ export default function AdminStylistsPage() {
         return;
       }
 
-      await loadStylists();
-
+      await loadStylists(page);
     } catch (err) {
       console.error("Delete error:", err);
       alert("Delete failed");
     }
   }
 
-  // ⭐ ADD THIS HERE
   async function updateTier(id, tier) {
     const { error } = await supabase
       .from("stylists")
@@ -114,7 +120,7 @@ export default function AdminStylistsPage() {
       console.error("Tier update failed:", error);
       alert("Tier update failed");
     } else {
-      loadStylists();
+      loadStylists(page);
     }
   }
 
@@ -125,6 +131,19 @@ export default function AdminStylistsPage() {
       </span>
     );
   }
+
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalStylists / PAGE_SIZE)
+  );
+
+  const firstRecord =
+    totalStylists === 0 ? 0 : (page - 1) * PAGE_SIZE + 1;
+
+  const lastRecord = Math.min(
+    page * PAGE_SIZE,
+    totalStylists
+  );
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -146,7 +165,7 @@ export default function AdminStylistsPage() {
           />
 
           <button
-            onClick={loadStylists}
+            onClick={() => loadStylists(page)}
             className="px-4 py-2 rounded-lg bg-black text-white"
           >
             Refresh
@@ -164,6 +183,24 @@ export default function AdminStylistsPage() {
             {status.message}
           </div>
         )}
+      </div>
+
+      {/* Pagination Summary */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
+        <div className="text-sm text-gray-700">
+          Showing{" "}
+          <strong>
+            {firstRecord.toLocaleString()}–{lastRecord.toLocaleString()}
+          </strong>{" "}
+          of{" "}
+          <strong>{totalStylists.toLocaleString()}</strong>{" "}
+          stylists
+        </div>
+
+        <div className="text-sm text-gray-600">
+          Page {page.toLocaleString()} of{" "}
+          {totalPages.toLocaleString()}
+        </div>
       </div>
 
       {/* Stylists List */}
@@ -242,12 +279,16 @@ export default function AdminStylistsPage() {
                   <div className="flex flex-wrap gap-2 items-center">
                     <select
                       value={s.tier || "free"}
-                      onChange={(e) => updateTier(s.id, e.target.value)}
+                      onChange={(e) =>
+                        updateTier(s.id, e.target.value)
+                      }
                       className="border rounded px-2 py-1 text-sm"
                     >
                       <option value="free">Free</option>
                       <option value="pro">Pro</option>
-                      <option value="premium">Premium</option>
+                      <option value="premium">
+                        Premium
+                      </option>
                     </select>
 
                     <button
@@ -282,6 +323,46 @@ export default function AdminStylistsPage() {
             )}
           </div>
         )}
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+        <button
+          onClick={() =>
+            setPage((current) => Math.max(1, current - 1))
+          }
+          disabled={page <= 1 || loading}
+          className={`px-5 py-2 rounded-lg border font-medium ${
+            page <= 1 || loading
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-800 hover:bg-gray-50"
+          }`}
+        >
+          ← Previous
+        </button>
+
+        <div className="text-sm text-gray-600">
+          Page{" "}
+          <strong>{page.toLocaleString()}</strong>{" "}
+          of{" "}
+          <strong>{totalPages.toLocaleString()}</strong>
+        </div>
+
+        <button
+          onClick={() =>
+            setPage((current) =>
+              Math.min(totalPages, current + 1)
+            )
+          }
+          disabled={page >= totalPages || loading}
+          className={`px-5 py-2 rounded-lg border font-medium ${
+            page >= totalPages || loading
+              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+              : "bg-white text-gray-800 hover:bg-gray-50"
+          }`}
+        >
+          Next →
+        </button>
       </div>
 
       {/* Confirmation Modal */}
