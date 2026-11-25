@@ -224,9 +224,10 @@ export default function AdminDashboardPage() {
     ] = await Promise.all([
 
       supabase
-        .from("stylists")
-        .select("*", { count: "exact", head: true })
-        .eq("status", "approved"),
+        .from("stylegrades_stats")
+        .select("stat_value")
+        .eq("stat_key", "eligible_stylists")
+        .single(),
 
       supabase
         .from("stylists")
@@ -268,7 +269,7 @@ export default function AdminDashboardPage() {
     console.log("Advertiser Result:", advertiserResult);
     console.log("Cities Result:", citiesResult);  
 
-    const stylistCount = stylistResult.count || 0;
+    const stylistCount = Number(stylistResult.data?.stat_value) || 0;
     const pendingStylistCount = pendingStylistResult.count || 0;
     const needsInformationCount =
       needsInfoResult.count || 0;
